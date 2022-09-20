@@ -1,0 +1,47 @@
+.recharts-responsive-container {
+  margin-left: -1rem !important;
+}
+
+.line-chart {
+  position: relative;
+
+  .chart-legend {
+    position: absolute;
+    right: 1rem;
+    top: -3rem;
+    height: 200px;
+    width: 550px;
+    -webkit-box-shadow: 10px 10px 5px -8px rgba(0, 0, 0, 0.75);
+    -moz-box-shadow: 10px 10px 5px -8px rgba(0, 0, 0, 0.75);
+    box-shadow: 10px 10px 5px -8px rgba(0, 0, 0, 0.75);
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: .5rem;
+    padding: 1rem;
+    color: white;
+    text-transform: uppercase;
+    overflow-y: scroll;
+
+    &::-webkit-scrollbar {
+      height: 7px !important;
+      width: 7px !important;
+      background: transparent;
+      border-radius: none !important;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: none !important;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #ffffff;
+      border-radius: 0 5px 5px 0;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      border-radius: none !important;
+      background: grey;
+      cursor: auto;
+    }
+  }
+}

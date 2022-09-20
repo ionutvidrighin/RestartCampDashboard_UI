@@ -1,0 +1,129 @@
+.login-form-component {
+  width: 450px;
+  background-color: white;
+  border-radius: 0.5rem;
+  -webkit-box-shadow: 5px 5px 10px -3px #7e7e7e;
+  -moz-box-shadow: 5px 5px 10px -3px #646464;
+  box-shadow: 5px 5px 10px -3px #7e7e7e;
+  padding: 2rem 2.5rem;
+  position: relative;
+
+  .back-to-login {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    cursor: pointer;
+
+    span {
+      color:#6d6d7a;
+      font-size: .8rem;
+    }
+  }
+
+  h3 {
+    margin: 1.5rem 0 0.5rem 0;
+    color: #6d6d7a;
+    font-weight: 400;
+    font-size: 0.99rem;
+  }
+
+  h1 {
+    font-weight: 500;
+    font-size: 2rem;
+    width: 100%;
+  }
+
+  .login-to-app-form {
+    .display-token {
+      width: 100%;
+      height: 120px;
+      border-radius: 5px;
+      background-color: #e4e4e4;
+      box-shadow: 6px 6px 14px -7px rgba(0,0,0,0.75);
+      margin-bottom: 1rem;
+      padding: 2rem 1rem 1rem 1rem;
+      word-break:break-all;
+      font-size: .74rem;
+      position: relative;
+
+      .copy-to-clipboard-icon {
+        position: absolute;
+        top: 3px;
+        left: -17px;
+        width: 40px;
+      }
+    }
+  }
+
+  .login-form-section {
+    height: fit-content;
+    padding: .5rem 0 1rem 0;
+
+    .form-fields {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .token-input-label {
+      font-size: .9rem; 
+      color: #6d6d7a;
+      margin-bottom: .3rem;
+    }
+
+    .login-form-error {
+      font-size: 0.7rem;
+      color: #f72585;
+    }
+
+    .submitLoginForm {
+      height: 2.5rem;
+    }
+  }
+
+
+  .copy-clipboard-btn {
+    align-items: center;
+    appearance: none;
+    background-color: #fff;
+    border: 1px solid #dbdbdb;
+    border-radius: .375em;
+    box-shadow: none;
+    box-sizing: border-box;
+    color: #363636;
+    cursor: pointer;
+    display: inline-flex;
+    font-family: BlinkMacSystemFont,-apple-system,"Segoe UI",Roboto,Oxygen,Ubuntu,Cantarell,"Fira Sans","Droid Sans","Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: .7rem;
+    width: 70px;
+    height: 1.7rem;
+    justify-content: center;
+    line-height: 1.5;
+    padding: calc(.5em - 1px) 1em;
+    margin: 0 0 0 auto;
+    text-align: center;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    vertical-align: top;
+    white-space: nowrap;
+    &:hover {
+      border-color: #b5b5b5;
+    }
+
+    &:active {
+      border-color: #4a4a4a;
+      outline: 0;
+    }
+
+    &:focus {
+      border-color: #595959;
+      outline: 0;
+    }
+
+    &:focus:not(:active) {
+      box-shadow: rgba(72, 95, 199, .25) 0 0 0 .125em;
+    }
+  }
+}

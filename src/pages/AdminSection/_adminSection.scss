@@ -1,0 +1,132 @@
+.admin-section {
+  flex: 1;
+  background-color: #3e5676;
+
+  .create-dashboard-user-section,
+  .dashboard-access-key,
+  .change-dashboard-access-key {
+    box-shadow: 0px 0px 26px -6px rgba(0,0,0,0.75);
+  }
+
+  .secret-app-key-section {
+
+    section {
+      background-color: rgba(255, 255, 255, 0.1);
+      padding: 1rem;
+      width: fit-content;
+      border-radius: 8px;
+    }
+
+    span:first-of-type {
+      color: rgb(228, 228, 228);
+    }
+  
+    .secret-key {
+      font-weight: bold;
+      color: white;
+    }
+  }
+
+  .divider {
+    margin: 0 auto;
+    width: 80%;
+    height: 1px;
+    background-color: aliceblue;
+  }
+
+  .add-new-user-container {
+    width: 90%;
+    margin: 0 auto;
+    margin-bottom: 1rem;
+    .add-new-user-btn {
+      cursor: pointer;
+      background-color: #557092;
+      box-shadow: 5px 5px 14px -7px rgba(0,0,0,0.75);
+      border-radius: 5px;
+      color: white;
+      font-weight: bold;
+      width: fit-content;
+      padding: .3rem .5rem;
+      &:active {
+        transform: translateY(4px);
+      }
+    }
+  }
+
+  .dashboard-users {
+    width: 90%;
+    margin: 0 auto;
+    h4 {
+      color: rgb(228, 228, 228);
+    }
+    .table-header-item {
+      width: 230px;
+      text-align: center;
+      font-weight: bold;
+      height: 80%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-left: 1px solid black;
+      &:first-child {
+        border-left: none;
+      }
+    }
+
+    .table-row {
+      display: flex;
+      height: 50px;
+      .table-body-cell {
+        width: 230px;
+        padding: .3rem;
+        text-align: center;
+        font-weight: bold;
+        word-break:break-all;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-left: 1px solid black;
+        border-bottom: 1px solid black;
+        &:first-child {
+          border-left: none;
+        }
+      }
+
+      .dashboard-user-password {
+        position: relative;
+      }
+
+      #show-hide-password {
+        position: absolute;
+        right: 5px;
+        top: -3px;
+      }
+    }
+
+    .medium-cell {
+      width: 180px !important;
+    }
+
+    .small-cell {
+      width: 140px !important;
+    }
+
+    .smallest-cell {
+      width: 100px !important;
+    }
+
+    .delete-account-cell {
+      cursor: pointer;
+      transition: .2s ease-in-out all;
+      &:hover {
+        background-color: #c7c7c7;
+        transition: .2s ease-in-out all;
+      }
+    }
+  }
+
+  .rotate-icon {
+    transform: rotate(-360deg);
+    transition: .5s all;
+  }
+}

@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+
+.change-email-page {
+  font-family: 'Roboto', sans-serif;
+  background-color: #3e5676;
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: 200px 520px;
+  grid-column-gap: 0px;
+  grid-row-gap: 0px;
+  flex: 1;
+  height: fit-content;
+  min-height: 100vh;
+
+  .change-email-logo {
+    align-self: end;
+    height: 500px;
+    width: 500px;
+    background-image: url('../../assets/change-email.png');
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: .2;
+  }
+
+  .page-title-section {
+    height: 100%;
+    width: 300px;
+  }
+
+  .change-email-form {
+    background-color: #384d6a;
+    z-index: 10;
+    h4 {
+      color: rgb(218, 218, 218);
+    }
+  }
+
+  #change-email-btn {
+    margin: 1rem 0;
+    padding: 10px;
+    font-weight: bold;
+    background-color: #509ecc;
+    color: rgb(250, 250, 250);
+    position: relative;
+    &:active {
+      top: 0.1em;
+    }
+  }
+
+
+}

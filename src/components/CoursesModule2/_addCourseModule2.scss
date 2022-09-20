@@ -1,0 +1,58 @@
+.course-days {
+  color: white;
+  font-weight: bold;
+  display: flex;
+  flex-wrap: wrap;
+
+  input[type=checkbox] {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+.course-days-error {
+  font-size: 0.75rem;
+  color: #ff5c5c;
+  border-top: 2px solid #ff5c5c;
+  p {
+    margin: 3px 14px 0 14px !important;
+  }
+}
+
+.course-recurrence {
+  margin: -.2rem 0 -.4rem 0;
+  color: white;
+  font-weight: bold;
+  font-style: italic;
+}
+
+.reveal-added-course {
+  margin: 0 1rem 1rem 3rem;
+  flex: 1;
+  border-left: 2px solid rgb(233, 233, 233);
+  color: white;
+  font-weight: bold;
+
+  .added-paid-course-card {
+    width: 250px;
+    height: 500px;
+  }
+
+  .added-paid-course-logo {
+    height: 240px !important;
+  }
+
+  .added-paid-course-details {
+    height: fit-content;
+    font-size: .9rem !important;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3fr 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+    div:nth-child(2) {
+      position: relative !important;
+    }
+  }
+}

@@ -1,0 +1,53 @@
+.email-3days-top-section {
+  width: 90%;
+
+  p {
+    font-size: .8rem;
+  }
+
+  img {
+    width: 650px;
+  }
+
+  h5 {
+    color: #fd5c4a;
+    font-weight: bold;
+  }
+
+  .divider {
+    margin: 0 auto;
+    width: 80%;
+    height: 1px;
+    background-color: black;
+  }
+}
+
+.email-3days-center-section {
+  width: 90%;
+
+  p {
+    font-size: .8rem;
+  }
+
+  .paragraph-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    div:first-child {
+      margin-right: 1rem;
+      img {
+        width: 320px;
+      }
+    }
+
+    div:last-child {
+      padding: 1rem 0;
+    }
+  }
+
+  h6 {
+    color: #48b6ff;
+    font-weight: bold;
+  }
+}

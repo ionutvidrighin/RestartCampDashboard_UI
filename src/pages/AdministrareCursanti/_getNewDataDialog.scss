@@ -1,0 +1,47 @@
+.get-student-data-by-course-name-dialog {
+  padding: 0 1rem 1rem 1rem;
+  width: 450px;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .criteria-name {
+    margin: .5rem 0 0 0;
+    font-weight: bold;
+  }
+
+  .search-criteria {
+    border: 1px solid grey;
+    border-radius: 5px;
+
+    p {
+      margin: 0;
+      padding-left: .5rem;
+      cursor: pointer;
+      &:hover {
+        font-style: italic;
+      }
+    }
+
+    input {
+      margin: .3rem;
+      background-color: rgb(199, 199, 199) !important;
+      color: black;
+    }
+  }
+
+  .courses-list {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .selected {
+    background-image: linear-gradient(to right, #38b6ff, #31abf2, #2aa0e5, #2295d9, #198acc);
+    color: white;
+  }
+
+  .submit-btn {
+    background-color: #38b6ff;
+  }
+}

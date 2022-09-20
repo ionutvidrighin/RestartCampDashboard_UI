@@ -1,0 +1,165 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
+
+$blue: #509ecc;
+
+.App {
+  width: 100%;
+  height: 100vh;
+  font-family: 'Roboto', 'Montserrat', sans-serif;
+  display: flex;
+  background-color: #3e5676;
+  overflow-x: hidden;
+  position: relative;
+
+  .generate-db-token-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    .generate-token-box {
+      height: 400px;
+      width: 500px;
+      background-color: rgb(217, 217, 217);
+      border-radius: 5px;
+      box-shadow: 10px 10px 12px -3px rgba(0,0,0,0.75);
+      position: relative;
+      .generate-token-bg-img {
+        position: absolute;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        opacity: 0.03;
+      }
+
+      .generate-token-container {
+        flex: 1;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+        button {
+          padding: 1rem;
+          font-weight: bold;
+          background-color: rgb(132, 175, 231);
+          color: black;
+        }
+        .success-checkmark {
+          width: 200px;
+        }
+        .error-cross {
+          width: 150px;
+        }
+        .success-granted-banner {
+          position: absolute;
+          top: -15px;
+          padding: .5rem;
+          background-color: #45d6a9;
+        }
+        .db-token-error-banner {
+          position: absolute;
+          top: -15px;
+          padding: .5rem;
+          background-color: red;
+          color: white;
+        }
+      }
+    }
+  }
+
+  .no-access-page {
+    flex: 1;
+    background-color: #3e5676;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    img {
+      width: 650px;
+    }
+    .speaking {
+      position: absolute;
+      top: 10px;
+      left: 100px;
+      width: 350px;
+    }
+    .no-access-info {
+      margin: 4rem 0 0 0;
+      padding: 1rem 0;
+      color: black;
+      position: absolute;
+      top: 10px;
+      left: 200px;
+      z-index: 5;
+      h4 {
+        font-weight: bold;
+      }
+    }
+
+  }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 10px !important;
+  background: transparent;
+  border-radius: none !important;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: none !important;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: rgb(202, 202, 202);
+  border-radius: none !important;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  border-radius: none !important;
+  background: grey;
+  cursor: auto;
+}
+
+// importing all components styles
+@import './pages/Login/login';
+@import './components/Authentication/loginFormComponent';
+@import './styles/dashboard';
+@import './pages/AdminSection/adminSection';
+@import './pages/SchimbareEmail/schimbareEmail';
+@import './pages/SchimbareParola/schimbareParola';
+@import './pages/ManipularePaginiWeb/PaginaCursuri/paginaCursuri';
+@import './pages/ManipularePaginiWeb/ConfirmarePrezenta/confirmarePrezenta';
+@import './pages/ManipularePaginiWeb/FormularInscriere/formularInscriere';
+@import './pages/ManipularePaginiWeb/Header&Footer/headerFooter';
+@import './pages/CursuriModul1/cursuriModul1';
+@import './pages/CursuriModul2/cursuriModul2';
+@import './pages/AdministrareCursanti/administrareCursanti';
+@import './pages/AdministrareCursanti/Inscriere_cursanti_modul2/inscriereCursantiModul2';
+@import './pages/AdministrareEmails/editareEmailTemplate';
+@import './pages/DezabonareCursanti/dezabonareCursanti';
+@import './components/ReusableComponents/OverlayProgressCircle/overlayProgressCircle';
+@import './components/ReusableComponents/Table/table';
+@import './components/ReusableComponents/lineChart';
+@import './components/ReusableComponents/pieChart';
+@import './components/CoursesModule1/courseModule1Card';
+@import './components/CoursesModule1/addCourseModule1';
+@import './components/CoursesModule1/changeCourseModule1';
+@import './components/CoursesModule2/courseModule2Card';
+@import './components/CoursesModule2/addCourseModule2';
+@import './components/CoursesModule2/changeCourseModule2';

@@ -1,0 +1,186 @@
+
+.header-footer {
+  flex: 1;
+  background-color: #3e5676;
+  position: relative;
+
+  .left-section {
+    padding: 1.5rem .4rem;
+    width: 320px;
+    height: fit-content;
+    min-height: 500px;
+    overflow-y: auto;
+    background-color: #526784;
+
+    h6 { 
+      text-align: center;
+      font-weight: bold;
+      color: white;
+    }
+  
+    .section-content {
+      padding: 1rem;
+      border: 1px solid $blue;
+      border-radius: 5px;
+      position: relative;
+  
+      .section-title {
+        position: absolute;
+        top: -18px;
+        left: 25px;
+        font-size: 1rem;
+        font-weight: bold;
+        color: black;
+        background-color: #509ecc;
+        border-radius: 5px;
+        padding: .3rem;
+      }
+    }
+  
+  
+    &::-webkit-scrollbar {
+      width: 8px !important;
+    }
+    
+    &::-webkit-scrollbar-track {
+      background: transparent;
+      border-radius: none !important;
+    }
+    
+    &::-webkit-scrollbar-thumb {
+      background: rgb(204, 204, 204);
+      border-radius: 5px !important;
+    }
+  
+    &::-webkit-scrollbar-thumb:hover {
+      border-radius: none !important;
+      background: rgb(100, 100, 100);
+    }
+  }
+  
+  .right-section {
+    flex: 1;
+    height: fit-content;
+    min-height: 500px;
+    overflow-y: auto;
+    background-color: azure;
+
+    h6 {
+      font-weight: bold;
+      background-color: #509ecc;
+      border-radius: 0 0 5px 0;
+      width: fit-content;
+      padding: 7px;
+    }
+  
+    .header-section {
+      $navbar-bg-color: #3e5676;
+      $btn-bg-color: #596c84;
+      .nav-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        height: 80px;
+        background-color: $navbar-bg-color;
+        padding: 0 1rem;
+      
+        .back-to-site-btn {
+          display: inline-block;
+          padding: .4rem .6rem;
+          border-radius: 20px;
+          color: #fff;
+          font-size: 1rem;
+          transition: all .3s;
+          position: relative;
+          overflow: hidden;
+          z-index: 1;
+          cursor: pointer;
+          &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: $btn-bg-color;
+            border-radius: 10rem;
+            z-index: -2;
+          }
+          &:before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            height: 100%;
+            background-color: darken($btn-bg-color, 15%);
+            transition: all .3s;
+            border-radius: 10rem;
+            z-index: -1;
+          }
+          &:hover {
+            color: #fff;
+            &:before {
+              width: 100%;
+            }
+          }
+        }
+      }
+    }
+
+    .contactInformation {
+      text-align: center;
+      h4 {
+        letter-spacing: 3px;
+        font-family: sans-serif;
+      }
+      h4, h5 {
+        font-weight: bolder !important;
+      }
+    }
+    
+    .webPageFooter {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 100px;
+      background-color: #3e5676;
+      .social-media-icons {
+        img {
+          width: 35px;
+          height: 35px;
+          margin: 0 .3rem;
+          cursor: pointer;
+        }
+      }
+
+      .terms-and-conditions {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        a {
+          text-decoration: none;
+        }
+        
+        .terms-gdpr {
+          cursor: pointer;
+          border: 2px solid rgb(241, 241, 241);
+          height: 3rem;
+          margin: 0 1rem;
+          padding: 1rem;
+          color:rgb(241, 241, 241);
+          font-weight: bold;
+          transition: .5s ease all;
+          &:hover {
+            background-color: gray;
+            border-color: gray;
+            transition: .5s ease all;
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -1,0 +1,30 @@
+.reveal-added-course {
+  margin: 0 1rem 1rem 3rem;
+  flex: 1;
+  border-left: 2px solid rgb(233, 233, 233);
+  color: white;
+  font-weight: bold;
+
+  .added-free-course-card {
+    width: 250px;
+    height: 650px;
+    min-height: 400px;
+  }
+
+  .added-free-course-logo {
+    height: 250px !important;
+  }
+
+  .added-free-course-description {
+    font-size: .9rem !important;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 3fr 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+    div:nth-child(2) {
+      position: relative !important;
+    }
+  }
+}

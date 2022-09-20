@@ -1,0 +1,35 @@
+.course-week-days {
+  color: rgb(20, 216, 79);
+  text-transform: uppercase;
+}
+
+
+.selected-course {
+  margin: 0 1rem 1rem 3rem;
+  flex: 1;
+  border-left: 2px solid rgb(233, 233, 233);
+  color: white;
+  font-weight: bold;
+
+  .selected-paid-course-card {
+    width: 250px;
+    height: 550px;
+    max-height: 570px;
+
+    .course-title {
+      font-size: .9rem !important;
+
+      p:last-of-type {
+        font-weight: normal;
+      }
+    }
+
+    .course--date {
+      font-size: .9rem;
+    }
+  }
+
+  .selected-paid-course-details {
+    height: fit-content;
+  }
+}

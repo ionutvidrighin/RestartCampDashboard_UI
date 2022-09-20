@@ -1,0 +1,55 @@
+@import './getNewDataDialog';
+
+.administrare-cursanti {
+  background-color: #3e5676;
+  height: fit-content;
+  min-height: 100vh;
+  flex: 1;
+
+  .action-buttons-section {
+    width: 100%;
+    padding-left: 1rem;
+    
+    .action-buttons {
+      display: flex;
+    }
+
+    h5 {
+      color: white;
+      text-align: left;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .cursanti-inscrisi-per-curs,
+  .cursanti-prezenti-per-curs {
+    margin: 1rem 0;
+    padding-left: 1rem;
+    width: 100%;
+    p {
+      color: white;
+      margin: 0;
+    }
+  }
+
+  .chart-table-btn {
+    width: 300px;
+  }
+
+  .info-container {
+    color: white;
+    
+    .info-icon {
+      cursor: pointer;
+    }
+  }
+
+  .charts {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: space-around;
+    position: relative;
+    top: -3rem;
+  }
+}

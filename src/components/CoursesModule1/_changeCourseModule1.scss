@@ -1,0 +1,46 @@
+.exit-section-btn {
+  position: absolute;
+  top: -.5rem;
+  right: -.5rem;
+  margin: -.7rem -2rem 0 0;
+  padding: .2rem;
+  color: white;
+  cursor: pointer;
+  border-radius: 50%;
+  background-color: rgba(0,0,0,0.1);
+}
+
+.selected-course {
+  margin: 0 1rem 1rem 3rem;
+  flex: 1;
+  border-left: 2px solid rgb(233, 233, 233);
+  color: white;
+
+  .selected-free-course-card {
+    width: 240px;
+    height: 510px;
+    min-height: 400px;
+    
+    .course--date {
+      font-size: .8rem !important;
+    }
+  }
+
+  .free-course-description {
+    font-size: .9rem !important;
+    font-weight: normal;
+  }
+}
+
+
+textarea {
+  &::-webkit-scrollbar {
+    width: 5px !important;
+    background: transparent;
+    border-radius: none !important;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgb(71, 74, 77);
+    border-radius: none !important;
+  }
+}

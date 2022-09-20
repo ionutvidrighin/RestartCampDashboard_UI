@@ -1,0 +1,20 @@
+.inscriere-cursanti-modul2 {
+  flex: 1;
+  padding: 3rem 1rem;
+  color: #e4e4e4;
+
+  .add-student-container {
+    max-height: 550px;
+    overflow-y: scroll;
+    margin-bottom: 1rem;
+
+    .add-remove-row {
+      width: 30px;
+      height: 30px;
+      cursor: pointer;
+      &:active {
+        transform: translateY(4px);
+      }
+    }
+  }
+}
