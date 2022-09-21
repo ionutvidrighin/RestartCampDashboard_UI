@@ -1,12 +1,13 @@
 import { ActionTypes } from "../action_types"
 import API from "../../../api/api"
+import { store } from '../../store'
 
 export const fetchEmailTemplateContent = () => {
-  const accessKey = sessionStorage.getItem('accessKey')
+  const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
     try {
-      const response = await API.emailConfirmationRegistration.getEmailTemplateContent(accessKey)
+      const response = await API.emailConfirmationRegistration.getEmailTemplateContent(accessToken)
       const returnedData = response.data
       dispatch({
         type: ActionTypes.SUCCESS_GET_EMAIL_CONFIRMATION_REGISTRATION_TEMPLATE,
@@ -30,11 +31,11 @@ export const fetchEmailTemplateContent = () => {
 }
 
 export const updateEmailTemplateContent = (body) => {
-  const accessKey = sessionStorage.getItem('accessKey')
+  const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
     try {
-      await API.emailConfirmationRegistration.changeEmailTemplateContent(accessKey, body)
+      await API.emailConfirmationRegistration.changeEmailTemplateContent(accessToken, body)
       dispatch({
         type: ActionTypes.SUCCESS_UPDATE_EMAIL_CONFIRMATION_REGISTRATION_TEMPLATE,
         payload: body
@@ -55,11 +56,11 @@ export const updateEmailTemplateContent = (body) => {
 }
 
 export const sendTestEmailTemplateContent = (body) => {
-  const accessKey = sessionStorage.getItem('accessKey')
+  const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
     try {
-      const response = await API.emailConfirmationRegistration.sendEmailTemplate(accessKey, body)
+      const response = await API.emailConfirmationRegistration.sendEmailTemplate(accessToken, body)
       const returnedData = response.data
 
       const payload = {
