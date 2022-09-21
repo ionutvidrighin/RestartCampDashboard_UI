@@ -98,11 +98,11 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
         <div className="administrare-cursanti d-flex flex-column align-items-center justify-content-between">
           <div className="p-3 pb-5 chart-table-btn align-self-start">
             <Button
-            className={localStyles.button}
-            onClick={handleSwitchChartOrTable}
-            variant="contained"
-            startIcon={tableOrChartBtn.table ? <ShowChartRoundedIcon /> : <TableChartRoundedIcon />}
-            >
+              className={localStyles.button}
+              onClick={handleSwitchChartOrTable}
+              variant="contained"
+              startIcon={tableOrChartBtn.table ? <ShowChartRoundedIcon /> : <TableChartRoundedIcon />}
+              >
             {tableOrChartBtn.text}
             </Button>
           </div>

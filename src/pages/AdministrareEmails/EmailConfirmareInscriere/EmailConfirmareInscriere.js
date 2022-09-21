@@ -100,13 +100,11 @@ const EmailConfirmareInscriere = ({ setShowPlaceholder }) => {
 
   // grab the E-mail Template Object from Redux
   // and plug into *formValues* function
-  const emailTemplateObject = useSelector(state => {
-    const template = state.emailConfirmationRegistrationTemplate.template
-    const serverResponse = state.emailConfirmationRegistrationTemplate.success
-    const serverMessage = state.emailConfirmationRegistrationTemplate?.serverMessage
-    return { template, serverResponse, serverMessage }
-  })
-
+  const emailTemplateObject = useSelector(state => ({
+    template: state.emailConfirmationRegistrationTemplate.template,
+    serverResponse: state.emailConfirmationRegistrationTemplate.success,
+    serverMessage: state.emailConfirmationRegistrationTemplate?.serverMessage
+  }))
   const { template, serverResponse, serverMessage } = emailTemplateObject
 
   const formInitialValues = formValues(template)

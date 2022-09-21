@@ -101,13 +101,11 @@ const Email3ZileAngajat = ({setShowPlaceholder}) => {
 
   // grab the E-mail Template Object from Redux
   // and plug into *formValues* function
-  const emailTemplateObject = useSelector(state => {
-    const template = state.email3DaysAfterRegistrationEmployee.template
-    const serverResponse = state.email3DaysAfterRegistrationEmployee.success
-    const serverMessage = state.email3DaysAfterRegistrationEmployee?.serverMessage
-    return { template, serverResponse, serverMessage }
-  })
-
+  const emailTemplateObject = useSelector(state => ({
+    template: state.email3DaysAfterRegistrationEmployee.template,
+    serverResponse: state.email3DaysAfterRegistrationEmployee.success,
+    serverMessage: state.email3DaysAfterRegistrationEmployee?.serverMessage
+  }))
   const { template, serverResponse, serverMessage } = emailTemplateObject
 
   const formInitialValues = formValues(template)
@@ -304,7 +302,7 @@ const Email3ZileAngajat = ({setShowPlaceholder}) => {
             { emailTemplateObject.template &&
               <>
                 <section className='manipulare-template pe-2'>
-                  <h6 className='pt-5 fw-bold'> EDITARE E-MAIL TEMPLATE </h6>
+                  <h6 className='pt-3 fw-bold'> EDITARE E-MAIL TEMPLATE </h6>
                   <h6 className='ps-4 pe-4 subtitle'> E-mail trimis la 3 zile dupa înscriere candidat/angajat</h6>
                   <Divider style={{background: 'white'}} className="mb-5 ms-2" />
 
