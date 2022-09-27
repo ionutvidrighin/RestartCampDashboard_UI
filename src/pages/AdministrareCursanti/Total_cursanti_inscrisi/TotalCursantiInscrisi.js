@@ -2,20 +2,21 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from "react-redux";
 import { doesUserHavePermission } from '../../../utils/helperFunctions';
-import { fetchStudentsByDate } from '../../../redux/actions/registeredStudentsActions';
+import { fetchStudentsByDate,
+  clearStudentsInCoursesMod1State } from '../../../redux/actions/registeredStudentsActions';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableAllStudents, setupDataForChart } from '../helperMethods';
 import { makeStyles } from '@material-ui/styles';
-import tableColumns from './columns';
+import dayjs from 'dayjs';
 import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import NoAccessPage from '../../../components/NoAccessPage';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
+import tableColumns from './columns';
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/LineChart';
-import dayjs from 'dayjs';
 
 const useStyles = makeStyles({
   button: {
@@ -43,6 +44,8 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
     if (userHasPermission) {
       dispatch(fetchStudentsByDate({date: today}))
     }
+    // clear state at component destroy
+    return () => dispatch(clearStudentsInCoursesMod1State())
   }, [])
 
 
@@ -54,14 +57,14 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
   })
   const [searchingDate, setSearchingDate] = useState(today)
 
-  const getDataFromStore = useSelector(state => {
+  const getDataFromStore = useSelector(state => ({
     // data used inside the Table
-    const allData = state.registeredStudentsModule1.students
-
+    allData: state.registeredStudentsModule1.students,
     // data used inside the Graph
-    const studentsByDay = state.registeredStudentsModule1.students.map(item => item.registrationDate)
-    return { allData, studentsByDay }
-  })
+    studentsByDay: state.registeredStudentsModule1.students.map(item => item.registrationDate),
+    error: state.registeredStudentsModule1?.error
+  }))
+  const { allData, error } = getDataFromStore
 
   // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
   const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
@@ -91,6 +94,37 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
     }
     dispatch(fetchStudentsByDate({date: searchingDate}))
   }
+
+  const displaySnackBar = () => {
+    if (allData.length === 0) {
+      if (error) {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: error,
+          upDuration: 4000
+        })
+      } else {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: 'No Student Data for the selected search criteria',
+          upDuration: 4000
+        })
+      }
+    } else {
+      setSnackBar({
+        background: '#28cc95',
+        open: true,
+        text: 'Data Loaded',
+        upDuration: 400
+      })
+    }
+  }
+
+  useEffect(() => {
+    displaySnackBar()
+  }, [allData])
 
   return (
     <>
@@ -144,9 +178,7 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
             />
           }
 
-          { snackBar.open &&
-            <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} />
-          }
+          { snackBar.open && <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} /> }
 
         </div>
         :

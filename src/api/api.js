@@ -1,7 +1,7 @@
 import axios from 'axios'
 
-//const baseUrl = 'http://localhost:4545'
-const baseUrl = 'https://restart-camp-org.herokuapp.com'
+const baseUrl = 'http://localhost:4545'
+//const baseUrl = 'https://restart-camp-org.herokuapp.com'
 const responseBody = response => response
 
 // public requests
@@ -12,12 +12,25 @@ const requests = {
 }
 
 // private requests (with token)
-const tokenizedRequests = {
+export const tokenizedRequests = {
   get: (route, token) => axios.get(`${baseUrl}${route}`, { headers: { Authorization: `Bearer ${token}`}}).then(responseBody),
   post: (route, token, body) => axios.post(`${baseUrl}${route}`, body, { headers: { Authorization: `Bearer ${token}`}}).then(responseBody),
   put: (route, token, body) => axios.put(`${baseUrl}${route}`, body, { headers: { Authorization: `Bearer ${token}`}}).then(responseBody),
   patch: (route, token, body) => axios.patch(`${baseUrl}${route}`, body, { headers: { Authorization: `Bearer ${token}`}}).then(responseBody),
   delete: (route, token, element) => axios.delete(`${baseUrl}${route}`, { headers: { Authorization: `Bearer ${token}`}, data: element}).then(responseBody)
+}
+
+export const tokenizedUpload = {
+  post: (route, formData, token) => axios.post(`${baseUrl}${route}`, formData, { headers: { Authorization: `Bearer ${token}`}}, )
+}
+
+export const tokenizedDownload = async (route, token) => {
+  return await axios({
+    url: `${baseUrl}${route}`,
+    method: "GET",
+    headers: { Authorization: `Bearer ${token}`},
+    responseType: "blob"
+  })
 }
 
 const Authentication = {
@@ -87,12 +100,6 @@ const unsubscribeOrRemoveStudent = {
   removeStudent: (token, body) => tokenizedRequests.put('/remove-student', token, body)
 }
 
-const emailConfirmationRegistration = {
-  getEmailTemplateContent: (token) => tokenizedRequests.get('/email-confirmation-registration', token),
-  changeEmailTemplateContent: (token, body) => tokenizedRequests.post('/email-confirmation-registration', token, body),
-  sendEmailTemplate: (token, body) => tokenizedRequests.post('/test-email-confirmation-registration', token, body)
-}
-
 const emailAfter3DaysRegistration = {
   getEmailTemplateEmployee: (token) => tokenizedRequests.get('/email-3days-after-registration-employee', token),
   changeEmailTemplateEmployee: (token, body) => tokenizedRequests.post('/email-3days-after-registration-employee', token, body),
@@ -129,7 +136,6 @@ const API = {
   CoursePresencePageData,
   HeaderFooterData,
   RegistrationFormAlerts,
-  emailConfirmationRegistration,
   emailAfter3DaysRegistration,
   emailReminder7Days,
   emailReminder1Day,

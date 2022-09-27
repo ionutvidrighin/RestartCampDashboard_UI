@@ -12,12 +12,6 @@ import coursePresencePageReducer from './webpagesDataReducers/coursePresencePage
 import unsubscribeOrRemoveStudentReducer from './unsubscribeOrRemoveStudentReducer';
 import registrationFormAlertsReducer from './webpagesDataReducers/registrationFormAlertsReducer';
 import headerFooterReducer from './webpagesDataReducers/headerFooterReducer';
-import emailConfirmationRegistrationTemplate from './emailTemplates/emailConfirmationStudentRegistration';
-import email3DaysAfterRegistrationEmployee from './emailTemplates/email3DaysAfterRegistrationEmployee'
-import email3DaysAfterRegistrationCompany from './emailTemplates/email3DaysAfterRegistrationCompany'
-import emailReminder7Days from './emailTemplates/emailReminder7Days'
-import emailReminder1Day from "./emailTemplates/emailReminder1Day"
-import emailReminder1Hour from './emailTemplates/emailReminder1Hour'
 
 
 export default combineReducers({
@@ -33,12 +27,6 @@ export default combineReducers({
   coursePresencePageReducer,
   unsubscribeOrRemoveStudentReducer,
   registrationFormAlertsReducer,
-  headerFooterReducer,
-  emailConfirmationRegistrationTemplate,
-  email3DaysAfterRegistrationEmployee,
-  email3DaysAfterRegistrationCompany,
-  emailReminder7Days,
-  emailReminder1Day,
-  emailReminder1Hour
+  headerFooterReducer
 })
 

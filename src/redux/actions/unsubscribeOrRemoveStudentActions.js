@@ -79,3 +79,7 @@ export const removeStudent = (body) => {
   }
 }
 
+export const clearUnscribeOrRemoveStudentState = () => ({
+  type: ActionTypes.CLEAR_UNSUBSCRIBE_OR_REMOVE_STUDENT_STATE
+})
+

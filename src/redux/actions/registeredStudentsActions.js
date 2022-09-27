@@ -12,11 +12,21 @@ export const fetchStudentsByDate = (date) => {
       const response = await API.fetchStudents.getStudentsByDate(accessToken, date)
       const returnedData = response.data
       dispatch({
-        type: ActionTypes.GET_STUDENTS_BY_DATE,
+        type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
         payload: returnedData
       })
     } catch (error) {
-      console.log(error)
+      if (error.response) {
+        dispatch({
+          type: ActionTypes.ERROR_GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
+          payload: error.response.data.message
+        })
+      } else {
+        dispatch({
+          type: ActionTypes.ERROR_GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
+          payload: 'Server Error - No response'
+        })
+      }
     }
   }
 }
@@ -34,11 +44,25 @@ export const fetchStudentsByCourseNameAndCareer = (searchCriteria) => {
       const response = await API.fetchStudents.getStudentsByCourseNameAndCareer(accessToken, searchCriteria)
       const returnedData = response.data
       dispatch({
-        type: ActionTypes.GET_STUDENTS_BY_COURSE_NAME_AND_CAREER,
+        type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_COURSE_NAME_AND_CAREER,
         payload: returnedData
       })
     } catch (error) {
-      console.log(error)
+      if (error.response) {
+        dispatch({
+          type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_COURSE_NAME_AND_CAREER,
+          payload: error.response.data.message
+        })
+      } else {
+        dispatch({
+          type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_COURSE_NAME_AND_CAREER,
+          payload: 'Server Error - No response'
+        })
+      }
     }
   }
 }
+
+export const clearStudentsInCoursesMod1State = () => ({
+  type: ActionTypes.CLEAR_STUDENTS_IN_COURSES_MOD1_STATE,
+})

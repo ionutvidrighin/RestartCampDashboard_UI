@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch, useSelector } from "react-redux";
 import { getStudentNameAndEmail } from './helperMethods';
+import { searchStudentForUnsubscribeByEmail, 
+  searchStudentForUnsubscribeByName } from '../../redux/actions/unsubscribeOrRemoveStudentActions';
 import Button from '@material-ui/core/Button';
 import PermDataSettingIcon from '@material-ui/icons/PermDataSetting';
 import UnsubscribeStudentDialog from './UnsubscribeStudentDialog';
 import DeleteStudentDialog from './DeleteStudentDialog';
-import { searchStudentForUnsubscribeByEmail, 
-  searchStudentForUnsubscribeByName } from '../../redux/actions/unsubscribeOrRemoveStudentActions';
 import SnackBar from "../ReusableComponents/SnackBar"
 
 const SearchStudentSection = ({localStyles}) => {
@@ -43,7 +43,8 @@ const SearchStudentSection = ({localStyles}) => {
       })
       return
     }
-    dispatch(searchStudentForUnsubscribeByEmail({studentEmail}))
+    const payload = studentEmail.toLowerCase()
+    dispatch(searchStudentForUnsubscribeByEmail({studentEmail: payload}))
     setStudentEmail("")
   }
 
@@ -58,7 +59,8 @@ const SearchStudentSection = ({localStyles}) => {
       })
       return
     }
-    dispatch(searchStudentForUnsubscribeByName({studentName}))
+    const payload = studentName.toUpperCase()
+    dispatch(searchStudentForUnsubscribeByName({studentName: payload}))
     setStudentName("")
   }
 

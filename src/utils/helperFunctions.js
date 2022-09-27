@@ -5,6 +5,7 @@ import marketingIcon from "../assets/access-icons/marketing.png";
 import analyticsIcon from "../assets/access-icons/analytics.png";
 import emailAdminIcon from "../assets/access-icons/email.png";
 
+
 export const capitalizeWord = (string) => {
   return string && string[0].toUpperCase() + string.slice(1)
 }

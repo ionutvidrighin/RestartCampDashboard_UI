@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { doesUserHavePermission } from '../../../utils/helperFunctions';
-import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/registeredStudentsActions';
+import { fetchStudentsByCourseNameAndCareer,
+  clearStudentsInCoursesMod1State } from '../../../redux/actions/registeredStudentsActions';
 import { fetchCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
@@ -11,10 +12,11 @@ import { nanoid } from 'nanoid';
 import dayjs from 'dayjs';
 import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
-import GetNewStudentDataDialog from './GetNewStudentDataDialog';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
+import GetNewStudentDataDialog from './GetNewStudentDataDialog';
 import tableColumns from './columns';
 import NoAccessPage from '../../../components/NoAccessPage';
+import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/LineChart';
@@ -54,23 +56,26 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
     text: 'DU-MĂ LA GRAFIC'
   })
   const [openChangeSearchDataDialog, setOpenChangeSearchDataDialog] = useState(false)
-  const [selectedSearchData, setSelectedSearchData] = useState({
-    date: null,
-    course: null
-  })
+  const [selectedSearchData, setSelectedSearchData] = useState({ date: null, course: null })
+  const [snackBar, setSnackBar] = useState({})
 
   // get Courses MODULE 1 from Store
-  let coursesFromStore = useSelector(state => state.coursesModule1.courses)
-  coursesFromStore = coursesFromStore.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
+  const coursesList = useSelector(state => {
+    let list = state.coursesModule1.courses
+    list = list.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
+    return list
+  })
 
-  // populate Table with data for current month at component mount
+  /* populate Table with data for current month at component mount
+   * data used for the api call: studentCareer, courseName, registrationYearMonth
+   */
   useEffect(() => {
     if (userHasPermission) {
       const payload = {}
-      if (coursesFromStore.length !== 0) {
+      if (coursesList.length !== 0) {
         Object.assign(payload, {
           career: 'angajat',
-          courseName: coursesFromStore[0].courseName,
+          courseName: coursesList[0].courseName,
           registrationYearMonth: today
         })      
       }
@@ -78,12 +83,13 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
     }
   }, [])
 
-  // get Students registered for Courses MODULE 1 from Store
-  const getDataFromStore = useSelector(state => {
-    const allData = state.registeredStudentsModule1.students
-    const studentsByDay = state.registeredStudentsModule1.students.map(item => item.registrationDate)
-    return { allData, studentsByDay }
-  })
+  // get Students registered at Courses MODULE 1 from Store
+  const getDataFromStore = useSelector(state => ({
+    allData: state.registeredStudentsModule1.students,
+    studentsByDay: state.registeredStudentsModule1.students.map(item => item.registrationDate),
+    error: state.registeredStudentsModule1?.error
+  }))
+  const { allData, error } = getDataFromStore
 
   // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
   const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
@@ -100,6 +106,37 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
       text: 'DU-MĂ LA GRAFIC'
     })
   }
+
+  const displaySnackBar = () => {
+    if (allData.length === 0) {
+      if (error) {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: error,
+          upDuration: 4000
+        })
+      } else {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: 'No Student Data for the selected search criteria',
+          upDuration: 4000
+        })
+      }
+    } else {
+      setSnackBar({
+        background: '#28cc95',
+        open: true,
+        text: 'Data Loaded',
+        upDuration: 400
+      })
+    }
+  }
+
+  useEffect(() => {
+    displaySnackBar()
+  }, [allData])
 
   return (
     <>
@@ -131,11 +168,11 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                 </div>
               </div>
 
-              { coursesFromStore.length !== 0 &&
+              { coursesList.length !== 0 &&
                 <div className='cursanti-inscrisi-per-curs'>
                   <p> Date extrase pentru cursul:
                     <span className='mx-1 fw-bold'>
-                      { selectedSearchData.course ? selectedSearchData.course : coursesFromStore[0].courseName }
+                      { selectedSearchData.course ? selectedSearchData.course : coursesList[0].courseName }
                     </span>
                   </p>
                   <p> aferente lunii,
@@ -150,7 +187,7 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                 <GetNewStudentDataDialog 
                   openDialog={openChangeSearchDataDialog} 
                   closeDialog={setOpenChangeSearchDataDialog}
-                  coursesListNames={coursesFromStore}
+                  coursesListNames={coursesList}
                   selectedSearchData={setSelectedSearchData}
                 />
               }
@@ -170,6 +207,8 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
               chartData={setupDataForChart(getDataFromStore)}
             />
           }
+
+          { snackBar.open && <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} /> }
         </div>
         :
         <NoAccessPage />

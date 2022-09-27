@@ -1,25 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchCoursesModule1 } from "../../../redux/actions/coursesActions/coursesModule1";
-import { fetchStudentsPresenceByCourseName } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
+import { fetchStudentsPresenceByCourseName,
+  clearCourseModule1Presence } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
+import { clearCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { nanoid } from 'nanoid';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { doesUserHavePermission } from '../../../utils/helperFunctions';
 import { setupDataForTableCoursePresence, setupDataForBarChartCoursePresence, 
   setupDataForPieChartCoursePresence } from '../helperMethods';
-import GetNewPresenceDataDialog from './GetNewPresenceDataDialog';
+import dayjs from 'dayjs';
 import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import tableColumns from './columns';
+import GetNewPresenceDataDialog from './GetNewPresenceDataDialog';
+import NoAccessPage from '../../../components/NoAccessPage';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import BarChart from '../../../components/ReusableComponents/barChart';
 import RoundChart from '../../../components/ReusableComponents/pieChart';
-import dayjs from 'dayjs';
-import NoAccessPage from '../../../components/NoAccessPage';
+import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
 const useStyles = makeStyles({
   button: {
@@ -37,7 +39,6 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   const dispatch = useDispatch()
   const route = useLocation()
   const { pathname } = route
-  const today = dayjs().format().substring(0, 7)
   const today_ro_format = dayjs().locale('ro').format('LL').substring(3)
 
   const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
@@ -50,36 +51,34 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   })
   const [openChangeSearchDataDialog, setOpenChangeSearchDataDialog] = useState(false)
   const [selectedSearchData, setSelectedSearchData] = useState({ date: null, course: null })
+  const [snackBar, setSnackBar] = useState({})
 
   // fetch All Courses MODULE 1
   useEffect(() => {
     setShowPlaceholder(false)
     if (userHasPermission) {
-      dispatch(fetchCoursesModule1())
+      dispatch(fetchStudentsPresenceByCourseName())
+    }
+
+    return () => {
+      dispatch(clearCoursesModule1())
+      dispatch(clearCourseModule1Presence())
     }
   }, [])
 
   // get the Courses MODULE 1 from Store
-  let coursesFromStore;
-  coursesFromStore = useSelector(state => state.coursesModule1.courses)
-  coursesFromStore = coursesFromStore.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
-
-  //populate Table with data for current month at component mount
-  useEffect(() => {
-    if (userHasPermission) {
-      const payload = {}
-      if (coursesFromStore.length !== 0) {
-        Object.assign(payload, {
-          courseName: coursesFromStore[0].courseName,
-          registrationYearMonth: today
-        }) 
-        dispatch(fetchStudentsPresenceByCourseName(payload))
-      }
-    }
-  }, [coursesFromStore.length !== 0])
+  const coursesList = useSelector(state => {
+    let list = state.coursesModule1.courses
+    list = list.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
+    return list
+  })
 
   // get the Course MODULE 1 Presence Data from Store
-  const coursePresenceData = useSelector(state => state.coursePresence.presence)
+  const coursePresence = useSelector(state => ({
+    presenceData: state.coursePresence.presence,
+    error: state.coursePresence?.error
+  }))
+  const { presenceData, error } = coursePresence
 
   // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
   const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
@@ -90,7 +89,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
       table: false,
       chart: true,
       text: 'DU-MĂ LA TABEL'
-    }) 
+    })
     : 
     setTableOrChartBtn({
       table: true,
@@ -98,6 +97,37 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
       text: 'DU-MĂ LA GRAFIC'
     })
   }
+  
+  const displaySnackBar = () => {
+    if (presenceData.length === 0) {
+      if (error) {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: error,
+          upDuration: 4000
+        })
+      } else {
+        setSnackBar({
+          background: '#e53c5d',
+          open: true,
+          text: 'No Presence Data for the selected search criteria',
+          upDuration: 4000
+        })
+      }
+    } else {
+      setSnackBar({
+        background: '#28cc95',
+        open: true,
+        text: 'Data Loaded',
+        upDuration: 500
+      })
+    }
+  }
+
+  useEffect(() => {
+    displaySnackBar()
+  }, [presenceData])
 
   return (
     <>
@@ -130,11 +160,11 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                 </div>
               </div>
 
-              { coursesFromStore.length !== 0 &&
+              { coursesList.length !== 0 &&
                 <div className='cursanti-prezenti-per-curs'>
                   <p> Date extrase pentru cursul:
                     <span className='mx-1 fw-bold'>
-                      { selectedSearchData.course ? selectedSearchData.course : coursesFromStore[0].courseName }
+                      { selectedSearchData.course ? selectedSearchData.course : coursesList[0].courseName }
                     </span>
                   </p>
                   <p> aferente lunii,
@@ -149,7 +179,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                 <GetNewPresenceDataDialog 
                   openDialog={openChangeSearchDataDialog} 
                   closeDialog={setOpenChangeSearchDataDialog}
-                  coursesListNames={coursesFromStore}
+                  coursesListNames={coursesList}
                   selectedData={setSelectedSearchData}
                 />
               }
@@ -157,9 +187,9 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
               <div className="px-3 pb-5" style={{width: '100%'}}>
                 <Table 
                   tableTitle={chartTableTitles.cursanti_prezenti}
-                  courses={coursesFromStore}
+                  courses={coursesList}
                   tableColumns={tableColumns} 
-                  tableData={setupDataForTableCoursePresence(coursePresenceData)} />
+                  tableData={setupDataForTableCoursePresence(presenceData)} />
               </div>
             </>
           }
@@ -167,14 +197,16 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
           { tableOrChartBtn.chart &&
             <div className="charts">
               <section className="bar-chart">
-                <BarChart data={setupDataForBarChartCoursePresence(coursePresenceData)} />
+                <BarChart data={setupDataForBarChartCoursePresence(presenceData)} />
               </section>
 
               <section className="pie-chart">
-                <RoundChart data={setupDataForPieChartCoursePresence(coursePresenceData)} />
+                <RoundChart data={setupDataForPieChartCoursePresence(presenceData)} />
               </section>
             </div>
           }
+
+          { snackBar.open && <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} /> }
         </div>
         :
         <NoAccessPage />

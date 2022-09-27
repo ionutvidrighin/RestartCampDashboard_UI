@@ -21,14 +21,14 @@ import CursantiPerCurs from "./pages/AdministrareCursanti/Cursanti_inscrisi_per_
 import CursantiPrezentiPerCurs from "./pages/AdministrareCursanti/Cursanti_prezenti_per_curs/CursantiPrezentiPerCurs";
 import InscriereCursantiModul2 from "./pages/AdministrareCursanti/Inscriere_cursanti_modul2/InscriereCursantiModul2";
 import DezabonareCursanti from "./pages/DezabonareCursanti/DezabonareCursanti";
-import EmailConfirmareInscriere from "./pages/AdministrareEmails/EmailConfirmareInscriere/EmailConfirmareInscriere";
-import Email3zileAngajat from "./pages/AdministrareEmails/Email3zileDupaInscriere/Email3zileAngajat"
-import Email3zileCompanie from "./pages/AdministrareEmails/Email3zileDupaInscriere/Email3zileCompanie"
-import EmailReminderCurs1ora from "./pages/AdministrareEmails/EmailReminderCurs1ora/EmailReminderCurs1ora";
-import EmailReminderCurs1zi from "./pages/AdministrareEmails/EmailReminderCurs1zi/EmailReminderCurs1zi";
-import EmailReminderCurs7zile from "./pages/AdministrareEmails/EmailReminderCurs7zile/EmailReminderCurs7zile";
-import EmailVoucher4oreDupaParticipare from "./pages/AdministrareEmails/EmailVoucher4oreDupaParticipare/EmailVoucher4oreDupaParticipare";
-import EmailVoucher40oreDupaParticipare from "./pages/AdministrareEmails/EmailVoucher40oreDupaParticipare/EmailVoucher40oreDupaParticipare";
+import EmailConfirmareInscriere from "./pages/AdministrareEmails/EmailConfirmareInscriere";
+import Email3zileAngajat from "./pages/AdministrareEmails/Email3zileAngajat"
+import Email3zileCompanie from "./pages/AdministrareEmails/Email3zileCompanie"
+import EmailReminderCurs1ora from "./pages/AdministrareEmails/EmailReminderCurs1ora";
+import EmailReminderCurs1zi from "./pages/AdministrareEmails/EmailReminderCurs1zi";
+import EmailReminderCurs7zile from "./pages/AdministrareEmails/EmailReminderCurs7zile";
+import EmailVoucher40oreDupaCurs from "./pages/AdministrareEmails/EmailVoucher40oreDupaCurs";
+// import EmailVoucher40oreDupaParticipare from "./pages/AdministrareEmails/EmailVoucher40oreDupaParticipare";
 
 function App() {
   const isUserLoggedIn = useSelector(state => state.authReducer.isLogged)
@@ -119,12 +119,12 @@ function App() {
                 <EmailReminderCurs1ora setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-voucher-4ore">
+              {/* <Route path="/email-voucher-4ore">
                 <EmailVoucher4oreDupaParticipare setShowPlaceholder={setShowPlaceholder} />
-              </Route>
+              </Route> */}
 
               <Route path="/email-voucher-40ore">
-                <EmailVoucher40oreDupaParticipare setShowPlaceholder={setShowPlaceholder} />
+                <EmailVoucher40oreDupaCurs setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
               <Route path="/email-3-zile-inscriere-angajat">

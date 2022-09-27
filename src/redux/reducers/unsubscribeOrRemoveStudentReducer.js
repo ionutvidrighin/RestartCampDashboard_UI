@@ -34,7 +34,7 @@ const unsubscribeOrRemoveStudent = (state = intialState, { type, payload }) => {
         studentData: payload.data,
         serverResponse: payload.status
       }
-    case ActionTypes.RESET_SERVER_RESPONSE: 
+    case ActionTypes.CLEAR_UNSUBSCRIBE_OR_REMOVE_STUDENT_STATE:
       return {
         studentData: {},
         serverResponse: null

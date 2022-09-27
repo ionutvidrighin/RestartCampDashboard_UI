@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { doesUserHavePermission } from '../../utils/helperFunctions';
 import { makeStyles } from '@material-ui/styles';
-import { ActionTypes } from "../../redux/actions/action_types";
+import { clearUnscribeOrRemoveStudentState } from "../../redux/actions/unsubscribeOrRemoveStudentActions";
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../components/NoAccessPage';
 import SearchStudentSection from '../../components/UnsubscribeStudent/SearchStudentSection';
@@ -52,11 +52,7 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
     setShowPlaceholder(false)
 
     // reset server response + clear state when leaving the page
-    return () => {
-      dispatch({
-        type: ActionTypes.RESET_SERVER_RESPONSE
-      })
-    }
+    return () => dispatch(clearUnscribeOrRemoveStudentState())
   }, [])
 
   return (
