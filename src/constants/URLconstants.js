@@ -5,6 +5,7 @@ export const URLconstants = {
   confirmare_prezenta: '/editare-confirmare-prezenta',
   cursuri_modul1: '/cursuri-modul1',
   cursuri_modul2: '/cursuri-modul2',
+  cauta_cursant: '/cauta-cursant',
   total_cursanti: '/total-cursanti',
   cursanti_per_curs: '/cursanti-per-curs',
   cursanti_prezenti: '/cursanti-prezenti',

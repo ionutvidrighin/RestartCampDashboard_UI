@@ -3,7 +3,7 @@ import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from "react-redux";
 import { doesUserHavePermission } from '../../../utils/helperFunctions';
 import { fetchStudentsByDate,
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/registeredStudentsActions';
+  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/registeredStudentsActions';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableAllStudents, setupDataForChart } from '../helperMethods';
 import { makeStyles } from '@material-ui/styles';
@@ -14,9 +14,9 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import NoAccessPage from '../../../components/NoAccessPage';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
-import tableColumns from './columns';
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/LineChart';
+import tableColumns from './columns';
 
 const useStyles = makeStyles({
   button: {

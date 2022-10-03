@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
-import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/registeredStudentsActions';
+import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/studentsActions/registeredStudentsActions';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';

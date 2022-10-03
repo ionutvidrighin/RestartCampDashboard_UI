@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import PageInstructionsDialog from './PageInstructionsDialog';
 import ringBellIcon from "../../assets/bell.png";
-import ringBellTone from "../../assets/ringtones/alert.mp3";
 
 const DisplayRingBellAndBanner = ({position, Component}) => {
 
@@ -13,12 +12,10 @@ const DisplayRingBellAndBanner = ({position, Component}) => {
 
   useEffect(() => {
     ringBellIconRef.current.classList.add('animate-ring-bell')
-    ringBellToneRef.current.play()
   }, [])
 
   const handleOpenDialog = () => {
     setOpenInstructionsDialog(true)
-    ringBellToneRef.current.pause()
     ringBellIconRef.current.classList.remove('animate-ring-bell')
     bannerRef.current.classList.remove('animate-banner')
   }
@@ -35,10 +32,6 @@ const DisplayRingBellAndBanner = ({position, Component}) => {
         className={`ring-bell-icon`}
         onClick={handleOpenDialog}
       />
-      <audio ref={ringBellToneRef} loop>
-        <source src={ringBellTone} type="audio/mp3" />
-      </audio>
-
       <div className='instructions-banner animate-banner' ref={bannerRef}>
         <div className='arrow'></div>
         <p className='m-0'>Instrucțiunile Paginii</p>

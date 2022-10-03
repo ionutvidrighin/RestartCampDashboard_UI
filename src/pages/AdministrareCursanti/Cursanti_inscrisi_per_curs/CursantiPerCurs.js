@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { doesUserHavePermission } from '../../../utils/helperFunctions';
 import { fetchStudentsByCourseNameAndCareer,
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/registeredStudentsActions';
+  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/registeredStudentsActions';
 import { fetchCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';

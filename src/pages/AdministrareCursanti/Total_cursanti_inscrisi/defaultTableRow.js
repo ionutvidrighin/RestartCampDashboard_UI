@@ -9,7 +9,9 @@ const defaultTableRow = [{
   email: 'no data',
   job: 'no data',
   domain: 'no data',
-  courses: 'no data',
+  subscribedToEmails: 'no data',
+  activeStudent: 'no data',
+  course: 'no data',
   activity: 'no data',
   reference: 'no data'
 }]

@@ -6,6 +6,41 @@
   min-height: 100vh;
   flex: 1;
 
+  .cauta-cursant-inscris {
+    height: 100vh;
+    h6 {
+      color: white;
+    }
+
+    .search-student-section {
+      padding: 1rem 0;
+      width: 300px;
+      background-color: #526784;
+      .page-title {
+        text-align: center;
+        font-size: 1.1rem;
+      }
+      .searching-criteria {
+        height: 65%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-around;
+      }
+    }
+  
+    .show-searched-student-section {
+      flex: 1;
+      h6 {
+        color: black;
+      }
+      .all-student-data {
+        padding: 1rem;
+      }
+    }
+
+  }
+
+
   .action-buttons-section {
     width: 100%;
     padding-left: 1rem;

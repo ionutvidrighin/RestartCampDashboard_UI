@@ -7,6 +7,8 @@ function setupDataForTableAllStudents(rawData) {
   let tableData = rawData.allData.map(item => {
     const tableRow = {
       ...item,
+      subscribedToEmails: item.subscribedToEmails ? 'DA' : 'NU',
+      activeStudent: item.activeStudent ? 'DA' : 'NU',
       course: item.course[0].title,
       activity: item.career,
       registrationDate: dayjs(item.registrationDate).locale('ro').format('LL')

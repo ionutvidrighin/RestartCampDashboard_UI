@@ -11,6 +11,7 @@ const DeleteUserAccountDialog = ({openDialog, closeDialog, user}) => {
   const { id, username } = user
 
   const [snackBar, setSnackBar] = useState({})
+  const currentlyLoggedUser = useSelector(state => state.authReducer.email)
   const serverMessageOnUpdateUser = useSelector(state => ({
     error: state.dashboardUserAccounts?.error,
     success: state.dashboardUserAccounts?.success
@@ -50,6 +51,18 @@ const DeleteUserAccountDialog = ({openDialog, closeDialog, user}) => {
     const payload = {
       id,
       username
+    }
+    
+    if (username === currentlyLoggedUser) {
+      setSnackBar({
+        background: '#e53c5d', 
+        open: true,
+        success: false,
+        upDuration: 12000,
+        text: 'Eroare! Nu îți poți șterge propriul cont.'
+      })
+      setTimeout(() => handleCloseDialog(), 2500)
+      return
     }
     dispatch(deleteDashboardUserAccount(payload))
   }

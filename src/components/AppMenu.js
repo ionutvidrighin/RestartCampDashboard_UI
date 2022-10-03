@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from '@material-ui/styles';
 import { URLconstants } from "../constants/URLconstants";
-import AccessDataBaseButton from "./AccessDataBaseButton";
 import DisplayLoggedUser from "./DisplayLoggedUser";
 import DisplayDateAndTime from "./DisplayDateAndTime";
 import Button from '@material-ui/core/Button';
@@ -72,7 +71,6 @@ const AppMenu = () => {
         <div className="d-flex flex-column align-items-center">
           <div className="app-logo pb-1">
             <img src="./imgs/logo.png" alt="logo" width="60%" />
-            <AccessDataBaseButton />
           </div>
           <hr className="m-0" style={{color: 'white', width: '100%'}} />
 
@@ -178,6 +176,14 @@ const AppMenu = () => {
             </Button>
               { showStudentSubMenu &&
                 <div className="sub-menu-items">
+                  <Button
+                    variant="contained" 
+                    className={localStyles.contained} 
+                    style={ (pathname === URLconstants.cauta_cursant) ? { background: '#c23a6a'} : {background: ''} }
+                    onClick={() => history.push('/cauta-cursant')}> 
+                    Caută <span className="text-lowercase mx-1"> cursant înscris </span>
+                  </Button>
+
                   <Button
                     variant="contained" 
                     className={localStyles.contained} 

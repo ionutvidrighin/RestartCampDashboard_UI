@@ -9,6 +9,8 @@ const columns = [
   { field: "email", headerName: "Adresă E-mail", width: 250, sortable: false },
   { field: "job", headerName: "Nivel Carieră", width: 200, sortable: true },
   { field: "domain", headerName: "Domeniu Activitate", width: 200, sortable: true },
+  { field: "subscribedToEmails", headerName: "Abonat Newsletters", width: 200, sortable: true },
+  { field: "activeStudent", headerName: "Cursant Activ", width: 150, sortable: true },
   { field: "activity", headerName: "Activitate Profesionala", width: 220, sortable: true },
   { field: "reference", headerName: "Unde ne-a gasit", width: 170, sortable: true }
 ]
@@ -23,6 +25,8 @@ export const CSV_HEADERS_ALL_STUDENTS = [
   { label: "E-mail", key: "email" },
   { label: "Job", key: "job" },
   { label: "Domeniu activitate", key: "domain" },
+  { label: "Abonat Newsletters", key: "subscribedToEmails" },
+  { label: "Cursant Activ", key: "activeStudent" },
   { label: "Curs", key: "course" },
   { label: "Activitate profesionala", key: "activity" },
   { label: "Unde ne-a gasit", key: "reference" }

@@ -1,6 +1,6 @@
-import { ActionTypes } from './action_types'
-import API from '../../api/api'
-import { store } from "../store"
+import { ActionTypes } from '../action_types'
+import API from '../../../api/api'
+import { store } from "../../store"
 
 
 export const fetchStudentsByDate = (date) => {

@@ -1,13 +1,20 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { doesUserHavePermission } from '../../utils/helperFunctions';
+import { doesUserHavePermission, getStudentNameAndEmail } from '../../utils/helperFunctions';
+import { clearStudentData } from '../../redux/actions/studentsActions/searchStudent';
 import { makeStyles } from '@material-ui/styles';
-import { clearUnscribeOrRemoveStudentState } from "../../redux/actions/unsubscribeOrRemoveStudentActions";
-import Divider from '@material-ui/core/Divider';
+import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
+import SearchStudent from '../../components/UnsubscribeStudent/SearchStudent';
+import StudentInCoursesModule1 from '../../components/SearchStudentData/StudentInCoursesModule1';
+import StudentInCoursesModule2 from '../../components/SearchStudentData/StudentInCoursesModule2';
+import StudentPresenceInCoursesModule1 from '../../components/SearchStudentData/StudentPresenceInCoursesModule1';
+import UnsubscribeStudentButton from '../../components/UnsubscribeStudent/UnsubscribeStudentButton';
+import DeleteStudentButton from '../../components/UnsubscribeStudent/DeleteStudentButton';
 import NoAccessPage from '../../components/NoAccessPage';
-import SearchStudentSection from '../../components/UnsubscribeStudent/SearchStudentSection';
-import SearchedStudentSection from '../../components/UnsubscribeStudent/SearchedStudentSection';
+import SnackBar from '../../components/ReusableComponents/SnackBar';
+import Divider from '@material-ui/core/Divider';
+
 
 const useStyles = makeStyles({
   textField: {
@@ -27,6 +34,7 @@ const useStyles = makeStyles({
     }
   },
   submitButton: {
+    width: '100%',
     backgroundColor: '#509ecc', 
     color: 'white',
     fontSize: '.8rem',
@@ -48,40 +56,77 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
   const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
   const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
 
+  const studentData = useSelector(state => ({
+    data: state.searchStudentReducer.data,
+    success: state.searchStudentReducer?.success,
+    error: state.searchStudentReducer?.error
+  }))
+  const { data, success, error } = studentData
+
+  const studentNameAndEmail = getStudentNameAndEmail(data)
+
   useEffect(() => {
     setShowPlaceholder(false)
 
-    // reset server response + clear state when leaving the page
-    return () => dispatch(clearUnscribeOrRemoveStudentState())
+    return () => dispatch(clearStudentData())
   }, [])
+
+  const [snackBar, setSnackBar] = useState({})
+  useEffect(() => {
+    if (error) {
+      setSnackBar({
+        background: '#e53c5d',
+        open: true,
+        text: error,
+        upDuration: 12000
+      })
+      dispatch(clearStudentData())
+    }
+  }, [error])
 
   return (
     <> 
       { userHasPermission ?
-        <div className='dezabonare-cursanti'>
+        <div className='dezabonare-stergere-cursant'>
 
           <div className='top-section'>
-            <h6>DEZABONARE / ȘTERGERE CURSANȚI</h6>
-            <p className='m-0 fw-bold'>!!!</p>
-            <p className='m-0'>
-              Dezabonarea unui cursant se va efectua prin înlocuirea adresei sale de e-mail în baza de date, cu o adresa de e-mail fictivă, sub forma: 
-              <br />
-              <span style={{color: 'black', fontWeight: 'bold'}}> FAKE_EMAIL_ADDRESS@replaced.r </span>
-            </p>
-
-            <br />
-
-            <p className='m-0 fw-bold'>!!!</p>
-            <p className='m-0'>
-              Cererea cursantului de ștergere a datelor sale personale (conform GDPR) din baza de date, se va efectua prin înlocuirea datelor sale personale, cu date fictive, pentru a nu impacta negativ datele statistice pe termen lung.
-            </p>
+            <h6 className='fs-5 mb-0'>
+              DEZABONARE  /  ȘTERGERE CURSANT
+            </h6>
           </div>
 
           <Divider style={{background: 'black'}} />
 
-          <div className='bottom-section'>
-            <SearchStudentSection localStyles={localStyles} />
-            <SearchedStudentSection />
+          <div className='bottom-section mt-4'>
+            <div className='search-student-section'>
+              <SearchStudent localStyles={localStyles} />
+              
+              {/* Show Unsubscribe and Delete Student Buttons only if Student was found */}
+              { (data && success) &&
+                <div>
+                  <UnsubscribeStudentButton localStyles={localStyles} />
+                  <DeleteStudentButton localStyles={localStyles} />
+                </div>
+              }
+            </div>
+
+            { (data && success) &&
+              <div className='searched-student-section'>
+                <div className='student-name-and-email'>
+                  <AssignmentIndIcon className='me-2' />
+                  <h6 className='m-0'> { studentNameAndEmail } </h6>
+                </div>
+                <div className='ps-3 pe-3 show-student-data'>
+                  <StudentInCoursesModule1 />
+                  <Divider style={{background: 'white'}} className='mt-3' />
+                  <StudentInCoursesModule2 />
+                  <Divider style={{background: 'white'}} className='mt-3' />
+                  <StudentPresenceInCoursesModule1 />
+                </div>
+              </div>
+            }
+
+            { snackBar.open && <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} /> }  
           </div>
         </div>
         :

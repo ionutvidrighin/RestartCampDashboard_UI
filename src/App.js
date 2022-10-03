@@ -1,10 +1,10 @@
 import "./App.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { useState } from "react";
-import { useSelector } from 'react-redux'
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { generateDataBaseToken } from './redux/actions/generateDBToken';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
 import LoginPage from "./pages/Login/LoginPage";
-import GenerateDBToken from "./components/GenerateDBToken";
 import AppMenu from "./components/AppMenu";
 import AdminSection from "./pages/AdminSection/AdminSection";
 import SchimbareEmail from "./pages/SchimbareEmail/SchimbareEmail";
@@ -16,6 +16,7 @@ import ConfirmarePrezenta from "./pages/ManipularePaginiWeb/ConfirmarePrezenta/C
 import HeaderFooter from "./pages/ManipularePaginiWeb/Header&Footer/HeaderFooter";
 import CursuriModul1 from "./pages/CursuriModul1/CursuriModul1";
 import CursuriModul2 from "./pages/CursuriModul2/CursuriModul2";
+import CautaCursantInscris from "./pages/AdministrareCursanti/Cauta_cursant_inscris/CautaCursantInscris";
 import TotalCursantiInscrisi from "./pages/AdministrareCursanti/Total_cursanti_inscrisi/TotalCursantiInscrisi";
 import CursantiPerCurs from "./pages/AdministrareCursanti/Cursanti_inscrisi_per_curs/CursantiPerCurs";
 import CursantiPrezentiPerCurs from "./pages/AdministrareCursanti/Cursanti_prezenti_per_curs/CursantiPrezentiPerCurs";
@@ -31,9 +32,17 @@ import EmailVoucher40oreDupaCurs from "./pages/AdministrareEmails/EmailVoucher40
 // import EmailVoucher40oreDupaParticipare from "./pages/AdministrareEmails/EmailVoucher40oreDupaParticipare";
 
 function App() {
+  const dispatch = useDispatch()
+
   const isUserLoggedIn = useSelector(state => state.authReducer.isLogged)
-  const isGenerateDBTokenDialogOpen = useSelector(state => state.generateDBTokenReducer.isDialogOpen)
+  const currentlyLoggedUser = useSelector(state => state.authReducer.username)
   const [showPlaceholder, setShowPlaceholder] = useState(true)
+
+  useEffect(() => {
+    if (isUserLoggedIn) {
+      dispatch(generateDataBaseToken(currentlyLoggedUser))
+    }
+  }, [isUserLoggedIn])
 
   return (
     <div className="App">
@@ -43,7 +52,6 @@ function App() {
             <LoginPage /> 
             :
             <>
-              { isGenerateDBTokenDialogOpen && <GenerateDBToken /> }
               <AppMenu setShowPlaceholder={setShowPlaceholder} />
               { showPlaceholder && <Placeholder /> }
 
@@ -81,6 +89,10 @@ function App() {
 
               <Route path="/cursuri-modul2">
                 <CursuriModul2 setShowPlaceholder={setShowPlaceholder} />
+              </Route>
+
+              <Route path="/cauta-cursant">
+                <CautaCursantInscris setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
               <Route path="/total-cursanti">

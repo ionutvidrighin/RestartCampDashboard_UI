@@ -15,7 +15,8 @@ const coursesPageData = (state = intialState, { type, payload }) => {
       return {
         data: null,
         success: false,
-        serverMessage: payload
+        serverMessage: payload,
+        error: payload
       }
     case ActionTypes.UPDATE_COURSES_PAGE_DATA:
       return {
@@ -26,8 +27,8 @@ const coursesPageData = (state = intialState, { type, payload }) => {
     case ActionTypes.ERROR_UPDATE_COURSES_PAGE_DATA:
       return {
         ...state,
-        serverMessage: 'Page Data could not be updated',
-        error: payload,
+        serverMessage: payload,
+        error: payload
       }
     case ActionTypes.REMOVE_LINK_WORDS_COURSES_PAGE:
       if (payload.location === "infoCoursesModule1") {
@@ -126,7 +127,12 @@ const coursesPageData = (state = intialState, { type, payload }) => {
     case ActionTypes.CLEAR_SERVER_MESSAGE_RESPONSE:
       const currentState = state
       delete currentState['serverMessage']
+      delete currentState['error']
       return currentState
+    case ActionTypes.CLEAR_COURSES_PAGE_DATA_STATE:
+      return {
+        data: null
+      }  
     case ActionTypes.CLEAR_ALL_STATE_AT_LOGOUT:
       return {
         data: null

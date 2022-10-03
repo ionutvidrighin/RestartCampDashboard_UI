@@ -42,8 +42,10 @@ const SnackBar = ({ snackbarData, setSnackBar }) => {
     if (snackbarData.hasOwnProperty('success')) {
       if (snackbarData.success) {
         successToneRef.current.play()
+        successToneRef.current.volume = 0.06
       } else {
         errorToneRef.current.play()
+        errorToneRef.current.volume = 0.03
       }
     }
   }, [])

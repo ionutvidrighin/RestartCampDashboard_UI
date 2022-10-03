@@ -28,7 +28,7 @@ export const fetchCoursesPageData = () => {
   }
 }
 
-export const updateCoursesPageData = (body) => {
+export const updateCoursesPageData = (body) => { 
   const accessToken = store.getState().generateDBTokenReducer.value
   return async (dispatch) => {
     try {

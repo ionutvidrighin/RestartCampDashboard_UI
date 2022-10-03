@@ -7,8 +7,7 @@ const LoginFormContainer = () => {
   const [token, setToken] = useState({
     received: false,
     value: null
-  });
-
+  })
 
   return (
     <div className="login-form-component">

@@ -55,23 +55,23 @@ const dashboardUsersAccounts = {
 }
 
 const CoursesPageData = {
-  getData: () => tokenizedRequests.get('/courses-page-data'),
-  updateData: (body) => tokenizedRequests.put('/courses-page-data', body)
+  getData: () => requests.get('/courses-page-data'),
+  updateData: (token, body) => tokenizedRequests.put('/courses-page-data', token, body)
 }
 
 const CoursePresencePageData = {
-  getData: () => tokenizedRequests.get('/course-presence-page-data'),
-  updateData: (body) => tokenizedRequests.put('/course-presence-page-data', body)
+  getData: () => requests.get('/course-presence-page-data'),
+  updateData: (token, body) => tokenizedRequests.put('/course-presence-page-data', token, body)
 }
 
 const HeaderFooterData = {
-  getData: () => tokenizedRequests.get('/header-footer-data'),
-  updateData: (body) => tokenizedRequests.put('/header-footer-data', body)
+  getData: () => requests.get('/header-footer-data'),
+  updateData: (token, body) => tokenizedRequests.put('/header-footer-data', token, body)
 }
 
 const RegistrationFormAlerts = {
-  getData: () => tokenizedRequests.get('/registration-form-alerts'),
-  updateData: (body) => tokenizedRequests.put('/registration-form-alerts', body)
+  getData: () => requests.get('/registration-form-alerts'),
+  updateData: (token, body) => tokenizedRequests.put('/registration-form-alerts', token, body)
 }
 
 const callCourses = {
@@ -93,11 +93,14 @@ const fetchStudents = {
   getStudentsPresenceByCourseName: (token, body) => tokenizedRequests.post('/get-course-presence', token, body) 
 }
 
-const unsubscribeOrRemoveStudent = {
-  getStudentDataByName: (token, body) => tokenizedRequests.post('/get-student-data-by-name', token, body),
+const searchStudent = {
   getStudentDataByEmail: (token, body) => tokenizedRequests.post('/get-student-data-by-email', token, body),
+  getStudentDataByName: (token, body) => tokenizedRequests.post('/get-student-data-by-name', token, body)
+}
+
+const unsubscribeOrDeleteStudent = {
   unsubscribeStudent: (token, body) => tokenizedRequests.put('/unsubscribe-student', token, body),
-  removeStudent: (token, body) => tokenizedRequests.put('/remove-student', token, body)
+  deleteStudent: (token, body) => tokenizedRequests.put('/delete-student', token, body)
 }
 
 const emailAfter3DaysRegistration = {
@@ -131,7 +134,8 @@ const API = {
   dashboardUsersAccounts,
   callCourses,
   fetchStudents,
-  unsubscribeOrRemoveStudent,
+  searchStudent,
+  unsubscribeOrDeleteStudent,
   CoursesPageData,
   CoursePresencePageData,
   HeaderFooterData,

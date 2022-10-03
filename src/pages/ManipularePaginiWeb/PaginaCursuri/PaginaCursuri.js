@@ -83,14 +83,15 @@ const PaginaCursuri = ({ setShowPlaceholder }) => {
     const dataObject = state.coursesPageReducer.data
     const serverResponse = state.coursesPageReducer.success
     const serverMessage = state.coursesPageReducer?.serverMessage
+    const error = state.coursesPageReducer?.error
     const module1WordsWithLinks = state.coursesPageReducer.data?.infoCoursesModule1?.linkWords
     const module2WordsWithLinks = state.coursesPageReducer.data?.infoCoursesModule2?.linkWords
-    return { dataObject, serverResponse, serverMessage, module1WordsWithLinks, module2WordsWithLinks }
+    return { dataObject, serverResponse, serverMessage, error, module1WordsWithLinks, module2WordsWithLinks }
   })
-  const { dataObject, serverResponse, serverMessage, module1WordsWithLinks, module2WordsWithLinks } = coursesPageData
+  const { dataObject, serverResponse, serverMessage, error, module1WordsWithLinks, module2WordsWithLinks } = coursesPageData
 
   const formInitialValues = formValues(dataObject)
-  const FORM_VALIDATION = formValidation
+  const FORM_VALIDATION = formValidation 
 
   const handleShowLoadingPageData = () => {
     if (dataObject || serverResponse) {
@@ -205,30 +206,30 @@ const PaginaCursuri = ({ setShowPlaceholder }) => {
   }
 
   const displaySnackBar = () => {
-    if (serverMessage === 'Page Data Updated Successfully') {
-      setSnackBar({
-        ...snackBar,
-        background: '#28cc95',
-        open: true,
-        success: true,
-        upDuration: 12000,
-        text: serverMessage
-      })
-      dispatch(clearServerResponse())
-      setLoadingData({...loadingData, showCircle: false})
-    }
-
-    if (serverMessage === 'Page Data could not be updated') {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        upDuration: 12000,
-        text: serverMessage
-      })
-      dispatch(clearServerResponse())
-      setLoadingData({...loadingData, showCircle: false})
+    if (serverMessage) {
+      if (error) {
+        setSnackBar({
+          ...snackBar,
+          background: '#e53c5d', 
+          open: true,
+          success: false,
+          upDuration: 12000,
+          text: serverMessage
+        })
+        dispatch(clearServerResponse())
+        setLoadingData({...loadingData, showCircle: false})
+      } else {
+        setSnackBar({
+          ...snackBar,
+          background: '#28cc95',
+          open: true,
+          success: true,
+          upDuration: 12000,
+          text: serverMessage
+        })
+        dispatch(clearServerResponse())
+        setLoadingData({...loadingData, showCircle: false})
+      }
     }
   }
 
@@ -236,7 +237,7 @@ const PaginaCursuri = ({ setShowPlaceholder }) => {
   // on updating the page data information
   useEffect(() => {
     displaySnackBar()
-  }, [serverMessage])
+  }, [serverMessage, error])
  
 
   return (

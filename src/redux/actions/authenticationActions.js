@@ -7,6 +7,7 @@ export const logUserIn = (loggedUser) => {
     payload: { 
       ...loggedUser, 
       username: userName.charAt(0).toUpperCase() + userName.slice(1),
+      email: loggedUser.username,
       isLogged: true
     }
   }
