@@ -8,7 +8,7 @@ import addUserIcon from "../../assets/add-user.png";
 import NoAccessPage from '../../components/NoAccessPage';
 
 const AdminSection = ({ setShowPlaceholder }) => {
-  const getUserAccessFromStore = useSelector(state => state.authReducer.access)
+  const getUserRoleFromStore = useSelector(state => state.authReducer.role)
 
   useEffect(() => {
     setShowPlaceholder(false)
@@ -21,7 +21,7 @@ const AdminSection = ({ setShowPlaceholder }) => {
 
   return (
     <>
-    { isAdmin(getUserAccessFromStore) ?
+    { isAdmin(getUserRoleFromStore) ?
       <div className='admin-section'>
         <div className='d-flex align-items-center justify-content-center'>
           <img src={usersIcon} alt="users-icon" style={{width: '150px'}} className='mt-3' />

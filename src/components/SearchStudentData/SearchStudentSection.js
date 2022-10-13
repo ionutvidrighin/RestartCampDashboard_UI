@@ -5,7 +5,7 @@ import { getStudentDataByEmail, getStudentDataByFullName } from '../../redux/act
 import Button from '@material-ui/core/Button';
 import SnackBar from "../ReusableComponents/SnackBar"
 
-const SearchStudentSection = ({localStyles}) => {
+const SearchStudentSection = ({localStyles, editPermission}) => {
   const dispatch = useDispatch()
 
   const [snackBar, setSnackBar] = useState({})
@@ -67,12 +67,14 @@ const SearchStudentSection = ({localStyles}) => {
           label="Adresă e-mail cursant"
           value={studentEmail}
           onChange={e => setStudentEmail(e.target.value)}
+          disabled={editPermission}
         />
         <Button
           variant='contained' 
           type="submit" 
           className={localStyles.submitButton}
-          onClick={handleGetStudentDataByEmail}> 
+          onClick={handleGetStudentDataByEmail}
+          disabled={editPermission}> 
           Caută cursant
         </Button>
       </div>
@@ -88,12 +90,14 @@ const SearchStudentSection = ({localStyles}) => {
           label="Nume și Prenume cursant"
           value={studentName}
           onChange={(e) => setStudentName(e.target.value)}
+          disabled={editPermission}
         />
         <Button
           variant='contained' 
           type="submit" 
           className={localStyles.submitButton}
-          onClick={handleGetStudentDataByName}> 
+          onClick={handleGetStudentDataByName}
+          disabled={editPermission}> 
           Caută cursant
         </Button>
       </div>

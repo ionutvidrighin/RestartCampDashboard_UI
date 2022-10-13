@@ -52,7 +52,7 @@ function App() {
             <LoginPage /> 
             :
             <>
-              <AppMenu setShowPlaceholder={setShowPlaceholder} />
+              <AppMenu />
               { showPlaceholder && <Placeholder /> }
 
               <Route path="/sectiune-admin">

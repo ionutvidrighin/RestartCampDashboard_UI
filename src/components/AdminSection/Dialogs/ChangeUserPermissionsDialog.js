@@ -3,9 +3,11 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateDashboardUserPermissions,
   clearDashboardUserServerResponse } from '../../../redux/actions/dashboardUserAccountsActions'
 import { makeStyles } from '@material-ui/styles';
-import { pagesAccess, permissionsList } from '../../../constants/userPermissions';
+import { userRoles, viewTimeLimit } from '../../../constants/userPermissions';
+import { nanoid } from 'nanoid';
 import pageAccessLogo from "../../../assets/change-access.png";
 import Dialog from '@material-ui/core/Dialog';
+import NativeSelect from '@material-ui/core/NativeSelect';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
@@ -13,7 +15,7 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
 import Button from '@material-ui/core/Button';
-import SnackBar from '../../../components/ReusableComponents/SnackBar';
+import SnackBar from '../../../components/ReusableComponents/SnackBar'; 
 
 const useStyles = makeStyles({
   container: {
@@ -60,76 +62,97 @@ const ChangeUserPermissionsDialog = ({openDialog, closeDialog, user}) => {
   const styles = useStyles()
   const dispatch = useDispatch()
 
-  const {id, username, access, pagesPermission} = user 
-  const [userPermissionList, setUserPermissionList] = useState(permissionsList)
-  const [userPagesAccess, setUserPagesAccess] = useState(pagesAccess)
+  const {id, username, role, permissions } = user 
+  const [currentRole, setCurrentRole] = useState(userRoles)
+  const [userPermissions, setUserPermissions] = useState(permissions)
+  const [selectRestrictedColumns, setSelectRestrictedColumns] = useState({
+    sectionId: null,
+    open: false
+  })
   const [snackBar, setSnackBar] = useState({})
 
   useEffect(() => {
-    const updatedUserAccessList = []
-    userPermissionList.forEach(({name}) => {
-      if (name === access) {
-        updatedUserAccessList.push({ name, selected: true })
+    const updatedUserRolesList = []
+    userRoles.forEach(({name}) => {
+      if (name === role) {
+        updatedUserRolesList.push({ name, selected: true })
       } else {
-        updatedUserAccessList.push({ name, selected: false })
+        updatedUserRolesList.push({ name, selected: false })
       }
     })
-    setUserPermissionList(updatedUserAccessList)
-
-    const pagesWithAccess = pagesPermission
-    const pagesNameWithAccess = pagesPermission.map(page => page.name)
-    const pagesWithNoAccess = userPagesAccess.filter(access => !pagesNameWithAccess.includes(access.name))
-    const updatedUserPagesAccess = [...pagesWithNoAccess, ...pagesWithAccess]
-    updatedUserPagesAccess.sort((a, b) => a.id - b.id)
-
-    setUserPagesAccess(updatedUserPagesAccess)
+    setCurrentRole(updatedUserRolesList)
   }, [])
 
+
   const handleCloseDialog = () => {
-    console.log('triggered')
     closeDialog(false)
   }
 
-  const handleSelectUserPermission = (event) => {
-    const permissionName = event.target.name
-    const selectedPermission = event.target.checked
-
-    let updatedUserAccessList = userPermissionList.map(element => {
-      return {...element, selected: false}
-    })
-
-    updatedUserAccessList = updatedUserAccessList.map(element => {
-      if (element.name === permissionName) {
-        return {...element, selected: selectedPermission}
+  const handleSelectUserRole = (event) => {
+    const selectedRole = event.target.name
+    
+    let updatedRoles = currentRole.map(element => ({...element, selected: false}))
+    updatedRoles = updatedRoles.map(role => {
+      if (role.name === selectedRole) {
+        return {...role, selected: true}
       }
-      return element
+      return role
     })
-    setUserPermissionList(updatedUserAccessList)
+    setCurrentRole(updatedRoles)
   }
 
-  const handleChangeUserPagesAccess = (event) => {
-    const pageName = event.target.name
-    const newPermissionValue = event.target.checked
-
-    let updatedPagesPermission = userPagesAccess.map(page => {
-      if (page.name === pageName) {
-        return {...page, hasPermission: newPermissionValue}
-      }
-      return page
+  const handleOpenSelectRestrictedColumns = (sectionId) => {
+    setSelectRestrictedColumns({
+      sectionId,
+      open: !selectRestrictedColumns.open
     })
-    setUserPagesAccess(updatedPagesPermission)
+  }
+
+  const handleSelectPagesPermission = (event, sectionId, viewDataLimitId) => {
+    const selectedSection = event.target?.name || event.target.getAttribute('name')
+    const selectedViewTimeLimit = event.target.value
+
+    let allUserPermissions = userPermissions
+    const sectionToUpdate = allUserPermissions.findIndex(section => section.id === sectionId)
+    const updatedPermissions = [...allUserPermissions]
+
+    if (selectedSection === 'view') {
+      updatedPermissions[sectionToUpdate].access.view = !allUserPermissions[sectionToUpdate].access.view
+    }
+    if (selectedSection === 'edit') {
+      updatedPermissions[sectionToUpdate].access.edit = !allUserPermissions[sectionToUpdate].access.edit
+    }
+    if (selectedSection === 'download') {
+      updatedPermissions[sectionToUpdate].access.download = !updatedPermissions[sectionToUpdate].access.download
+    }
+    if (selectedSection === 'downloadWhatsapp') {
+      updatedPermissions[sectionToUpdate].access.downloadWhatsapp = !updatedPermissions[sectionToUpdate].access.downloadWhatsapp
+    }
+    if (selectedSection === 'viewTimeLimit') {
+      updatedPermissions[sectionToUpdate].access.viewTimeLimit = {label: selectedViewTimeLimit, value: selectedViewTimeLimit}
+    }
+    if (selectedSection === 'viewDataLimit') {
+      const foundSection = updatedPermissions[sectionToUpdate].access.viewDataLimit
+      const tableColumnToUpdate = foundSection.findIndex(column => column.id === viewDataLimitId)
+      const updatedRestrictedTableColumns = [...foundSection]
+      updatedRestrictedTableColumns[tableColumnToUpdate].selected = !foundSection[tableColumnToUpdate].selected
+    }
+
+    setUserPermissions(updatedPermissions)
   }
 
   const saveAndCloseDialog = () => {
-    const newUserAccess = userPermissionList.find(permission => permission.selected).name
-    const newUserPagesAccess = []
-    userPagesAccess.forEach(pageAccess => {
-      if (pageAccess.hasPermission) {
-        newUserPagesAccess.push(pageAccess)
-      }
+    const newUserRole = currentRole.find(role => role.selected).name
+    const newSectionsPermissions = []
+    userPermissions.forEach(section => {
+      const viewAccess = section.access.view
+      const editAccess = section.access.edit
+      const downloadAccess = section.access?.download
+      const downloadWhatsappAccess = section.access?.downloadWhatsapp
+      newSectionsPermissions.push(viewAccess, editAccess, downloadAccess, downloadWhatsappAccess)
     })
-  
-    if (newUserPagesAccess.length === 0) {
+
+    if (!newSectionsPermissions.includes(true)) {
       setSnackBar({
         background: '#e53c5d', 
         open: true,
@@ -140,10 +163,9 @@ const ChangeUserPermissionsDialog = ({openDialog, closeDialog, user}) => {
       const payload = {
         id,
         username,
-        access: newUserAccess,
-        pagesPermission: newUserPagesAccess
+        role: newUserRole,
+        permissions: userPermissions
       }
-  
       dispatch(updateDashboardUserPermissions(payload))
     }
   }
@@ -185,8 +207,8 @@ const ChangeUserPermissionsDialog = ({openDialog, closeDialog, user}) => {
     <div>
       <Dialog aria-labelledby="customized-dialog-title" open={openDialog} className={styles.container}>
         <div className='pt-1 pe-2 pb-4'>
-          <div className='d-flex justify-content-end'>
-            <CancelRoundedIcon onClick={handleCloseDialog} style={{cursor: 'pointer'}} />
+          <div className='d-flex justify-content-end' onClick={handleCloseDialog}>
+            <CancelRoundedIcon style={{cursor: 'pointer'}} />
           </div>
 
           <div className='text-center' style={{width: '100%'}}>
@@ -201,51 +223,144 @@ const ChangeUserPermissionsDialog = ({openDialog, closeDialog, user}) => {
         <div className={styles.permissionsWrapper}>
           <div className={styles.permissionSelection}>
             <img src={pageAccessLogo} alt="permissionLogo" className={styles.logo} />
-            <h6 className='m-0 mb-3 mt-5'>Acces actual: </h6>
-            { userPermissionList.map((permission, index) => {
-              return (
-                <FormControl component="fieldset" key={index}>
-                  <RadioGroup
-                    aria-label="permissionName"
-                    name={permission.name}
-                    value={permission.selected}
-                    onChange={handleSelectUserPermission}
-                  >
-                    <FormControlLabel 
-                      value={permission.selected}
-                      control={
-                        <Radio
-                          name={permission.name}
-                          checked={permission.selected}
-                          style={{color: 'green'}} 
-                        />
-                      } 
-                      label={permission.name}
-                    />
-                  </RadioGroup>
-                </FormControl>
-              )
-            })}
+            <h6 className='m-0 mb-3 mt-5'>Rol actual: </h6>
+            { currentRole.map((role, index) => (
+              <FormControl component="fieldset" key={index}>
+                <RadioGroup
+                  aria-label="roleName"
+                  name={role.name}
+                  value={role.selected}
+                  onChange={(event) => handleSelectUserRole(event)}
+                >
+                  <FormControlLabel 
+                    value={role.selected}
+                    control={
+                      <Radio
+                        name={role.name}
+                        checked={role.selected}
+                        style={{color: 'green'}} 
+                      />
+                    } 
+                    label={role.name}
+                  />
+                </RadioGroup>
+              </FormControl>
+            ))}
           </div>
 
           <div className={styles.pagesAccess}>
-            <h6 className='text-center pt-2 pb-2'> Sectiuni cu access: </h6>
+            <h6 className='text-center pt-2 pb-2'> Sectiuni cu acces: </h6>
 
             <div className={`ps-3 ${styles.pagesAccessWrapper}`}>
-              { userPagesAccess.map((page, index) => {
+              { userPermissions.map(section => {
+                const { access: { view, edit } } = section
                 return (
-                  <FormControlLabel
-                    key={index}
-                    control={
-                      <Checkbox
-                        checked={page.hasPermission}
-                        onChange={handleChangeUserPagesAccess} 
-                        name={page.name}
-                        style={{color: 'green'}}
-                      />
-                    }
-                    label={page.label}
-                  />
+                  <>
+                    <p className='m-0 fw-bold' key={nanoid(6)}> { section.label }: </p>
+                    <div className='d-flex flex-column ms-4 mb-3'>
+                      <FormControlLabel
+                        key={nanoid(5)}
+                        control={
+                          <Checkbox
+                            checked={view}
+                            onChange={(event) => handleSelectPagesPermission(event, section.id)} 
+                            name={'view'}
+                            style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                          }
+                        label="Vizualizare Sectiune" />
+                      <FormControlLabel
+                        key={nanoid(5)}
+                        control={
+                          <Checkbox
+                            checked={edit}
+                            onChange={(event) => handleSelectPagesPermission(event, section.id)} 
+                            name={'edit'}
+                            style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                        }
+                        label="Editare Sectiune" />
+
+                      { section.access.hasOwnProperty('download') &&
+                        <FormControlLabel
+                          key={nanoid(4)}
+                          control={
+                            <Checkbox
+                              checked={section.access.download}
+                              onChange={(event) => handleSelectPagesPermission(event, section.id)} 
+                              name={'download'}
+                              style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                            }
+                          label="Export/Download CSV"
+                        />
+                      }
+                        
+                      { section.access.hasOwnProperty('downloadWhatsapp') &&
+                        <FormControlLabel
+                          key={nanoid(4)}
+                          control={
+                            <Checkbox
+                              checked={section.access.downloadWhatsapp}
+                              onChange={(event) => handleSelectPagesPermission(event, section.id)} 
+                              name={'downloadWhatsapp'}
+                              style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                            }
+                          label="Export/Download CSV Nr. Tel. Whatsapp"
+                        />
+                      }
+
+                      { section.access.hasOwnProperty('viewTimeLimit') &&
+                        <div key={nanoid(4)}>
+                          <label key={nanoid(9)} style={{ fontFamily: "'Roboto', 'Helvetica', 'Arial', 'sans-serif'", marginRight: 5 }}>
+                            Vizualizare date pe (n) luni în urmă:
+                          </label>
+                          <NativeSelect
+                            key={nanoid(8)}
+                            value={section.access.viewTimeLimit.label}
+                            name={'viewTimeLimit'}
+                            onChange={(event) => handleSelectPagesPermission(event, section.id)}>
+
+                            { viewTimeLimit.map(element => (
+                              <option key={nanoid(3)} value={element.label} style={{textAlign: 'center'}}> 
+                                {element.label}
+                              </option>
+                            ))}
+
+                          </NativeSelect>
+                        </div>
+                      }
+
+                      { section.access.hasOwnProperty('viewDataLimit') &&
+                        <div key={nanoid(4)}>
+                          <p key={nanoid(9)} className='m-0' style={{ fontFamily: "'Roboto', 'Helvetica', 'Arial', 'sans-serif'"}}>
+                            Vizualizare/Export restricționat pentru:
+                          </p>
+
+                          <div className='restricted-table-columns'>
+                            <div className='show-restricted-columns' onClick={() => handleOpenSelectRestrictedColumns(section.id)}>
+                              { section.access.viewDataLimit.map(element => (
+                                  <>
+                                    {element.selected && <span key={element.id}> {element.label} </span>}
+                                  </>
+                                ))
+                              }
+                            </div>
+
+                            { (selectRestrictedColumns.open && selectRestrictedColumns.sectionId === section.id) && 
+                              <div className='select-columns'>
+                                { section.access.viewDataLimit.map(element => (
+                                  <div key={element.id}
+                                    name={'viewDataLimit'}
+                                    onClick={(event) => handleSelectPagesPermission(event, section.id, element.id)}
+                                    className={`data-element ${element.selected && 'selected'}`}>
+                                    {element.label}
+                                  </div>
+                                ))}
+                              </div>
+                            }
+                          </div>
+                        </div>
+                      }
+                    </div>
+                  </>
                 )
               })}
             </div>
@@ -256,7 +371,7 @@ const ChangeUserPermissionsDialog = ({openDialog, closeDialog, user}) => {
           <Button 
             className='fw-bold'
             variant='contained' 
-            autoFocus 
+            autoFocus
             onClick={saveAndCloseDialog}>
             Modifică
           </Button>

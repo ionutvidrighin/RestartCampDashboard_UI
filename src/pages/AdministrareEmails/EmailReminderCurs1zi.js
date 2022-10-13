@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { doesUserHavePermission } from '../../utils/helperFunctions';
+import { appPagesConstants } from '../../constants/userPermissions';
+import { doesUserHaveViewPermission } from '../../utils/helperFunctions';
 import { emailTemplatesEndpoints } from '../../constants/emailTemplatesEndpoints';
 import { getEmailTemplateHTML } from '../../api/callEmailTemplates';
 import Divider from '@material-ui/core/Divider';
@@ -12,15 +12,13 @@ import SendTestEmailTemplate from '../../components/ReusableComponents/EmailTemp
 import ShowEmailTemplateContent from '../../components/ReusableComponents/EmailTemplatesManipulation/ShowEmailTemplateContent';
 import HowToOperateOnPage from '../../components/EmailConfirmationTemplate/HowToOperateOnPage';
 import OverlayProgressCircle from '../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle';
-import DisplayRingBellAndBanner from '../../components/ReusableComponents/DisplayRingBellAndBanner';
+import RingBellAndPageInstructionsBanner from '../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import SnackBar from '../../components/ReusableComponents/SnackBar';
 
 const EmailReminderCurs1Zi = ({ setShowPlaceholder }) => {
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_REMINDER_1_ZI, userPagesAccessFromStore)
   
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 2000})
@@ -54,7 +52,7 @@ const EmailReminderCurs1Zi = ({ setShowPlaceholder }) => {
 
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       setLoadingData({...loadingData, showCircle: true})
       callEmailTemplateHTML()
     }
@@ -62,7 +60,7 @@ const EmailReminderCurs1Zi = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <>
           <OverlayProgressCircle overlaySetup={loadingData} />
           <div className='editare-email-template' style={{pointerEvents: loadingData.showCircle ? 'none': 'auto'}}>

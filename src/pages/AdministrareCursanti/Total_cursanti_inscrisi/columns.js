@@ -15,7 +15,7 @@ const columns = [
   { field: "reference", headerName: "Unde ne-a gasit", width: 170, sortable: true }
 ]
 
-export const CSV_HEADERS_ALL_STUDENTS = [
+export const CSV_HEADERS_ALL_STUDENTS = [ 
   { label: "Dl./Dna.", key: "appellation" },
   { label: "Reședință", key: "address" },
   { label: "Județ", key: "county" },
@@ -30,6 +30,11 @@ export const CSV_HEADERS_ALL_STUDENTS = [
   { label: "Curs", key: "course" },
   { label: "Activitate profesionala", key: "activity" },
   { label: "Unde ne-a gasit", key: "reference" }
+]
+
+export const CSV_HEADERS_ALL_STUDENT_TRAINER_ACCOUNT_TYPE = [
+  { label: "Nr. Telefon", key: "phoneNo" },
+  { label: "Curs", key: "course" }
 ]
 
 export default columns

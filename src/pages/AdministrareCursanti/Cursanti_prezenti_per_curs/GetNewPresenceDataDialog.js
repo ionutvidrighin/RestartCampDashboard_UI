@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
 import { fetchStudentsPresenceByCourseName } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
+import { calculateMonthsDifference } from '../../../utils/helperFunctions';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import dayjs from 'dayjs';
 
-const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, selectedData}) => {
+const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, selectedData, limitedAccessOnPastData, userTablePermissions}) => {
   const dispatch = useDispatch()
   const today = dayjs().format().substring(0, 7)
 
@@ -55,9 +56,27 @@ const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, s
       return
     }
 
+    const dateSelected = new Date(selectedDate)
+    const currentDate = new Date()
+    const dateDifference = calculateMonthsDifference(dateSelected, currentDate)
+    if (limitedAccessOnPastData !== "unlimited") {
+      if (dateDifference >= limitedAccessOnPastData) {
+        setSnackBar({
+          background: '#e43d6f', 
+          open: true,
+          success: false,
+          upDuration: 12000,
+          text: `Datele mai vechi de ${limitedAccessOnPastData} luni nu pot fi generate. 
+                Te rog contactează administratorul pentru mai multe detalii.`
+        })
+        return
+      }
+    }
+
     const payload = {
       courseName: selectedCourse.courseName,
-      registrationYearMonth: selectedDate
+      registrationYearMonth: selectedDate,
+      userTablePermissions
     }
 
     dispatch(fetchStudentsPresenceByCourseName(payload))

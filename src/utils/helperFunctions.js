@@ -1,4 +1,4 @@
-import { permissionConstants } from "../constants/userPermissions"
+import { rolesConstants, tableColumnsConstants } from "../constants/userPermissions"
 import adminIcon from "../assets/access-icons/admin.png";
 import trainerIcon from "../assets/access-icons/trainer.png";
 import marketingIcon from "../assets/access-icons/marketing.png";
@@ -10,49 +10,152 @@ export const capitalizeWord = (string) => {
   return string && string[0].toUpperCase() + string.slice(1)
 }
 
-export const doesUserHavePermission = (pageRoute, userPagesPermission) => {
-  pageRoute = pageRoute.substring(1)
-  const userPagesAccess = userPagesPermission.map(page => page.name)
-  
-  return userPagesAccess.includes(pageRoute)
+export const extractUserTablePermissions = (page, userPagesPermission) => {
+  const visitedSection = userPagesPermission.find(element => element.label === page)
+  return visitedSection.access.viewDataLimit
 }
 
-export const isAdmin = (userAccess) => {
-  return userAccess === permissionConstants.ADMIN
+export const doesUserHaveViewPermission = (page, userPagesPermission) => {
+  const visitedPagePermission = userPagesPermission.find(element => element.label === page)
+  return visitedPagePermission.access.view
 }
 
-export const isAnalytics = (userAccess) => {
-  return userAccess === permissionConstants.ANALYTICS
+export const doesUserHaveEditPermission = (page, userPagesPermission) => {
+  const visitedPagePermission = userPagesPermission.find(element => element.label === page)
+  return visitedPagePermission.access.edit
 }
 
-export const isEmailsAdmin = (userAccess) => {
-  return userAccess === permissionConstants.EMAILS_ADMINISTRATOR
+export const doesUserHaveCSVExportPermission = (page, userPagesPermission) => {
+  const visitedPagePermission = userPagesPermission.find(element => element.label === page)
+  return visitedPagePermission.access.download
 }
 
-export const isMarketing = (userAccess) => {
-  return userAccess === permissionConstants.MARKETING
+export const checkUserAccessOnPastDataLimit = (page, userPagesPermission) => {
+  const visitedPage = userPagesPermission.find(element => element.label === page)
+  return visitedPage.access.viewTimeLimit.value
 }
 
-export const isTrainer = (userAccess) => {
-  return userAccess === permissionConstants.TRAINER
+export const createTableColumnsAccordingToPermission = (page, userPagesPermission) => {
+  const visitedSection = userPagesPermission.find(element => element.label === page)
+
+  const tableColumns = []
+  visitedSection.access.viewDataLimit.forEach(tableColumn => {
+    if (!tableColumn.selected) {
+      const column = {
+        field: tableColumn.value,
+        headerName: tableColumn.label,
+        sortable: true,
+        width: 150
+      }
+
+      if (tableColumn.value === tableColumnsConstants.APPELLATION) {
+        column.width = 120
+      }
+      if (tableColumn.value === tableColumnsConstants.FULL_NAME) {
+        column.width = 200
+        column.sortable = false
+      }
+      if (tableColumn.value === tableColumnsConstants.COURSE) {
+        column.width = 400
+        column.sortable = false
+      }
+      if (tableColumn.value === tableColumnsConstants.EMAIL) {
+        column.width = 250
+        column.sortable = false
+      }
+      if (tableColumn.value === tableColumnsConstants.JOB) {
+        column.width = 200
+      }
+      if (tableColumn.value === tableColumnsConstants.SUBSCRIBED_TO_EMAILS) {
+        column.width = 200
+      }
+      if (tableColumn.value === tableColumnsConstants.CAREER) {
+        column.width = 220
+      }
+      if (tableColumn.value === tableColumnsConstants.REFERENCE) {
+        column.width = 170
+        column.sortable = false
+      }
+
+      tableColumns.push(column)
+    }
+  })
+
+  return tableColumns
 }
 
-export const displayAccountTypeIcon = (userAccess) => {
+export const createCSVheadersAccordingToPermission = (page, userPagesPermission) => {
+  const visitedSection = userPagesPermission.find(element => element.label === page)
+
+  const CSVheaders = []
+  visitedSection.access.viewDataLimit.forEach(tableColumn => {
+    if (!tableColumn.selected) {
+      CSVheaders.push({
+        label: tableColumn.label,
+        key: tableColumn.value
+      })
+    }
+  })
+  return CSVheaders
+}
+
+export const isAdmin = (userRole) => {
+  return userRole === rolesConstants.ADMIN
+}
+
+export const isAnalytics = (userRole) => {
+  return userRole === rolesConstants.ANALYTICS
+}
+
+export const isMarketing = (userRole) => {
+  return userRole === rolesConstants.MARKETING
+}
+
+export const isTrainer = (userRole) => {
+  return userRole === rolesConstants.TRAINER
+}
+
+export const calculateMonthsDifference = (dateFrom, dateTo) => {
+  return dateTo.getMonth() - dateFrom.getMonth() + 
+    (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
+}
+
+export const preparePhoneNumbersWhatsappFormat = (data) => {
+  let dataValues = []
+  const entriesList = []
+  data.forEach(entry => {
+    dataValues = Object.values(entry)
+
+    const noData = dataValues.every(value => value === 'no data');
+    if (!noData) {
+      const formattedPhoneCode = entry.phoneCode.substring(1)
+      const formattedPhoneNo = entry.phoneNo.charAt(0) === '0' ? entry.phoneNo.substring(1) : entry.phoneNo
+
+      const phoneNo = `A,${formattedPhoneCode}${formattedPhoneNo}`
+      const course = entry.course
+      entriesList.push({phoneNo, course})
+    }
+  })
+
+  return entriesList
+}
+
+export const displayAccountTypeIcon = (userRole) => {
   let iconSrc
-  switch(userAccess) {
-    case permissionConstants.ADMIN:
+  switch(userRole) {
+    case rolesConstants.ADMIN:
       iconSrc = adminIcon
     break;
-    case permissionConstants.TRAINER:
+    case rolesConstants.TRAINER:
       iconSrc = trainerIcon
     break;
-    case permissionConstants.MARKETING:
+    case rolesConstants.MARKETING:
       iconSrc = marketingIcon
     break;
-    case permissionConstants.ANALYTICS:
+    case rolesConstants.ANALYTICS:
       iconSrc = analyticsIcon
     break;
-    case permissionConstants.EMAILS_ADMINISTRATOR:
+    case rolesConstants.EMAILS_ADMINISTRATOR:
       iconSrc = emailAdminIcon
     break;
     default:

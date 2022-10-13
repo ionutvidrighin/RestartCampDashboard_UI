@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from '@material-ui/styles';
-import { URLconstants } from "../constants/URLconstants";
+import { appRoutes } from "../constants/appRoutesConstants";
 import DisplayLoggedUser from "./DisplayLoggedUser";
 import DisplayDateAndTime from "./DisplayDateAndTime";
 import Button from '@material-ui/core/Button';
@@ -107,28 +107,28 @@ const AppMenu = () => {
                       <Button
                         variant="contained"
                         className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === URLconstants.pagina_cursuri) ? { background: '#c23a6a'} : {background: ''} }
+                        style={ (pathname === appRoutes.pagina_cursuri) ? { background: '#c23a6a'} : {background: ''} }
                         onClick={() => history.push('/editare-pagina-cursuri')} > 
                         Pagina Cursuri
                       </Button>
                       <Button
                         variant="contained"
                         className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === URLconstants.formular_inscriere) ? { background: '#c23a6a'} : {background: ''} }
+                        style={ (pathname === appRoutes.formular_inscriere) ? { background: '#c23a6a'} : {background: ''} }
                         onClick={() => history.push('/editare-formular-inscriere')} > 
                         Alerte Formular Înscriere
                       </Button>
                       <Button
                         variant="contained"
                         className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === URLconstants.confirmare_prezenta) ? { background: '#c23a6a'} : {background: ''} }
+                        style={ (pathname === appRoutes.confirmare_prezenta) ? { background: '#c23a6a'} : {background: ''} }
                         onClick={() => history.push('/editare-confirmare-prezenta')} > 
                         Pagina Confirmare Prezență
                       </Button>
                       <Button
                         variant="contained"
                         className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === URLconstants.headerFooter) ? { background: '#c23a6a'} : {background: ''} }
+                        style={ (pathname === appRoutes.headerFooter) ? { background: '#c23a6a'} : {background: ''} }
                         onClick={() => history.push('/editare-header-footer')} > 
                         Header & Footer
                       </Button>
@@ -142,7 +142,7 @@ const AppMenu = () => {
                         setShowWebPageManipulation(false)
                       } 
                     } 
-                    style={ (pathname === URLconstants.cursuri_modul1) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cursuri_modul1) ? { background: '#c23a6a'} : {background: ''} }
                     className={localStyles.contained}> 
                     Cursuri MODUL 1
                   </Button>
@@ -153,7 +153,7 @@ const AppMenu = () => {
                         setShowWebPageManipulation(false)
                       } 
                     } 
-                    style={ (pathname === URLconstants.cursuri_modul2) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cursuri_modul2) ? { background: '#c23a6a'} : {background: ''} }
                     className={localStyles.contained}> 
                     Cursuri MODUL 2
                   </Button>
@@ -179,7 +179,7 @@ const AppMenu = () => {
                   <Button
                     variant="contained" 
                     className={localStyles.contained} 
-                    style={ (pathname === URLconstants.cauta_cursant) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cauta_cursant) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/cauta-cursant')}> 
                     Caută <span className="text-lowercase mx-1"> cursant înscris </span>
                   </Button>
@@ -187,7 +187,7 @@ const AppMenu = () => {
                   <Button
                     variant="contained" 
                     className={localStyles.contained} 
-                    style={ (pathname === URLconstants.total_cursanti) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.total_cursanti) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/total-cursanti')}> 
                     Total <span className="text-lowercase mx-1"> cursanți înscriși </span> MODUL 1
                   </Button>
@@ -195,7 +195,7 @@ const AppMenu = () => {
                   <Button 
                     variant="contained" 
                     className={localStyles.contained}
-                    style={ (pathname === URLconstants.cursanti_per_curs) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cursanti_per_curs) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/cursanti-per-curs')}> 
                     Cursanți <span className="text-lowercase mx-1"> înscriși per curs </span> MODUL 1
                   </Button>
@@ -203,7 +203,7 @@ const AppMenu = () => {
                   <Button 
                     variant="contained" 
                     className={localStyles.contained}
-                    style={ (pathname === URLconstants.cursanti_prezenti) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cursanti_prezenti) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/cursanti-prezenti')}> 
                     Cursanți <span className="text-lowercase mx-1">prezenți cursuri</span> MODUL 1
                   </Button>
@@ -211,7 +211,7 @@ const AppMenu = () => {
                   <Button 
                     variant="contained" 
                     className={localStyles.contained}
-                    style={ (pathname === URLconstants.cursanti_modul2) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.cursanti_modul2) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/cursanti-modul2')}> 
                     Înscriere <span className="text-lowercase me-1 ms-1">cursanți</span> MODUL 2
                   </Button>
@@ -255,28 +255,28 @@ const AppMenu = () => {
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_reminder_7days) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_reminder_7days) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-reminder-7zile')} > 
                       E-mail <span className="text-lowercase ms-1"> reminder 7 zile </span> 
                     </Button>
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_reminder_1day) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_reminder_1day) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-reminder-1zi')}>
                       E-mail <span className="text-lowercase ms-1"> reminder 1 zi </span>
                     </Button>
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_reminder_1hour) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_reminder_1hour) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-reminder-1ora')}>
                       E-mail <span className="text-lowercase ms-1"> reminder 1 ora </span>
                     </Button>
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_voucher_4hours) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_voucher_4hours) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-voucher-4ore')}>
                       <span>
                         E-mail <span className="text-lowercase"> voucher - 4 ore dupa confirmare participare </span> 
@@ -285,7 +285,7 @@ const AppMenu = () => {
                     <Button
                     variant="contained"
                     className={localStyles.emailsTemplateBtn}                      
-                    style={ (pathname === URLconstants.email_voucher_40hours) ? { background: '#c23a6a'} : {background: ''} }
+                    style={ (pathname === appRoutes.email_voucher_40hours) ? { background: '#c23a6a'} : {background: ''} }
                     onClick={() => history.push('/email-voucher-40ore')}>
                       <span>
                         E-mail <span className="text-lowercase"> voucher - 40 ore dupa confirmare participare </span> 
@@ -365,7 +365,7 @@ const AppMenu = () => {
                     <Button 
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_registration) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_registration) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-confirmare-inscriere')} > 
                       E-mail <span className="text-lowercase ms-1"> confirmare înscriere </span> 
                     </Button>
@@ -373,7 +373,7 @@ const AppMenu = () => {
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_3days_after_registration_employee) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_3days_after_registration_employee) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-3-zile-inscriere-angajat')} > 
                         <span className="text-lowercase">
                           <span className="text-capitalize">E-mail</span> 3 zile dupa înscriere candidat/angajat 
@@ -383,7 +383,7 @@ const AppMenu = () => {
                     <Button
                       variant="contained"
                       className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === URLconstants.email_3days_after_registration_freelancer) ? { background: '#c23a6a'} : {background: ''} }
+                      style={ (pathname === appRoutes.email_3days_after_registration_freelancer) ? { background: '#c23a6a'} : {background: ''} }
                       onClick={() => history.push('/email-3-zile-inscriere-antreprenor')} > 
                         <span className="text-lowercase">
                           <span className="text-capitalize">E-mail</span> 3 zile dupa înscriere antreprenor/freelancer 
@@ -406,7 +406,7 @@ const AppMenu = () => {
                 setShowStudentSubMenu(false)
                 history.push('/dezabonare-cursanti')
               }}
-              style={ (pathname === URLconstants.dezabonare_cursanti) ? { background: '#c23a6a'} : {background: ''} }>
+              style={ (pathname === appRoutes.dezabonare_cursanti) ? { background: '#c23a6a'} : {background: ''} }>
               <span className="fw-bold">
                 DEZABONARE / ȘTERGERE CURSANȚI
               </span>

@@ -1,7 +1,7 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
 
-const EditStripeInfoCourses = ({localStyles, FormikProps}) => {
+const EditStripeInfoCourses = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { stripeInfoCoursesLink } = values
 
@@ -21,6 +21,7 @@ const EditStripeInfoCourses = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.stripeInfoCoursesLink && touched.stripeInfoCoursesLink)}
         helperText={errors.stripeInfoCoursesLink}
+        disabled={editPermission}
       />
     </div>
   )

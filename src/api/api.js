@@ -88,9 +88,41 @@ const callCourses = {
 }
 
 const fetchStudents = {
+  /* GetStudentsByDate - receives 2 params: token & date
+  *** token - String taken from Redux after user successfully logs in
+  *** date - Object of form { date: 'YYYY-MM' }
+  */
   getStudentsByDate: (token, body) => tokenizedRequests.post('/get-students-by-year-month', token, body),
+
+
+  /* GetStudentsByCourseNameAndCareer - receives 2 params: token & body
+  *** token - String taken from Redux after user successfully logs in
+  *** body - Object of form:
+  *   { 
+  *     career: String (ex: 'angajat')
+  *     courseName: String (ex: 'Cum poți începe o carieră în Social Media')
+  *     registrationYearMonth: String (ex: '2022-10')
+  *   }
+  */
   getStudentsByCourseNameAndCareer: (token, body) => tokenizedRequests.post('/get-students-by-course-name-and-career', token, body),
-  getStudentsPresenceByCourseName: (token, body) => tokenizedRequests.post('/get-course-presence', token, body) 
+  
+  
+  /* GetStudentsWithoutUnsubscribedAndDeleted - receives 2 params: token & date
+  *** token - String taken from Redux after user successfully logs in
+  *** date - Object of form { date: 'YYYY-MM' }
+  */
+  getStudentsWithoutUnsubscribedAndDeleted: (token, date) => tokenizedRequests.post('/get-students-without-unsubscribed-and-deleted', token, date),
+  
+  
+  /* GetStudentsPresenceByCourseName - receives 2 params: token & body
+  *** token - String taken from Redux after user successfully logs in
+  *** body - Object of form:
+  *   { 
+  *     courseName: String (ex: 'Cum poți începe o carieră în Social Media')
+  *     registrationYearMonth: String (ex: '2022-10')
+  *   }
+  */
+  getStudentsPresenceByCourseName: (token, body) => tokenizedRequests.post('/get-course-presence', token, body)
 }
 
 const searchStudent = {
@@ -98,9 +130,10 @@ const searchStudent = {
   getStudentDataByName: (token, body) => tokenizedRequests.post('/get-student-data-by-name', token, body)
 }
 
-const unsubscribeOrDeleteStudent = {
-  unsubscribeStudent: (token, body) => tokenizedRequests.put('/unsubscribe-student', token, body),
-  deleteStudent: (token, body) => tokenizedRequests.put('/delete-student', token, body)
+const individualStudent = {
+  subscribeToEmails: (studentEmail) => requests.post('/subscribe-student', studentEmail),
+  unsubscribeFromEmails: (studentEmail) => requests.post('/unsubscribe-student', studentEmail),
+  deleteStudent: (token, studentEmail) => tokenizedRequests.put('/delete-student', token, studentEmail)
 }
 
 const emailAfter3DaysRegistration = {
@@ -135,7 +168,7 @@ const API = {
   callCourses,
   fetchStudents,
   searchStudent,
-  unsubscribeOrDeleteStudent,
+  individualStudent,
   CoursesPageData,
   CoursePresencePageData,
   HeaderFooterData,

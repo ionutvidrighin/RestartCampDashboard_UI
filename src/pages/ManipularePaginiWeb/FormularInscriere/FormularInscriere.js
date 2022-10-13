@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchRegistrationFormAlerts,
   updateRegistrationFormAlerts,
   clearRegistrationFormAlertsState } from '../../../redux/actions/webPagesDataActions/registrationFormAlertsActions';
 import { clearServerResponse } from '../../../redux/actions/clearServerResponseAction';
-import { doesUserHavePermission } from "../../../utils/helperFunctions";
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from "../../../utils/helperFunctions";
+import { appPagesConstants } from '../../../constants/userPermissions';
 import { makeStyles } from '@material-ui/styles';
 import { Formik, Form } from "formik";
 import { formValues, formValidation } from './formValuesAndValidation';
@@ -13,10 +13,11 @@ import isEqual from 'lodash.isequal';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import HowToOperateOnPage from '../../../components/EditingWebPages/RegistrationFormPage/HowToOperateOnPage';
 import EditErrorAlerts from '../../../components/EditingWebPages/RegistrationFormPage/EditErrorAlerts';
 import ShowErrorAlerts from '../../../components/EditingWebPages/RegistrationFormPage/ShowErrorAlerts';
-import DisplayRingBellAndBanner from '../../../components/ReusableComponents/DisplayRingBellAndBanner';
+import RingBellAndPageInstructionsBanner from '../../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import OverlayProgressCircle from '../../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
@@ -54,15 +55,15 @@ const useStyles = makeStyles({
 const FormularInscriere = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.PAGINA_FORMULAR_INSCRIERE, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.PAGINA_CURSURI, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission}
 
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchRegistrationFormAlerts())
     }
 
@@ -178,7 +179,7 @@ const FormularInscriere = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <>
           <OverlayProgressCircle overlaySetup={loadingData} />
           <div className='editare-formular-inscriere d-flex'>
@@ -186,7 +187,12 @@ const FormularInscriere = ({ setShowPlaceholder }) => {
             {/* show page when data is fully loaded */}
             { alerts &&
               <>
-                <DisplayRingBellAndBanner position='62px' Component={HowToOperateOnPage} />
+                { hasEditPermission ?
+                  <RingBellAndPageInstructionsBanner Component={HowToOperateOnPage} />
+                  :
+                  <NoPermissionBanner permissions={permissions} />
+                }
+
                 <section className='left-section me-2'>
                   <h6> EDITARE ALERTE PAGINA FORMULAR ÎNSCRIERE </h6>
                   <Divider style={{background: 'white'}} className="mb-5" />
@@ -200,10 +206,14 @@ const FormularInscriere = ({ setShowPlaceholder }) => {
                         <EditErrorAlerts
                           FormikProps={props}
                           localStyles={localStyles}
+                          editPermission={!hasEditPermission}
                         />
 
                         <div className='d-flex justify-content-center'>
-                          <Button variant='contained' type="submit" className={localStyles.submitButton}> 
+                          <Button variant='contained'
+                            type="submit"
+                            className={localStyles.submitButton}
+                            disabled={!hasEditPermission}> 
                             Confirmă modificările
                           </Button>
                         </div>

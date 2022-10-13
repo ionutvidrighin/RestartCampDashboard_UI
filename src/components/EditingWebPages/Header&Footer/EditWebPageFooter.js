@@ -1,7 +1,7 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
 
-const EditWebPageFooter = ({localStyles, FormikProps}) => {
+const EditWebPageFooter = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { pageFooter } = values
 
@@ -21,6 +21,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.facebookPageLink && touched.pageFooter?.facebookPageLink)}
         helperText={errors.pageFooter?.facebookPageLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -36,6 +37,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.linkedinPageLink && touched.pageFooter?.linkedinPageLink)}
         helperText={errors.pageFooter?.linkedinPageLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -51,6 +53,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.instagramPageLink && touched.pageFooter?.instagramPageLink)}
         helperText={errors.pageFooter?.instagramPageLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -66,6 +69,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.whatsappNumber && touched.pageFooter?.whatsappNumber)}
         helperText={errors.pageFooter?.whatsappNumber}
+        disabled={editPermission}
       />
 
       <TextField
@@ -81,6 +85,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.emailAddress && touched.pageFooter?.emailAddress)}
         helperText={errors.pageFooter?.emailAddress}
+        disabled={editPermission}
       />
 
       <TextField
@@ -96,6 +101,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.newsLetterLink && touched.pageFooter?.newsLetterLink)}
         helperText={errors.pageFooter?.newsLetterLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -111,6 +117,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.termsConditionsLink && touched.pageFooter?.termsConditionsLink)}
         helperText={errors.pageFooter?.termsConditionsLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -126,6 +133,7 @@ const EditWebPageFooter = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageFooter?.gdprLink && touched.pageFooter?.gdprLink)}
         helperText={errors.pageFooter?.gdprLink}
+        disabled={editPermission}
       />
     </div>
   )

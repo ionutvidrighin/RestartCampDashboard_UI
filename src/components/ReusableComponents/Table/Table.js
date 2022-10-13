@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { ActionTypes } from '../../../redux/actions/action_types';
 import { useDispatch } from "react-redux";
 import { DataGrid } from '@material-ui/data-grid';
+import { ActionTypes } from '../../../redux/actions/action_types';
 
-export default function Table({ tableColumns, tableData }) {
+function Table({ tableColumns, tableData }) {
   //**Props description:
   // tableColumns = the columns to be rendered in the table (Array of Objects)
   // tableData = the actual data to be rendered in the table (Array of Objects)
@@ -47,3 +47,5 @@ export default function Table({ tableColumns, tableData }) {
     </div>
   )
 }
+
+export default Table

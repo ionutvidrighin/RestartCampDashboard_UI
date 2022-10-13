@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { doesUserHavePermission } from '../../../utils/helperFunctions';
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission,
+  doesUserHaveCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createCSVheadersAccordingToPermission,
+  extractUserTablePermissions } from '../../../utils/helperFunctions';
 import { fetchStudentsByCourseNameAndCareer,
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/registeredStudentsActions';
+  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/getRegisteredStudents';
 import { fetchCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
@@ -14,12 +17,12 @@ import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import GetNewStudentDataDialog from './GetNewStudentDataDialog';
-import tableColumns from './columns';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
-import LineChart from '../../../components/ReusableComponents/LineChart';
+import LineChart from '../../../components/ReusableComponents/Charts/LineChart';
 
 const useStyles = makeStyles({
   button: {
@@ -37,16 +40,25 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
   const dispatch = useDispatch()
   const today = dayjs().format().substring(0, 7)
   const today_ro_format = dayjs().locale('ro').format('LL').substring(3)
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const permissions = { edit: hasEditPermission, export: hasExportCSVPermission }
+  const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
 
   useEffect( () => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchCoursesModule1())
+    }
+
+    return () => {
+      dispatch(clearStudentsInCoursesMod1State())
     }
   }, [])
 
@@ -70,16 +82,17 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
    * data used for the api call: studentCareer, courseName, registrationYearMonth
    */
   useEffect(() => {
-    if (userHasPermission) {
+    if (hasViewPermission) {
       const payload = {}
       if (coursesList.length !== 0) {
         Object.assign(payload, {
           career: 'angajat',
           courseName: coursesList[0].courseName,
-          registrationYearMonth: today
+          registrationYearMonth: today,
+          userTablePermissions
         })      
+        dispatch(fetchStudentsByCourseNameAndCareer(payload))
       }
-      dispatch(fetchStudentsByCourseNameAndCareer(payload))
     }
   }, [])
 
@@ -140,15 +153,19 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className="administrare-cursanti d-flex flex-column align-items-center justify-content-between">
+
+          <NoPermissionBanner permissions={permissions} />
+
+          {/* {!hasEditPermission && <NoEditPermissionBanner />} */}
+
           <div className="p-3 chart-table-btn align-self-start">
             <Button
-            className={localStyles.button}
-            onClick={handleSwitchChartOrTable}
-            variant="contained"
-            startIcon={tableOrChartBtn.table ? <ShowChartRoundedIcon /> : <TableChartRoundedIcon />}
-            >
+              className={localStyles.button}
+              onClick={handleSwitchChartOrTable}
+              variant="contained"
+              startIcon={tableOrChartBtn.table ? <ShowChartRoundedIcon /> : <TableChartRoundedIcon />}>
             {tableOrChartBtn.text}
             </Button>
           </div>
@@ -161,10 +178,16 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                   <Button 
                     className={localStyles.button}
                     variant="contained"
-                    onClick={() => setOpenChangeSearchDataDialog(!openChangeSearchDataDialog)} >
+                    onClick={() => setOpenChangeSearchDataDialog(!openChangeSearchDataDialog)}
+                    disabled={!hasEditPermission}>
                   Schimbă Datele
                   </Button>
-                  <DownloadCSV data={tableDataForExport} tableTitle='CursantiInscrisiPerCurs' /> 
+                  <DownloadCSV
+                    data={tableDataForExport}
+                    tableTitle='CursantiInscrisiPerCurs'
+                    exportPermission={hasExportCSVPermission}
+                    CSVheaders={CSVheaders}
+                  /> 
                 </div>
               </div>
 
@@ -189,6 +212,8 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                   closeDialog={setOpenChangeSearchDataDialog}
                   coursesListNames={coursesList}
                   selectedSearchData={setSelectedSearchData}
+                  limitedAccessOnPastData={viewPastDataLimit}
+                  userTablePermissions={userTablePermissions}
                 />
               }
         
@@ -196,7 +221,7 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                 <Table 
                   tableTitle={chartTableTitles.cursanti_inscrisi_curs} 
                   tableColumns={tableColumns} 
-                  tableData={setupDataForTableStudentPerCourse(getDataFromStore)} />
+                  tableData={setupDataForTableStudentPerCourse(getDataFromStore, tableColumns)} />
               </div>
             </>
           }

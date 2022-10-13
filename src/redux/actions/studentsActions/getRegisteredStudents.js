@@ -3,13 +3,41 @@ import API from '../../../api/api'
 import { store } from "../../store"
 
 
-export const fetchStudentsByDate = (date) => {
+export const fetchStudentsByDate = (body) => {
   /** @date param - is of form Object => {date: 'YYYY-MM'}  */
   const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
     try {
-      const response = await API.fetchStudents.getStudentsByDate(accessToken, date)
+      const response = await API.fetchStudents.getStudentsByDate(accessToken, body)
+      const returnedData = response.data
+      dispatch({
+        type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
+        payload: returnedData
+      })
+    } catch (error) {
+      if (error.response) {
+        dispatch({
+          type: ActionTypes.ERROR_GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
+          payload: error.response.data.message
+        })
+      } else {
+        dispatch({
+          type: ActionTypes.ERROR_GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,
+          payload: 'Server Error - No response'
+        })
+      }
+    }
+  }
+}
+
+export const fetchStudentsWithoutUnsubscribedAndDeleted = (date) => {
+  /** @date param - is of form Object => {date: 'YYYY-MM'}  */
+  const accessToken = store.getState().generateDBTokenReducer.value
+
+  return async (dispatch) => {
+    try {
+      const response = await API.fetchStudents.getStudentsWithoutUnsubscribedAndDeleted(accessToken, date)
       const returnedData = response.data
       dispatch({
         type: ActionTypes.GET_STUDENTS_IN_COURSES_MOD1_BY_DATE,

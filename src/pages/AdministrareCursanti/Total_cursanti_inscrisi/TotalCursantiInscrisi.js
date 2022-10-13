@@ -1,22 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router';
 import { useDispatch, useSelector } from "react-redux";
-import { doesUserHavePermission } from '../../../utils/helperFunctions';
-import { fetchStudentsByDate,
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/registeredStudentsActions';
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission,
+  doesUserHaveCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createCSVheadersAccordingToPermission, 
+  extractUserTablePermissions } from '../../../utils/helperFunctions';
+import { calculateMonthsDifference } from '../../../utils/helperFunctions';
+import { fetchStudentsByDate, clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/getRegisteredStudents';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableAllStudents, setupDataForChart } from '../helperMethods';
 import { makeStyles } from '@material-ui/styles';
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
-import LineChart from '../../../components/ReusableComponents/LineChart';
-import tableColumns from './columns';
+import LineChart from '../../../components/ReusableComponents/Charts/LineChart';
+dayjs.extend(relativeTime)
 
 const useStyles = makeStyles({
   button: {
@@ -32,17 +37,22 @@ const useStyles = makeStyles({
 const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const today = dayjs().format().substring(0, 7)
-  const route = useLocation()
-  const { pathname } = route
+  const currentMonthYear = dayjs().format().substring(0, 7)
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission, export: hasExportCSVPermission}
+  const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const userTablePermissions = extractUserTablePermissions(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
 
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
-      dispatch(fetchStudentsByDate({date: today}))
+    if (hasViewPermission) {
+      dispatch(fetchStudentsByDate({date: currentMonthYear, userTablePermissions }))
     }
     // clear state at component destroy
     return () => dispatch(clearStudentsInCoursesMod1State())
@@ -55,7 +65,7 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
     chart: false,
     text: 'DU-MĂ LA GRAFIC'
   })
-  const [searchingDate, setSearchingDate] = useState(today)
+  const [searchingDate, setSearchingDate] = useState(currentMonthYear)
 
   const getDataFromStore = useSelector(state => ({
     // data used inside the Table
@@ -92,7 +102,36 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
       })
       return
     }
-    dispatch(fetchStudentsByDate({date: searchingDate}))
+
+    const selectedDateIsInFuture = dayjs(searchingDate).isAfter(dayjs())
+    if (selectedDateIsInFuture) {
+      setSnackBar({
+        ...snackBar,
+        background: '#e43d6f', 
+        open: true, 
+        text: "Data selectată nu poate fi in viitor."
+      })
+      return
+    }
+
+      const selectedDate = new Date(searchingDate)
+      const currentDate = new Date()
+      const dateDifference = calculateMonthsDifference(selectedDate, currentDate)
+      if (viewPastDataLimit !== "unlimited") {
+        if (dateDifference >= viewPastDataLimit) {
+          setSnackBar({
+            background: '#e43d6f', 
+            open: true,
+            success: false,
+            upDuration: 12000,
+            text: `Datele mai vechi de ${viewPastDataLimit} luni nu pot fi generate. 
+                  Te rog contactează administratorul pentru mai multe detalii.`
+          })
+          return
+        }
+      }
+
+    dispatch(fetchStudentsByDate({date: searchingDate, userTablePermissions}))
   }
 
   const displaySnackBar = () => {
@@ -128,8 +167,11 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className="administrare-cursanti d-flex flex-column align-items-center justify-content-between">
+
+          <NoPermissionBanner permissions={permissions} />
+
           <div className="p-3 pb-5 chart-table-btn align-self-start">
             <Button
               className={localStyles.button}
@@ -151,22 +193,28 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
                     defaultValue={searchingDate} 
                     onChange={e => setSearchingDate(e.target.value)} 
                     className="me-2"
+                    disabled={!hasEditPermission}
                   />
                   <Button 
                     className={localStyles.button}
                     variant="contained"
-                    onClick={handleSearchNewData} 
-                    >
+                    onClick={handleSearchNewData}
+                    disabled={!hasEditPermission}>
                   Schimbă Datele
                   </Button>
-                  <DownloadCSV data={tableDataForExport} tableTitle='TotalCursantiInscrisi' /> 
+                  <DownloadCSV
+                    data={tableDataForExport}
+                    tableTitle='TotalCursantiInscrisi'
+                    exportPermission={hasExportCSVPermission}
+                    CSVheaders={CSVheaders}
+                  /> 
                 </div>
               </div>
               <div className="px-3 pb-5" style={{width: '100%'}}>
                 <Table
                   tableTitle={chartTableTitles.cursanti_inscrisi_total} 
                   tableColumns={tableColumns} 
-                  tableData={setupDataForTableAllStudents(getDataFromStore)} />
+                  tableData={setupDataForTableAllStudents(getDataFromStore, tableColumns)} />
               </div>
             </>
           }

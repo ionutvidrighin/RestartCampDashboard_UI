@@ -1,56 +1,85 @@
-import defaultTableRowAllStudents from "./Total_cursanti_inscrisi/defaultTableRow"
-import defaultTableRowStudentPerCourse from "./Cursanti_inscrisi_per_curs/defaultTableRow"
-import defaultTableRowCoursePresence from "./Cursanti_prezenti_per_curs/defaultTableRow"
+import { nanoid } from 'nanoid';
+import { tableColumnsConstants } from '../../constants/userPermissions'
 import dayjs from "dayjs"
 
-function setupDataForTableAllStudents(rawData) {
+function createEmptyTableRow(tableColumns) {
+  let emptyTableRow = []
+  tableColumns.forEach(column => emptyTableRow.push({ [column.field]: 'no data', id: nanoid(4) }))
+  emptyTableRow = Object.assign({}, ...emptyTableRow)
+
+  return [emptyTableRow]
+}
+
+function setupDataForTableAllStudents(rawData, tableColumns) {
   let tableData = rawData.allData.map(item => {
     const tableRow = {
       ...item,
-      subscribedToEmails: item.subscribedToEmails ? 'DA' : 'NU',
-      activeStudent: item.activeStudent ? 'DA' : 'NU',
-      course: item.course[0].title,
-      activity: item.career,
-      registrationDate: dayjs(item.registrationDate).locale('ro').format('LL')
+      courseName: item?.course[0].title,
+      registrationDate: dayjs(item?.registrationDate).locale('ro').format('LL')
+    }
+
+    if (item.hasOwnProperty(tableColumnsConstants.SUBSCRIBED_TO_EMAILS)) {
+      Object.assign(tableRow, {
+        subscribedToEmails: item?.subscribedToEmails ? 'DA' : 'NU'
+      })
+    }
+    if (item.hasOwnProperty(tableColumnsConstants.ACTIVE_STUDENT)) {
+      Object.assign(tableRow, {
+        activeStudent: item?.activeStudent ? 'DA' : 'NU'
+      })
     }
     return tableRow
   })
+
   tableData.sort((a, b) => new Date(a.registrationDate) - new Date(b.registrationDate))
 
   // handling empty Array response from database
-  if (tableData.length === 0) tableData = defaultTableRowAllStudents
+  if (tableData.length === 0) {
+    tableData = createEmptyTableRow(tableColumns)
+  }
 
   return tableData
 }
 
-function setupDataForTableStudentPerCourse(rawData) {
+function setupDataForTableStudentPerCourse(rawData, tableColumns) {
   let tableData = rawData.allData.map(item => ({
     id: item.id,
-    registrationDate: dayjs(item.registrationDate).locale('ro').format('LL'),
-    fullName: item.fullName,
-    career: item.career,
-    course: item.course[0].title
+    registrationDate: dayjs(item?.registrationDate).locale('ro').format('LL'),
+    fullName: item?.fullName,
+    career: item?.career,
+    courseName: item?.course[0].title
   }))
   tableData.sort((a,b) => new Date(a.registrationDate) - new Date(b.registrationDate))
 
   // handling empty Array response from database
-  if (tableData.length === 0) tableData = defaultTableRowStudentPerCourse
+  if (tableData.length === 0) {
+    tableData = createEmptyTableRow(tableColumns)
+  }
 
   return tableData
 }
 
-function setupDataForTableCoursePresence(data) {
-  let tableData = data.map(entry => ({
-    id: entry.id,
-    courseName: entry.course.title,
-    date: dayjs(entry.course.date).locale('ro').format('LL'),
-    fullName: entry.fullName,
-    present: entry.course.present ? 'DA' : 'NU',
-    email: entry.email
-  }))
+function setupDataForTableCoursePresence(data, tableColumns) {
+  let tableData = data.map(entry => {
+    const tableRow = {
+      id: entry.id,
+      courseName: entry?.course.title,
+      date: dayjs(entry?.course.date).locale('ro').format('LL'),
+      fullName: entry?.fullName,
+      email: entry?.email
+    }
+    if (entry.hasOwnProperty(tableColumns.PRESENT)) {
+      Object.assign(tableRow, {
+        present: entry?.course.present ? 'DA' : 'NU',
+      })
+    }
+    return tableRow
+  })
 
   // handling empty Array response from database
-  if (tableData.length === 0) tableData = defaultTableRowCoursePresence
+  if (tableData.length === 0) {
+    tableData = createEmptyTableRow(tableColumns)
+  }
 
   return tableData
 }

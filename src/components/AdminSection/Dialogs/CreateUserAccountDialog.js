@@ -1,18 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from 'nanoid';
-import { addDashboardUser, clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUserAccountsActions";
-import { permissionsList, pagesAccess } from '../../../constants/userPermissions';
+import { createDashboardUser, clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUserAccountsActions";
+import { permissions, userRoles, viewTimeLimit } from '../../../constants/userPermissions'; 
 import { makeStyles } from '@material-ui/styles';
+import NativeSelect from '@material-ui/core/NativeSelect';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
-import FormControl from '@material-ui/core/FormControl';
 import SnackBar from '../../ReusableComponents/SnackBar';
 
 const EMAIL_REGEX = "^([a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+\/=?^_`{|}~-]+)*@(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?)$"
@@ -21,6 +22,7 @@ const useStyles = makeStyles({
   container: {
     '& .MuiDialog-paperWidthSm': {
       maxWidth: 800,
+      width: 800,
       height: 600
     }
   },
@@ -44,8 +46,12 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
   const styles = useStyles()
   const dispatch = useDispatch()
 
-  const [newUser, setNewUser] = useState({id: nanoid(5), username: "", password: "", permissionName: ""})
-  const [selectPagesAccess, setSelectPagesAccess] = useState(pagesAccess)
+  const [newUser, setNewUser] = useState({id: nanoid(5), username: "", password: "", role: ""})
+  const [userPermissions, setUserPermissions] = useState(permissions)
+  const [selectRestrictedColumns, setSelectRestrictedColumns] = useState({
+    sectionId: null,
+    open: false
+  })
   const [snackBar, setSnackBar] = useState({})
 
   const serverMessageOnCreateUser = useSelector(state => ({
@@ -96,33 +102,59 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
     setNewUser({username: '', password: ''})
   } 
 
-  const handleInputs = (event) => {
+  const handleGetUsernameAndPassword = (event) => {
     const name = event.target.name
     const value = event.target.value
     setNewUser(values => ({...values, [name]: value, id: nanoid(5)}))
   }
 
-  const handleSelectPermission = (event) => {
-    setNewUser({...newUser, permissionName: event.target.value})
+  const handleSelectUserRole = (event) => {
+    setNewUser({...newUser, role: event.target.value})
   }
 
-  const handleSelectPagesPermission = (event) => {
-    const pageName = event.target.name
-    const newPermissionValue = event.target.checked
-
-    let updatedPagesPermission = selectPagesAccess.map(page => {
-      if (page.name === pageName) {
-        return {...page, hasPermission: newPermissionValue}
-      }
-      return page
+  const handleOpenSelectRestrictedColumns = (sectionId) => {
+    setSelectRestrictedColumns({
+      sectionId,
+      open: !selectRestrictedColumns.open
     })
-    setSelectPagesAccess(updatedPagesPermission)
+  }
+
+  const handleSelectPagesPermission = (event, sectionId, viewDataLimitId) => {
+    const selectedSection = event.target?.name || event.target.getAttribute('name')
+    const selectedViewTimeLimit = event.target.value
+
+    let allUserPermissions = userPermissions
+    const sectionToUpdate = allUserPermissions.findIndex(section => section.id === sectionId)
+    const updatedPermissions = [...allUserPermissions]
+
+    if (selectedSection === 'view') {
+      updatedPermissions[sectionToUpdate].access.view = !allUserPermissions[sectionToUpdate].access.view
+    }
+    if (selectedSection === 'edit') {
+      updatedPermissions[sectionToUpdate].access.edit = !allUserPermissions[sectionToUpdate].access.edit
+    }
+    if (selectedSection === 'download') {
+      updatedPermissions[sectionToUpdate].access.download = !updatedPermissions[sectionToUpdate].access.download
+    }
+    if (selectedSection === 'downloadWhatsapp') {
+      updatedPermissions[sectionToUpdate].access.downloadWhatsapp = !updatedPermissions[sectionToUpdate].access.downloadWhatsapp
+    }
+    if (selectedSection === 'viewTimeLimit') {
+      updatedPermissions[sectionToUpdate].access.viewTimeLimit = {label: selectedViewTimeLimit, value: selectedViewTimeLimit}
+    }
+    if (selectedSection === 'viewDataLimit') {
+      const foundSection = updatedPermissions[sectionToUpdate].access.viewDataLimit
+      const tableColumnToUpdate = foundSection.findIndex(column => column.id === viewDataLimitId)
+      const updatedRestrictedTableColumns = [...foundSection]
+      updatedRestrictedTableColumns[tableColumnToUpdate].selected = !foundSection[tableColumnToUpdate].selected
+    }
+
+    setUserPermissions(updatedPermissions)
   }
 
   const saveAndCloseDialog = () => {
     if (newUser.username === "" || newUser.password === "") {
       setSnackBar({
-        ...snackBar,
         background: '#e53c5d', 
         open: true,
         success: false,
@@ -133,7 +165,6 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
     
     if ( !newUser.username.match(EMAIL_REGEX) ) {
       setSnackBar({
-        ...snackBar,
         background: '#e53c5d', 
         open: true,
         success: false,
@@ -142,29 +173,27 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
       return
     }
 
-    if (newUser.permissionName === "") {
+    if (newUser.role === "") {
       setSnackBar({
-        ...snackBar,
         background: '#e53c5d', 
         open: true,
         success: false,
-        text: "Te rog selectează accesul"
+        text: "Te rog selectează rolul noului cont."
       })
       return
     }
 
-    const allPagesPermission = []
-    const pagesPermission = []
-    selectPagesAccess.forEach(element => {
-      allPagesPermission.push(element.hasPermission)
-      if (element.hasPermission) {
-        pagesPermission.push(element)
-      }
+    const allSectionsPermissions = []
+    userPermissions.forEach(section => {
+      const viewAccess = section.access.view
+      const editAccess = section.access.edit
+      const downloadAccess = section.access?.download
+      const downloadWhatsappAccess = section.access?.downloadWhatsapp
+      allSectionsPermissions.push(viewAccess, editAccess, downloadAccess, downloadWhatsappAccess)
     })
 
-    if (!allPagesPermission.includes(true)) {
+    if (!allSectionsPermissions.includes(true)) {
       setSnackBar({
-        ...snackBar,
         background: '#e53c5d', 
         open: true,
         success: false,
@@ -177,11 +206,11 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
       id: newUser.id,
       username: newUser.username,
       password: newUser.password,
-      access: newUser.permissionName,
-      pagesPermission
+      role: newUser.role,
+      permissions: userPermissions
     }
 
-    dispatch(addDashboardUser(payload))  
+    dispatch(createDashboardUser(payload))
   }
 
   return (
@@ -199,38 +228,35 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
                 name="username"
                 label="USERNAME"
                 value={newUser.username}
-                onChange={handleInputs}
+                onChange={handleGetUsernameAndPassword}
               />
               <TextField 
                 type='text'
                 name="password"
                 label="PAROLĂ"
                 value={newUser.password}
-                onChange={handleInputs}
+                onChange={handleGetUsernameAndPassword}
               />
               <div className='mt-5 d-flex flex-column'>
-                <h6 className='m-0'>Acces: </h6>
+                <h6 className='m-0'>Rol User: </h6>
 
-                { permissionsList.map((permission, index) => {
-                  return (
-                    <FormControl component="fieldset" key={index}>
-                      <RadioGroup
-                        aria-label="permissionName"
-                        name="permissionName"
-                        value={newUser.permissionName}
-                        onChange={handleSelectPermission}
-                      >
-                        <FormControlLabel 
-                          value={permission.name}
-                          control={<Radio style={{color: 'green'}} />} 
-                          label={permission.name}
-                        />
-                      </RadioGroup>
-                    </FormControl>
-                  )
-                })}
-
+                { userRoles.map(role => (
+                  <FormControl component="fieldset" key={nanoid(5)}>
+                    <RadioGroup
+                      aria-label="role"
+                      name="role"
+                      value={newUser.role}
+                      onChange={handleSelectUserRole}>
+                      <FormControlLabel 
+                        value={role.name}
+                        control={<Radio style={{color: 'green'}} />} 
+                        label={role.name}
+                      />
+                    </RadioGroup>
+                  </FormControl>
+                ))}
               </div>
+
               <Button 
                 className='mt-5 fw-bold'
                 variant='contained' 
@@ -244,20 +270,117 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
               <h6 className='text-center pt-2 pb-2'> Acordă access la următoarele sectiuni: </h6>
 
               <div className={`ps-3 ${styles.pagesAccessWrapper}`}>
-                { selectPagesAccess.map((page, index) => {
+                { userPermissions.map(page => {
+                  const { access: { view, edit } } = page
                   return (
-                    <FormControlLabel
-                      key={index}
-                      control={
-                        <Checkbox
-                          checked={page.hasPermission}
-                          onChange={handleSelectPagesPermission} 
-                          name={page.name}
-                          style={{color: 'green'}}
+                    <>
+                      <p className='m-0 fw-bold' key={nanoid(6)}> { page.label }: </p>
+                      <div className='d-flex flex-column ms-4 mb-3'>
+                        <FormControlLabel
+                          key={nanoid(5)}
+                          control={
+                            <Checkbox
+                              checked={view}
+                              onChange={(event) => handleSelectPagesPermission(event, page.id)} 
+                              name={'view'}
+                              style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                            }
+                          label="Vizualizare Sectiune"
                         />
-                      }
-                      label={page.label}
-                    />
+                        <FormControlLabel
+                          key={nanoid(5)}
+                          control={
+                            <Checkbox
+                              checked={edit}
+                              onChange={(event) => handleSelectPagesPermission(event, page.id)} 
+                              name={'edit'}
+                              style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                          }
+                          label="Editare Sectiune"
+                        />
+
+                        { page.access.hasOwnProperty('download') &&
+                          <FormControlLabel
+                            key={nanoid(4)}
+                            control={
+                              <Checkbox
+                                checked={page.access.download}
+                                onChange={(event) => handleSelectPagesPermission(event, page.id)} 
+                                name={'download'}
+                                style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                              }
+                            label="Export/Download CSV"
+                          />
+                        }
+                        
+                        { page.access.hasOwnProperty('downloadWhatsapp') &&
+                          <FormControlLabel
+                            key={nanoid(4)}
+                            control={
+                              <Checkbox
+                                checked={page.access.downloadWhatsapp}
+                                onChange={(event) => handleSelectPagesPermission(event, page.id)} 
+                                name={'downloadWhatsapp'}
+                                style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
+                              }
+                            label="Export/Download CSV Nr. Tel. Whatsapp"
+                          />
+                        }
+
+                        { page.access.hasOwnProperty('viewTimeLimit') &&
+                          <div key={nanoid(4)}>
+                            <label key={nanoid(9)} style={{ fontFamily: "'Roboto', 'Helvetica', 'Arial', 'sans-serif'", marginRight: 5 }}>
+                              Vizualizare date pe (n) luni în urmă:
+                            </label>
+                            <NativeSelect
+                              key={nanoid(8)}
+                              value={page.access.viewTimeLimit.label}
+                              name={'viewTimeLimit'}
+                              onChange={(event) => handleSelectPagesPermission(event, page.id)}>
+
+                              { viewTimeLimit.map(element => (
+                                <option key={nanoid(3)} value={element.label} style={{textAlign: 'center'}}> 
+                                  {element.label}
+                                </option>
+                              ))}
+
+                            </NativeSelect>
+                          </div>
+                        }
+
+                        { page.access.hasOwnProperty('viewDataLimit') &&
+                          <div key={nanoid(4)}>
+                            <p key={nanoid(9)} className='m-0' style={{ fontFamily: "'Roboto', 'Helvetica', 'Arial', 'sans-serif'"}}>
+                              Vizualizare/Export restricționat pentru:
+                            </p>
+
+                            <div className='restricted-table-columns'>
+                              <div className='show-restricted-columns' onClick={() => handleOpenSelectRestrictedColumns(page.id)}>
+                                { page.access.viewDataLimit.map(element => (
+                                    <>
+                                      {element.selected && <span key={element.id}> {element.label} </span>}
+                                    </>
+                                  ))
+                                }
+                              </div>
+
+                              { (selectRestrictedColumns.open && selectRestrictedColumns.sectionId === page.id) && 
+                                <div className='select-columns'>
+                                  { page.access.viewDataLimit.map(element => (
+                                    <div key={element.id}
+                                      name={'viewDataLimit'}
+                                      onClick={(event) => handleSelectPagesPermission(event, page.id, element.id)}
+                                      className={`data-element ${element.selected && 'selected'}`}>
+                                      {element.label}
+                                    </div>
+                                  ))}
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        }
+                      </div>
+                    </>
                   )
                 })}
               </div>

@@ -4,7 +4,7 @@ import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';
-import SnackBar from './SnackBar';
+import SnackBar from '../SnackBar';
 import { nanoid } from 'nanoid';
 
 const AddLinkOnTextDialog = ({openDialog, setOpenDialog, addLinkWords}) => {

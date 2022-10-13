@@ -65,7 +65,8 @@ const DashboardUsersTable = () => {
   const [selectedUser, setSelectedUser] = useState({})
   const [onIconHover, setOnIconHover] = useState({rotate: false, id: null})
   
-  const getUsers = useSelector(state => {
+  const currentlyLoggedUser = useSelector(state => state.authReducer)
+  const dashboardUsers = useSelector(state => {
     let users = state.dashboardUserAccounts.users
     users = users.map(user => {
       let passwordLength = []
@@ -75,7 +76,7 @@ const DashboardUsersTable = () => {
 
       return {
         ...user,
-        icon: displayAccountTypeIcon(user.access),
+        icon: displayAccountTypeIcon(user.role),
         hiddenPassword: passwordLength
       }
     })
@@ -110,7 +111,7 @@ const DashboardUsersTable = () => {
             PAROLĂ
           </div>
           <div className='table-header-item'>
-            ACCES
+            ROL
           </div>
           <div className='table-header-item medium-cell'>
             MODIFICĂ ACCES
@@ -122,8 +123,8 @@ const DashboardUsersTable = () => {
 
         {/* Table body */}
         <Paper className={localStyles.tableBody}>
-          { getUsers.length > 0 &&
-            getUsers.map(user => {
+          { dashboardUsers.length > 0 &&
+            dashboardUsers.map(user => {
               return (
                 <div key={user.id} className='table-row'>
                   <div className='table-body-cell smallest-cell'>
@@ -132,9 +133,9 @@ const DashboardUsersTable = () => {
                       boxShadow: '0px 0px 26px -6px rgba(0,0,0,0.75)',
                       padding: '.4rem'  
                     }}
-                    onMouseEnter={() => setOnIconHover({rotate: true, id: user.id})}
-                    onMouseLeave={() => setOnIconHover({rotate: false, id: user.id})}
-                    className={(onIconHover.rotate && onIconHover.id === user.id) ? 'rotate-icon' : ""}>
+                      onMouseEnter={() => setOnIconHover({rotate: true, id: user.id})}
+                      onMouseLeave={() => setOnIconHover({rotate: false, id: user.id})}
+                      className={(onIconHover.rotate && onIconHover.id === user.id) ? 'rotate-icon' : ""}>
                       <img src={user.icon} alt="account-icon" style={{width: 30, cursor: 'pointer'}} />
                     </div>
                   </div>
@@ -172,23 +173,28 @@ const DashboardUsersTable = () => {
 
                   </div>
 
-                  <div className='table-body-cell' style={{color: isAdmin(user.access) && '#e66cb1'}}>
-                    { user.access }
+                  <div className='table-body-cell' style={{color: isAdmin(user.role) && '#e66cb1'}}>
+                    { user.role }
                   </div>
 
                   <div className='table-body-cell medium-cell'>
                     <Button 
                       variant="contained" 
                       className={localStyles.changeAccessBtn}
-                      onClick={() => openUserPermissionsDialog(user)} >
+                      onClick={() => openUserPermissionsDialog(user)}
+                      disabled={user.id === currentlyLoggedUser.id}>
                       Modifică
                     </Button>
                   </div>
                   
-                  <div className='table-body-cell small-cell delete-account-cell'
-                    onClick={() => openDeleteUserAccountDialog(user)}>
-                    <DeleteForeverIcon className={localStyles.deleteAccount} />
-                  </div>
+                  { (user.id === currentlyLoggedUser.id) ?
+                    <div className='table-body-cell small-cell delete-account-cell'> </div>
+                    :
+                    <div className='table-body-cell small-cell delete-account-cell'
+                      onClick={() => openDeleteUserAccountDialog(user)}>
+                        <DeleteForeverIcon className={localStyles.deleteAccount} />
+                    </div>
+                  }
                 </div>
               )
             })

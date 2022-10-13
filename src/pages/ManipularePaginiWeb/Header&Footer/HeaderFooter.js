@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/styles';
-import { doesUserHavePermission } from "../../../utils/helperFunctions";
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from "../../../utils/helperFunctions";
 import { fetchHeaderFooterData, 
   updateHeaderFooterData,
   clearHeaderFooterDataState } from '../../../redux/actions/webPagesDataActions/headerFooterDataActions';
@@ -13,12 +13,13 @@ import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import isEqual from 'lodash.isequal';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import HowToOperateOnPage from '../../../components/EditingWebPages/Header&Footer/HowToOperateOnPage';
 import EditWebPageHeader from '../../../components/EditingWebPages/Header&Footer/EditWebPageHeader';
 import EditContactInformation from '../../../components/EditingWebPages/Header&Footer/EditContactInformation';
 import EditWebPageFooter from '../../../components/EditingWebPages/Header&Footer/EditWebPageFooter';
 import ShowPageContent from '../../../components/EditingWebPages/Header&Footer/ShowPageContent';
-import DisplayRingBellAndBanner from '../../../components/ReusableComponents/DisplayRingBellAndBanner';
+import RingBellAndPageInstructionsBanner from '../../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import OverlayProgressCircle from '../../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
@@ -57,15 +58,15 @@ const useStyles = makeStyles({
 const HeaderFooter = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CONTENT_HEADER_FOOTER, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.PAGINA_CURSURI, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission}
   
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchHeaderFooterData())
     }
 
@@ -165,7 +166,7 @@ const HeaderFooter = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <>
           <OverlayProgressCircle overlaySetup={loadingData} />
           <div className='header-footer d-flex'>
@@ -173,8 +174,12 @@ const HeaderFooter = ({ setShowPlaceholder }) => {
             {/* show page when data is fully loaded */}
             { dataObject &&
             <>
-              {/* Editing Header&Footer Section */}
-              <DisplayRingBellAndBanner Component={HowToOperateOnPage} />
+              {/* Display Page Instructions Banner */}
+              { hasEditPermission ?
+                <RingBellAndPageInstructionsBanner Component={HowToOperateOnPage} />
+                :
+                <NoPermissionBanner permissions={permissions} /> }
+
               <section className='left-section me-2'>
                 <h6> EDITARE CONTENT HEADER & FOOTER </h6>
                 <Divider style={{background: 'white'}} className="mb-5" />
@@ -185,12 +190,15 @@ const HeaderFooter = ({ setShowPlaceholder }) => {
                   onSubmit={values => handleFormSubmit(values)}>
                 {(props) => (
                   <Form>
-                    <EditWebPageHeader localStyles={localStyles} FormikProps={props} />
-                    <EditContactInformation localStyles={localStyles} FormikProps={props} />
-                    <EditWebPageFooter localStyles={localStyles} FormikProps={props} />
+                    <EditWebPageHeader localStyles={localStyles} FormikProps={props} editPermission={!hasEditPermission} />
+                    <EditContactInformation localStyles={localStyles} FormikProps={props} editPermission={!hasEditPermission} />
+                    <EditWebPageFooter localStyles={localStyles} FormikProps={props} editPermission={!hasEditPermission} />
 
                     <div className='d-flex justify-content-center'>
-                      <Button variant='contained' type="submit" className={localStyles.submitButton}> 
+                      <Button variant='contained'
+                        type="submit"
+                        className={localStyles.submitButton}
+                        disabled={!hasEditPermission}> 
                         Confirmă modificările
                       </Button>
                     </div>

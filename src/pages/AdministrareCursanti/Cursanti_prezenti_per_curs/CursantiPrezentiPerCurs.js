@@ -1,26 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchStudentsPresenceByCourseName,
-  clearCourseModule1Presence } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
-import { clearCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { nanoid } from 'nanoid';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
-import { doesUserHavePermission } from '../../../utils/helperFunctions';
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission,
+  doesUserHaveCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createCSVheadersAccordingToPermission,
+  extractUserTablePermissions } from '../../../utils/helperFunctions';
+import { fetchStudentsPresenceByCourseName,
+  clearCourseModule1Presence } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
+import { clearCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
 import { setupDataForTableCoursePresence, setupDataForBarChartCoursePresence, 
   setupDataForPieChartCoursePresence } from '../helperMethods';
 import dayjs from 'dayjs';
 import Button from '@material-ui/core/Button';
 import ShowChartRoundedIcon from '@material-ui/icons/ShowChartRounded';
 import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
-import tableColumns from './columns';
 import GetNewPresenceDataDialog from './GetNewPresenceDataDialog';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
-import BarChart from '../../../components/ReusableComponents/barChart';
-import RoundChart from '../../../components/ReusableComponents/pieChart';
+import BarChart from '../../../components/ReusableComponents/Charts/barChart';
+import RoundChart from '../../../components/ReusableComponents/Charts/pieChart';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
 const useStyles = makeStyles({
@@ -37,12 +40,17 @@ const useStyles = makeStyles({
 const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
   const today_ro_format = dayjs().locale('ro').format('LL').substring(3)
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission, export: hasExportCSVPermission}
+  const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
 
   const [tableOrChartBtn, setTableOrChartBtn] = useState({
     table: true,
@@ -56,7 +64,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   // fetch All Courses MODULE 1
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchStudentsPresenceByCourseName())
     }
 
@@ -131,8 +139,11 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className="administrare-cursanti d-flex flex-column align-items-center justify-content-between">
+
+          <NoPermissionBanner permissions={permissions} />
+
           <div className="p-3 chart-table-btn align-self-start">
             <Button
               className={localStyles.button}
@@ -152,11 +163,16 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   <Button 
                     className={localStyles.button}
                     variant="contained"
-                    onClick={() => setOpenChangeSearchDataDialog(!openChangeSearchDataDialog)} 
-                    >
+                    onClick={() => setOpenChangeSearchDataDialog(!openChangeSearchDataDialog)}
+                    disabled={!hasEditPermission}>
                   Schimbă Datele
                   </Button>
-                  <DownloadCSV data={tableDataForExport} tableTitle='CursantiPrezentiPerCurs' /> 
+                  <DownloadCSV
+                    data={tableDataForExport}
+                    tableTitle='CursantiPrezentiPerCurs'
+                    exportPermission={hasExportCSVPermission}
+                    CSVheaders={CSVheaders}
+                  /> 
                 </div>
               </div>
 
@@ -181,6 +197,8 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   closeDialog={setOpenChangeSearchDataDialog}
                   coursesListNames={coursesList}
                   selectedData={setSelectedSearchData}
+                  limitedAccessOnPastData={viewPastDataLimit}
+                  userTablePermissions={userTablePermissions}
                 />
               }
 
@@ -189,7 +207,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   tableTitle={chartTableTitles.cursanti_prezenti}
                   courses={coursesList}
                   tableColumns={tableColumns} 
-                  tableData={setupDataForTableCoursePresence(presenceData)} />
+                  tableData={setupDataForTableCoursePresence(presenceData, tableColumns)} />
               </div>
             </>
           }

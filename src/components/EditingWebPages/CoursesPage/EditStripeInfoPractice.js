@@ -1,7 +1,7 @@
 import React from 'react'
 import TextField from '@material-ui/core/TextField';
 
-const EditStripeInfoPractice = ({localStyles, FormikProps}) => {
+const EditStripeInfoPractice = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { stripeInfoPracticeLink } = values
   return (
@@ -20,6 +20,7 @@ const EditStripeInfoPractice = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.stripeInfoPracticeLink && touched.stripeInfoPracticeLink)}
         helperText={errors.stripeInfoPracticeLink}
+        disabled={editPermission}
       />
     </div>
   )

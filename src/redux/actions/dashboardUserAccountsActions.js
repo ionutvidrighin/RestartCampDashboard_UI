@@ -30,26 +30,26 @@ export const fetchDashboardUsers = () => {
   }
 }
 
-export const addDashboardUser = (user) => {
+export const createDashboardUser = (user) => {
   const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
     try {
       await API.dashboardUsersAccounts.createNewUser(accessToken, user)
       dispatch({
-        type: ActionTypes.ADD_DASHBOARD_USER,
+        type: ActionTypes.CREATE_DASHBOARD_USER,
         payload: user
       })
     } catch (error) {
       if (error.response) {
         const errorMessage = error.response.data.error.message
         dispatch({
-          type: ActionTypes.ERROR_ADD_DASHBOARD_USER,
+          type: ActionTypes.ERROR_CREATE_DASHBOARD_USER,
           payload: errorMessage
         })
       } else {
         dispatch({
-          type: ActionTypes.ERROR_ADD_DASHBOARD_USER,
+          type: ActionTypes.ERROR_CREATE_DASHBOARD_USER,
           payload: 'Server Error - No response'
         })
       }

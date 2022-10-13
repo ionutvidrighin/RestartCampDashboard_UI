@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
-import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/studentsActions/registeredStudentsActions';
+import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/studentsActions/getRegisteredStudents';
+import { calculateMonthsDifference } from '../../../utils/helperFunctions';
+import { nanoid } from 'nanoid';
+import dayjs from 'dayjs';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
-import { nanoid } from 'nanoid';
-import dayjs from 'dayjs';
 
 
-const GetNewStudentDataDialog = ({openDialog, closeDialog, coursesListNames, selectedSearchData}) => {
+const GetNewStudentDataDialog = ({openDialog, closeDialog, coursesListNames, selectedSearchData, limitedAccessOnPastData, userTablePermissions}) => {
   const dispatch = useDispatch()
   const today = dayjs().format().substring(0, 7)
 
@@ -80,10 +81,28 @@ const GetNewStudentDataDialog = ({openDialog, closeDialog, coursesListNames, sel
       return
     }
 
+    const dateSelected = new Date(selectedDate)
+    const currentDate = new Date()
+    const dateDifference = calculateMonthsDifference(dateSelected, currentDate)
+    if (limitedAccessOnPastData !== "unlimited") {
+      if (dateDifference >= limitedAccessOnPastData) {
+        setSnackBar({
+          background: '#e43d6f', 
+          open: true,
+          success: false,
+          upDuration: 12000,
+          text: `Datele mai vechi de ${limitedAccessOnPastData} luni nu pot fi generate. 
+                Te rog contactează administratorul pentru mai multe detalii.`
+        })
+        return
+      }
+    }
+
     const payload = {
       career: selectedCareer.type,
       courseName: selectedCourse.courseName,
-      registrationYearMonth: selectedDate
+      registrationYearMonth: selectedDate,
+      userTablePermissions
     }
 
     dispatch(fetchStudentsByCourseNameAndCareer(payload))

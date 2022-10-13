@@ -8,7 +8,7 @@ import { addWordsWithLinkOnHeaderFooter,
 import AddLinkOnWordsDialog from '../../ReusableComponents/WebpagesManipulation/AddLinkOnWordsDialog';
 import ShowWordsWithLink from '../../ReusableComponents/WebpagesManipulation/ShowWordsWithLink';
 
-const EditContactInformation = ({localStyles, FormikProps}) => {
+const EditContactInformation = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { contactInformation } = values
 
@@ -36,6 +36,7 @@ const EditContactInformation = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.contactInformation?.title && touched.contactInformation?.title)}
         helperText={errors.contactInformation?.title}
+        disabled={editPermission}
       />
 
       {/* <div className='add-and-show-words-with-links'>
@@ -86,13 +87,15 @@ const EditContactInformation = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.contactInformation?.paragraph && touched.contactInformation?.paragraph)}
         helperText={errors.contactInformation?.paragraph}
+        disabled={editPermission}
       />
 
       <div className='add-and-show-words-with-links'>
         <Button
           onClick={() => setAddWordsWithLinkParagraph(!addWordsWithLinkParagraph)}
           variant="contained"
-          className='mb-2'>
+          className='mb-2'
+          disabled={editPermission}>
           <span className='text-capitalize me-1'>
             Adaugă
           </span>
@@ -109,7 +112,8 @@ const EditContactInformation = ({localStyles, FormikProps}) => {
           childObjectKey="paragraph"
         />
 
-        <ShowWordsWithLink 
+        <ShowWordsWithLink
+          editPermission={editPermission}
           data={wordsWithLink.paragraph}
           removeWordAction={removeWordsWithLinkOnHeaderFooter}
           objectKeyLocation="contactInformation"

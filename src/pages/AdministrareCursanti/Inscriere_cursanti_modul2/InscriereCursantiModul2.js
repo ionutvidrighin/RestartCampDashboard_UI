@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import { useSelector } from 'react-redux';
 import { nanoid } from 'nanoid';
-import { doesUserHavePermission } from '../../../utils/helperFunctions';
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../../utils/helperFunctions';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { makeStyles } from '@material-ui/styles';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import AddBoxIcon from '@material-ui/icons/AddBox';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -53,11 +54,11 @@ const useStyles = makeStyles({
 
 const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.INSCRIERE_CURSANTI_MODUL2, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.INSCRIERE_CURSANTI_MODUL2, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission}
 
   useEffect(() => setShowPlaceholder(false), [])
   
@@ -157,15 +158,21 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className='inscriere-cursanti-modul2'>
           <h4 className='text-center'>Înscriere cursanți MODUL 2</h4>
+
+          <NoPermissionBanner permissions={permissions} />
 
           <div className='add-student-container'>
             { addRow.map( element => (
               <div key={element.id} className='ms-3 d-flex justify-content-start align-items-center'>
-                <DeleteForeverIcon className="add-remove-row" onClick={() => handleRemoveRow(element.id)} />
-                <AddBoxIcon className="add-remove-row me-2" onClick={handleAddNewRow} />
+                { hasEditPermission &&
+                  <>
+                    <DeleteForeverIcon className="add-remove-row" onClick={() => handleRemoveRow(element.id)} />
+                    <AddBoxIcon className="add-remove-row me-2" onClick={handleAddNewRow} />
+                  </>
+                }
 
                 <MuiPickersUtilsProvider utils={DateFnsUtils}>
                   <KeyboardDatePicker
@@ -179,6 +186,7 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
                     KeyboardButtonProps={{
                       'aria-label': 'change date',
                     }}
+                    disabled={!hasEditPermission}
                   />
                 </MuiPickersUtilsProvider>
 
@@ -190,6 +198,7 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
                   size="small" 
                   label="Nume complet"
                   onChange={e => updateFullName(element.id, e.target.value)}
+                  disabled={!hasEditPermission}
                 />
           
                 <TextField
@@ -200,6 +209,7 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
                   size="small" 
                   label="Adresa e-mail"
                   onChange={e => updateEmailAddress(element.id, e.target.value)}
+                  disabled={!hasEditPermission}
                 />
           
                 <TextField
@@ -210,6 +220,7 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
                   size="small" 
                   label="Denumire curs MODUL 2"
                   onChange={e => updateCourseName(element.id, e.target.value)}
+                  disabled={!hasEditPermission}
                 />
               </div>
             ))}
@@ -219,7 +230,8 @@ const InscriereCursantiModul2 = ({ setShowPlaceholder }) => {
           <Button
             variant='contained'
             onClick={handleStoreStudents}
-            className={localStyles.button}>
+            className={localStyles.button}
+            disabled={!hasEditPermission}>
               Confirm înscrierea
           </Button>
         </div>

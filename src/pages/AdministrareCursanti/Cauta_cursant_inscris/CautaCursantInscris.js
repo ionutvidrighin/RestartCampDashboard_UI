@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
-import { doesUserHavePermission } from '../../../utils/helperFunctions';
+import { appPagesConstants } from '../../../constants/userPermissions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../../utils/helperFunctions';
 import { clearStudentData } from '../../../redux/actions/studentsActions/searchStudent';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import SearchStudentSection from '../../../components/SearchStudentData/SearchStudentSection';
 import SearchedStudentSection from '../../../components/SearchStudentData/SearchedStudentSection';
 
@@ -42,11 +43,11 @@ const useStyles = makeStyles({
 const CautaCursantInscris = ({setShowPlaceholder}) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CAUTA_CURSANT_INSCRIS, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CAUTA_CURSANT_INSCRIS, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission}
 
   useEffect(() => {
     setShowPlaceholder(false)
@@ -57,15 +58,18 @@ const CautaCursantInscris = ({setShowPlaceholder}) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className='administrare-cursanti'>
+          
+          <NoPermissionBanner permissions={permissions} />
+
           <div className='d-flex cauta-cursant-inscris'>
             <div className='search-student-section'>
               <h6 className='ms-3 page-title'> CAUTĂ CURSANT </h6>
 
               <Divider style={{background: 'white'}} className='mt-3 mb-4' />
 
-              <SearchStudentSection localStyles={localStyles} />
+              <SearchStudentSection localStyles={localStyles} editPermission={!hasEditPermission} />
             </div>
 
             <div className='show-searched-student-section'>

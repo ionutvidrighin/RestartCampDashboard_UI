@@ -1,12 +1,9 @@
 import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
+import { CSVLink } from "react-csv";
+import { chartTableTitles } from "../../../constants/chartTableTitlesConstants";
 import Button from '@material-ui/core/Button';
 import SnackBar from '../../ReusableComponents/SnackBar';
-import { CSVLink } from "react-csv";
-import { CSV_HEADERS_ALL_STUDENTS } from "../../../pages/AdministrareCursanti/Total_cursanti_inscrisi/columns";
-import { CSV_HEADERS_STUDENTS_BY_COURSE } from "../../../pages/AdministrareCursanti/Cursanti_inscrisi_per_curs/columns";
-import { CSV_HEADERS_STUDENTS_PRESENCE } from "../../../pages/AdministrareCursanti/Cursanti_prezenti_per_curs/columns";
-import { chartTableTitles } from "../../../constants/chartTableTitlesConstants";
 
 const useStyles = makeStyles({
   button: {
@@ -31,7 +28,7 @@ const useStyles = makeStyles({
   }
 })
 
-const DownloadCSV = ({data, tableTitle}) => {
+const DownloadCSV = ({data, tableTitle, exportPermission, CSVheaders}) => {
   const localStyles = useStyles()
   const [snackBar, setSnackBar] = useState({upDuration: 3000})
 
@@ -39,7 +36,7 @@ const DownloadCSV = ({data, tableTitle}) => {
     if (data.length === 0) {
       setSnackBar({
         ...snackBar,
-        background: '#e53c5d', 
+        background: '#e43d6f', 
         open: true,
         success: false,
         position: 'top',
@@ -48,27 +45,22 @@ const DownloadCSV = ({data, tableTitle}) => {
     }
   }
 
-  let csvHeader = ''
   let csvFileName;
   switch(tableTitle) {
     case chartTableTitles.cursanti_inscrisi_total:
-    csvHeader = CSV_HEADERS_ALL_STUDENTS
     csvFileName = 'Total_cursanti_inscrisi'
     break;
 
     case chartTableTitles.cursanti_inscrisi_curs:
-    csvHeader = CSV_HEADERS_STUDENTS_BY_COURSE
     csvFileName = 'Cursanti_inscrisi_per_curs'
     break;
 
     case chartTableTitles.cursanti_prezenti:
-    csvHeader = CSV_HEADERS_STUDENTS_PRESENCE
     csvFileName = 'Cursanti_prezenti_la_curs'
     break;
 
     default:
-    csvHeader = null
-    csvFileName = ""
+    csvFileName = "Export_CSV"
   }
 
   return (
@@ -77,19 +69,21 @@ const DownloadCSV = ({data, tableTitle}) => {
         <Button
           className={localStyles.button}
           variant="contained"
-          onClick={handleDisplayErrorForNoTableDataSelected}>
+          onClick={handleDisplayErrorForNoTableDataSelected}
+          disabled={!exportPermission}>
           Exportă în CSV
         </Button>
         :
         <CSVLink
           data={data} 
           id="csv-export" 
-          headers={csvHeader}
+          headers={CSVheaders}
           filename={csvFileName} >
           <Button
             className={localStyles.button}
             variant="contained"
-            onClick={()=>{}} >
+            onClick={()=>{}}
+            disabled={!exportPermission}>
             Exportă în CSV
           </Button>
         </CSVLink>

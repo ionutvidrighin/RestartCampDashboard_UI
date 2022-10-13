@@ -47,7 +47,7 @@ const MyAccount = () => {
   const history = useHistory()
 
   const [showProfileAccountMenu, setShowProfileAccountMenu] = useState(false)
-  const getUserAccessFromStore = useSelector(state => state.authReducer.access)
+  const getUserAccessFromStore = useSelector(state => state.authReducer.role)
 
   const logout = () => {
     dispatch(logUserOut())

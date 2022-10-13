@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from 'react-redux';
-import { doesUserHavePermission, getStudentNameAndEmail } from '../../utils/helperFunctions';
+import { appPagesConstants } from '../../constants/userPermissions';
+import { doesUserHaveViewPermission, getStudentNameAndEmail } from '../../utils/helperFunctions';
 import { clearStudentData } from '../../redux/actions/studentsActions/searchStudent';
 import { makeStyles } from '@material-ui/styles';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
@@ -50,11 +50,9 @@ const useStyles = makeStyles({
 const DezabonareCursanti = ({setShowPlaceholder}) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.DEZABONARE_STERGERE_CURSANTI, userPagesAccessFromStore)
 
   const studentData = useSelector(state => ({
     data: state.searchStudentReducer.data,
@@ -86,7 +84,7 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
 
   return (
     <> 
-      { userHasPermission ?
+      { hasViewPermission ?
         <div className='dezabonare-stergere-cursant'>
 
           <div className='top-section'>
@@ -104,8 +102,15 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
               {/* Show Unsubscribe and Delete Student Buttons only if Student was found */}
               { (data && success) &&
                 <div>
-                  <UnsubscribeStudentButton localStyles={localStyles} />
-                  <DeleteStudentButton localStyles={localStyles} />
+                  <UnsubscribeStudentButton
+                    localStyles={localStyles}
+                    studentEmail={studentNameAndEmail.split('-')[1].trim()}
+                  />
+          
+                  <DeleteStudentButton
+                    localStyles={localStyles}
+                    studentEmail={studentNameAndEmail.split('-')[1].trim()}
+                  />
                 </div>
               }
             </div>

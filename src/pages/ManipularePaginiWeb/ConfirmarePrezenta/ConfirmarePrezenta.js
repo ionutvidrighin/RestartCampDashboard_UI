@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCoursePresencePageData, 
   updateCoursePresencePageData,
   clearCoursePresencePageDataState } from '../../../redux/actions/webPagesDataActions/coursePresencePageDataActions';
 import { clearServerResponse } from '../../../redux/actions/clearServerResponseAction';
-import { doesUserHavePermission } from "../../../utils/helperFunctions";
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from "../../../utils/helperFunctions";
+import { appPagesConstants } from '../../../constants/userPermissions';
 import { makeStyles } from '@material-ui/styles';
 import { Formik, Form } from "formik";
 import { formValues, formValidation } from './formValuesAndValidation';
@@ -13,11 +13,12 @@ import isEqual from 'lodash.isequal';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
+import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import HowToOperateOnPage from '../../../components/EditingWebPages/CoursePresence/HowToOperateOnPage';
 import EditContentForMoreThan30minBeforeCourseStart from '../../../components/EditingWebPages/CoursePresence/EditContentForMoreThan30minBeforeCourseStart';
 import EditContentForLessThan30minBeforeCourseStart from '../../../components/EditingWebPages/CoursePresence/EditContentForLessThan30minBeforeCourseStart';
 import ShowPageContent from '../../../components/EditingWebPages/CoursePresence/ShowPageContent';
-import DisplayRingBellAndBanner from '../../../components/ReusableComponents/DisplayRingBellAndBanner';
+import RingBellAndPageInstructionsBanner from '../../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import OverlayProgressCircle from '../../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
@@ -55,15 +56,15 @@ const useStyles = makeStyles({
 const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
 
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.PAGINA_CONFIRMARE_PREZENTA, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.PAGINA_CONFIRMARE_PREZENTA, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission}
   
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchCoursePresencePageData())
     }
 
@@ -208,7 +209,7 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
 
   return (
     <> 
-      { userHasPermission ?
+      { hasViewPermission ?
         <>
           <OverlayProgressCircle overlaySetup={loadingData} />
           <div className='confirmare-prezenta d-flex' style={{pointerEvents: loadingData.showCircle ? 'none': 'auto'}}>
@@ -216,8 +217,12 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
             {/* show page when data is fully loaded */}
             { dataObject && 
               <>
-                {/* Editing PageData Section */}
-                <DisplayRingBellAndBanner position='62px' Component={HowToOperateOnPage} />
+                { hasEditPermission ?
+                  <RingBellAndPageInstructionsBanner position={'60px'} Component={HowToOperateOnPage} />
+                  :
+                  <NoPermissionBanner permissions={permissions} />
+                }
+
                 <section className='left-section me-2'>
                   <h6> EDITARE PAGINA CONFIRMARE PREZENȚĂ </h6>
                   <Divider style={{background: 'white'}} className="mb-5" />
@@ -232,16 +237,21 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
                         FormikProps={props} 
                         localStyles={localStyles}
                         wordsWithLinks={dataObject?.moreThan30Min?.linkWords}
+                        editPermission={!hasEditPermission}
                       />
                       <EditContentForLessThan30minBeforeCourseStart
                         FormikProps={props}
                         localStyles={localStyles}
                         formTitleMultipleRows={handleSelectFormTitleOnMultipleRows}
                         wordsWithLinks={dataObject?.lessThan30Min?.linkWords}
+                        editPermission={!hasEditPermission}
                       />
 
                       <div className='d-flex justify-content-center'>
-                        <Button variant='contained' type="submit" className={localStyles.submitButton}> 
+                        <Button variant='contained'
+                          type="submit"
+                          className={localStyles.submitButton}
+                          disabled={!hasEditPermission}> 
                           Confirmă modificările
                         </Button>
                       </div>

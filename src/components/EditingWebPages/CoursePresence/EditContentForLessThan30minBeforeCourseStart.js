@@ -6,7 +6,7 @@ import { addWordsWithLinkOnCoursePresencePageData,
 import AddLinkOnWordsDialog from '../../ReusableComponents/WebpagesManipulation/AddLinkOnWordsDialog';
 import ShowWordsWithLink from '../../ReusableComponents/WebpagesManipulation/ShowWordsWithLink';
 
-const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMultipleRows, wordsWithLinks, localStyles}) => {
+const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMultipleRows, wordsWithLinks, localStyles, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { lessThan30Min: { formTitle, paragraph1, paragraph2 } } = values
 
@@ -31,12 +31,14 @@ const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMul
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <div className='mb-4 d-flex align-items-center'>
         <input type="checkbox" 
           onChange={formTitleMultipleRows}
           style={{width: '15px', height: '15px', cursor: 'pointer'}}
+          disabled={editPermission}
         />
         <label className='ms-2' style={{color: '#fcba03', fontSize: '.9rem'}}>
           Titlu Formular pe mai multe rânduri ?
@@ -59,6 +61,7 @@ const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMul
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
 
       <TextField
@@ -77,13 +80,15 @@ const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMul
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
 
       <div className='add-and-show-words-with-links'>
         <Button
           onClick={() => setAddWordsWithLinkParagraph2(!addWordsWithLinkParagraph2)}
           variant="contained"
-          className='mb-2'>
+          className='mb-2'
+          disabled={editPermission}>
           <span className='text-capitalize me-1'>
             Adaugă
           </span>
@@ -100,7 +105,8 @@ const EditContentForLessThan30minBeforeCourseStart = ({FormikProps, formTitleMul
           paragraphNumber="paragraph2"
         />
 
-        <ShowWordsWithLink 
+        <ShowWordsWithLink
+          editPermission={editPermission}
           data={wordsWithLinks?.paragraph2}
           removeWordAction={removeWordsWithLinkOnCoursePresencePageData}
           objectKeyLocation="lessThan30Min"

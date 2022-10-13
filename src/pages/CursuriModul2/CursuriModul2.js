@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation } from "react-router-dom";
 import { fetchCoursesModule2, 
   updateCourseModule2State,
   deleteCourseModule2,
   clearCoursesModule2,
   clearCoursesModule2ServerResponse } from "../../redux/actions/coursesActions/coursesModule2";
-import { doesUserHavePermission } from "../../utils/helperFunctions";
+import { appPagesConstants } from "../../constants/userPermissions";
+import { doesUserHaveViewPermission } from "../../utils/helperFunctions";
 import { makeStyles } from '@material-ui/styles';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -16,9 +16,9 @@ import NoAccessPage from "../../components/NoAccessPage";
 import CourseModule2Card from "../../components/CoursesModule2/CourseModule2Card";
 import AddCourseModule2 from '../../components/CoursesModule2/AddCourseModule2';
 import ChangeCourseModule2 from '../../components/CoursesModule2/ChangeCourseModule2';
-import DeleteCourseDialog from "../../components/ReusableComponents/DeleteCourseDialog";
+import DeleteCourseDialog from "../../components/ReusableComponents/Dialogs/DeleteCourseDialog";
 import SnackBar from "../../components/ReusableComponents/SnackBar";
-import ToggleCourseStateBanner from "../../components/ReusableComponents/ToggleCourseStateBanner";
+import ToggleCourseStateBanner from "../../components/ReusableComponents/Banners/ToggleCourseStateBanner";
 import OverlayProgressCircle from "../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle";
 
 const useStyles = makeStyles({
@@ -37,15 +37,13 @@ const useStyles = makeStyles({
 const CursuriModul2 = ({setShowPlaceholder}) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
-  const route = useLocation()
-  const { pathname } = route
   
-  const getUserPagesAccessFromStore = useSelector(state => state.authReducer.pagesPermission)
-  const userHasPermission = doesUserHavePermission(pathname, getUserPagesAccessFromStore)
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.MANIPULARE_CURSURI_MODUL2, userPagesAccessFromStore)
 
   useEffect(() => {
     setShowPlaceholder(false)
-    if (userHasPermission) {
+    if (hasViewPermission) {
       dispatch(fetchCoursesModule2())
     }
     return () => dispatch(clearCoursesModule2())
@@ -111,7 +109,7 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
 
   return (
     <>
-      { userHasPermission ?
+      { hasViewPermission ?
         <>
           <OverlayProgressCircle overlaySetup={loadingData} />
           <div className="cursuri-platite">

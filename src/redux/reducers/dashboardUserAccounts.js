@@ -10,7 +10,7 @@ const dashboardUserAccounts = (state = intialState, { type, payload }) => {
       return {
         users: payload
       }
-    case ActionTypes.ADD_DASHBOARD_USER:
+    case ActionTypes.CREATE_DASHBOARD_USER:
       return {
         users: [...state.users, payload],
         success: true
@@ -18,8 +18,8 @@ const dashboardUserAccounts = (state = intialState, { type, payload }) => {
     case ActionTypes.UPDATE_DASHBOARD_USER:
       const userToUpdate = state.users.findIndex(user => user.id === payload.id)
       const updatedUsersList = [...state.users]
-      updatedUsersList[userToUpdate].pagesPermission = payload.pagesPermission
-      updatedUsersList[userToUpdate].access = payload.access
+      updatedUsersList[userToUpdate].permissions = payload.permissions
+      updatedUsersList[userToUpdate].role = payload.role
       return {
         users: updatedUsersList,
         success: true
@@ -31,7 +31,7 @@ const dashboardUserAccounts = (state = intialState, { type, payload }) => {
         users: newUsersList,
         success: true
       }
-    case ActionTypes.ERROR_ADD_DASHBOARD_USER:
+    case ActionTypes.ERROR_CREATE_DASHBOARD_USER:
     case ActionTypes.ERROR_UPDATE_DASHBOARD_USER:
     case ActionTypes.ERROR_DELETE_DASHBOARD_USER:
       return {

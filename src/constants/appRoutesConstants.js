@@ -1,4 +1,4 @@
-export const URLconstants = {
+export const appRoutes = {
   pagina_cursuri: '/editare-pagina-cursuri',
   headerFooter: '/editare-header-footer',
   formular_inscriere: '/editare-formular-inscriere',

@@ -2,7 +2,7 @@ import React from 'react'
 import TextField from '@material-ui/core/TextField';
 
 
-const EditWebPageHeader = ({localStyles, FormikProps}) => {
+const EditWebPageHeader = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { pageHeader } = values
 
@@ -22,6 +22,7 @@ const EditWebPageHeader = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.pageHeader?.backButtonLink && touched.pageHeader?.backButtonLink)}
         helperText={errors.pageHeader?.backButtonLink}
+        disabled={editPermission}
       />
 
       <TextField
@@ -37,6 +38,7 @@ const EditWebPageHeader = ({localStyles, FormikProps}) => {
         value={pageHeader.companyLogoLink}
         error={Boolean(errors.pageHeader?.companyLogoLink && touched.pageHeader?.companyLogoLink)}
         helperText={errors.pageHeader?.companyLogoLink}
+        disabled={editPermission}
       />
     </div>
   )

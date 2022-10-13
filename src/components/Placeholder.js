@@ -1,6 +1,4 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import Button from '@material-ui/core/Button';
 
 const componentStyle = {
   flex: 1,
@@ -21,16 +19,9 @@ const componentStyle = {
 }
 
 const Placeholder = () => {
-  const isDBTokenGenerated = useSelector(state => state.generateDBTokenReducer.isTokenGenerated)
 
   return (
     <div style={componentStyle} className="placeholder-component d-flex flex-column align-items-center justify-content-center">
-      { !isDBTokenGenerated &&
-        <div style={componentStyle.noDBaccessBanner}>
-          ÎN ACEST MOMENT ACCESUL LA BAZA DE DATE ESTE RESTRICȚIONAT
-        </div>
-      }
-      
       <div>
         <h2 className="fw-bold" style={{color: 'white'}}>Welcome</h2>
       </div>

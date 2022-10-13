@@ -6,7 +6,7 @@ import Avatar from '@material-ui/core/Avatar';
 const DisplayLoggedUser = () => {
 
   const getUserFromStore = useSelector(state => state.authReducer.username)
-  const getUserAccessFromStore = useSelector(state => state.authReducer.access)
+  const getUserAccessFromStore = useSelector(state => state.authReducer.role)
   const [accountTypeIcon, setAccountTypeIcon] = useState("")
 
   useEffect(() => {
@@ -29,7 +29,7 @@ const DisplayLoggedUser = () => {
       <div style={{ 
         position: 'absolute', 
         top: 12, 
-        right: 3, 
+        right: -15, 
         padding: '.8rem' ,
         borderRadius: '50%',
         border: '1px solid rgba(255, 255, 255, 0.5)',

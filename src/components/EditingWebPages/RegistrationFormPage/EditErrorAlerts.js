@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 
-const EditErrorAlerts = ({FormikProps, localStyles}) => {
+const EditErrorAlerts = ({FormikProps, localStyles, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
 
   return (
@@ -23,6 +23,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         value={values.fullName_error}
         error={Boolean(errors.fullName_error && touched.fullName_error)}
         helperText={errors.fullName_error}
+        disabled={editPermission}
       />
 
       <TextField
@@ -41,6 +42,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -59,6 +61,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -77,6 +80,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -95,6 +99,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -113,6 +118,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -131,6 +137,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
       
       <TextField
@@ -149,6 +156,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -167,6 +175,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -185,6 +194,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={3}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -203,6 +213,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
       
       <TextField
@@ -221,6 +232,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -239,6 +251,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />
 
       <TextField
@@ -257,6 +270,7 @@ const EditErrorAlerts = ({FormikProps, localStyles}) => {
         multiline={true}
         maxRows={2}
         minRows={2}
+        disabled={editPermission}
       />    
   </div>
   )

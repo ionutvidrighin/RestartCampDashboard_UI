@@ -3,7 +3,7 @@ import { useDispatch } from "react-redux";
 import TextField from '@material-ui/core/TextField';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
-const ShowWordsWithLink = ({data, removeWordAction, objectKeyLocation, childObjectKey, localStyles}) => {
+const ShowWordsWithLink = ({editPermission, data, removeWordAction, objectKeyLocation, childObjectKey, localStyles}) => {
   /** Props Explanation:
    * data -> type Array of Objects [{id: '', word: '', link: ''}] to be rendered in this component
    * removeWordAction -> type Function; Redux Action to remove the element from the Store
@@ -44,6 +44,7 @@ const ShowWordsWithLink = ({data, removeWordAction, objectKeyLocation, childObje
                     id='element'
                     name="element"
                     value={element.word}
+                    disabled={editPermission}
                   />
               
                   <TextField
@@ -57,13 +58,16 @@ const ShowWordsWithLink = ({data, removeWordAction, objectKeyLocation, childObje
                     id="element.link"
                     name="element.link"
                     value={element.link}
+                    disabled={editPermission}
                   />
 
-                  <DeleteForeverIcon 
-                    fontSize='medium'
-                    style={{color: 'white', cursor: 'pointer', alignSelf: 'flex-start'}}
-                    onClick={() => handleRemoveRow(element.id)}
-                  />
+                  { !editPermission &&
+                    <DeleteForeverIcon 
+                      fontSize='medium'
+                      style={{color: 'white', cursor: 'pointer', alignSelf: 'flex-start'}}
+                      onClick={() => handleRemoveRow(element.id)}
+                    />
+                  }
                 </div>
               )
             })

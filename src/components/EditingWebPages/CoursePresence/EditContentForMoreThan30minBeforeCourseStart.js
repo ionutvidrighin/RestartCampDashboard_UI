@@ -1,7 +1,7 @@
 import React from 'react';
 import TextField from '@material-ui/core/TextField';
 
-const EditContentForMoreThan30minBeforeCourseStart = ({FormikProps, localStyles}) => {
+const EditContentForMoreThan30minBeforeCourseStart = ({FormikProps, localStyles, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { moreThan30Min } = values
   
@@ -24,6 +24,7 @@ const EditContentForMoreThan30minBeforeCourseStart = ({FormikProps, localStyles}
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
 
       <TextField
@@ -42,6 +43,7 @@ const EditContentForMoreThan30minBeforeCourseStart = ({FormikProps, localStyles}
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
     </div>
   )

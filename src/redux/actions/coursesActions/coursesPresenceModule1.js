@@ -1,3 +1,5 @@
+import { extractUserTablePermissions } from  '../../../utils/helperFunctions'
+import { appPagesConstants } from '../../../constants/userPermissions';
 import { ActionTypes } from '../action_types';
 import { store }  from '../../store';
 import API from '../../../api/api';
@@ -5,6 +7,9 @@ import dayjs from 'dayjs';
 
 export const fetchStudentsPresenceByCourseName = (body) => {
   const today = dayjs().format().substring(0, 7)
+
+  const userPagesAccessFromStore = store.getState().authReducer.permissions
+  const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
 
   const accessToken = store.getState().generateDBTokenReducer.value
   return async (dispatch) => {
@@ -20,7 +25,8 @@ export const fetchStudentsPresenceByCourseName = (body) => {
         // prepare payload to make the call for Student Presence Data in Courses Module 1
         const studentsPresencePayload = {
           courseName: coursesModule1.data[0].courseTitle,
-          registrationYearMonth: today
+          registrationYearMonth: today,
+          userTablePermissions
         }
         const response = await API.fetchStudents.getStudentsPresenceByCourseName(accessToken, studentsPresencePayload)
         const returnedData = response.data

@@ -9,7 +9,7 @@ import AddLinkOnWordsDialog from '../../ReusableComponents/WebpagesManipulation/
 import ShowWordsWithLink from '../../ReusableComponents/WebpagesManipulation/ShowWordsWithLink';
 
 
-const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
+const EditInfoCoursesModule1 = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { infoCoursesModule1 } = values
 
@@ -37,6 +37,7 @@ const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
         value={infoCoursesModule1.title}
         error={Boolean(errors.infoCoursesModule1?.title && touched.infoCoursesModule1?.title)}
         helperText={errors.infoCoursesModule1?.title}
+        disabled={editPermission}
       />
 
       <TextField
@@ -55,13 +56,15 @@ const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
 
       <div className='add-and-show-words-with-links'>
         <Button
           onClick={() => setAddWordsWithLinkParagraph1(!addWordsWithLinkParagraph1)}
           variant="contained"
-          className='mb-2'>
+          className='mb-2'
+          disabled={editPermission}>
           <span className='text-capitalize me-1'>
             Adaugă
           </span>
@@ -78,7 +81,8 @@ const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
           childObjectKey="paragraph1"
         />
 
-        <ShowWordsWithLink 
+        <ShowWordsWithLink
+          editPermission={editPermission}
           data={wordsWithLink.paragraph1}
           removeWordAction={removeWordsWithLinkOnCoursesPageData}
           objectKeyLocation="infoCoursesModule1"
@@ -105,13 +109,15 @@ const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
         multiline={true}
         maxRows={5}
         minRows={5}
+        disabled={editPermission}
       />
 
       <div className='add-and-show-words-with-links'>
         <Button
           onClick={() => setAddWordsWithLinkParagraph2(!addWordsWithLinkParagraph2)}
           variant="contained"
-          className='mb-2'>
+          className='mb-2'
+          disabled={editPermission}>
           <span className='text-capitalize me-1'>
             Adaugă
           </span>
@@ -128,7 +134,8 @@ const EditInfoCoursesModule1 = ({localStyles, FormikProps}) => {
           childObjectKey="paragraph2"
         />
 
-        <ShowWordsWithLink 
+        <ShowWordsWithLink
+          editPermission={editPermission}
           data={wordsWithLink.paragraph2}
           removeWordAction={removeWordsWithLinkOnCoursesPageData}
           objectKeyLocation="infoCoursesModule1"

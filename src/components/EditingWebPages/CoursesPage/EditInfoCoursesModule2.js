@@ -7,7 +7,7 @@ import { addWordsWithLinkOnCoursesPageData,
 import AddLinkOnWordsDialog from '../../ReusableComponents/WebpagesManipulation/AddLinkOnWordsDialog';
 import ShowWordsWithLink from '../../ReusableComponents/WebpagesManipulation/ShowWordsWithLink';
 
-const EditInfoCoursesModule2 = ({localStyles, FormikProps}) => {
+const EditInfoCoursesModule2 = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
   const { infoCoursesModule2: { title, paragraph } } = values
 
@@ -30,6 +30,7 @@ const EditInfoCoursesModule2 = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.infoCoursesModule2?.title && touched.infoCoursesModule2?.title)}
         helperText={errors.infoCoursesModule2?.title}
+        disabled={editPermission}
       />
 
       <TextField
@@ -48,13 +49,15 @@ const EditInfoCoursesModule2 = ({localStyles, FormikProps}) => {
         onChange={handleChange}
         error={Boolean(errors.infoCoursesModule2?.paragraph && touched.infoCoursesModule2?.paragraph)}
         helperText={errors.infoCoursesModule2?.paragraph}
+        disabled={editPermission}
       />
 
       <div className='add-and-show-words-with-links'>
         <Button
           onClick={() => setAddWordsWithLink(!addWordsWithLink)}
           variant="contained"
-          className='mb-2'>
+          className='mb-2'
+          disabled={editPermission}>
           <span className='text-capitalize me-1'>
             Adaugă
           </span>
@@ -70,7 +73,8 @@ const EditInfoCoursesModule2 = ({localStyles, FormikProps}) => {
           childObjectKey="paragraph"
         />
 
-        <ShowWordsWithLink 
+        <ShowWordsWithLink
+          editPermission={editPermission}
           data={wordsWithLink}
           removeWordAction={removeWordsWithLinkOnCoursesPageData}
           objectKeyLocation="infoCoursesModule2"

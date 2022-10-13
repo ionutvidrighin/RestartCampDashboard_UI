@@ -1,13 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
-import PageInstructionsDialog from './PageInstructionsDialog';
-import ringBellIcon from "../../assets/bell.png";
+import PageInstructionsDialog from '../Dialogs/PageInstructionsDialog';
+import ringBellIcon from "../../../assets/bell.png";
 
-const DisplayRingBellAndBanner = ({position, Component}) => {
+const RingBellAndPageInstructionsBanner = ({position, Component}) => {
 
   const [openInstructionsDialog, setOpenInstructionsDialog] = useState(false)
 
   const ringBellIconRef = useRef()
-  const ringBellToneRef = useRef()
   const bannerRef = useRef()
 
   useEffect(() => {
@@ -48,4 +47,4 @@ const DisplayRingBellAndBanner = ({position, Component}) => {
   )
 }
 
-export default DisplayRingBellAndBanner
+export default RingBellAndPageInstructionsBanner
