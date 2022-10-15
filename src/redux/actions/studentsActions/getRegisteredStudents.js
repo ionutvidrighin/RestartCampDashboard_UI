@@ -4,7 +4,6 @@ import { store } from "../../store"
 
 
 export const fetchStudentsByDate = (body) => {
-  /** @date param - is of form Object => {date: 'YYYY-MM'}  */
   const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {
@@ -87,6 +86,19 @@ export const fetchStudentsByCourseNameAndCareer = (searchCriteria) => {
           payload: 'Server Error - No response'
         })
       }
+    }
+  }
+}
+
+export const fetchStudentsWhatsappNumbers = (date) => {
+  const accessToken = store.getState().generateDBTokenReducer.value
+
+  return async () => {
+    try {
+      const response = await API.fetchStudents.getStudentsWhatsappNumbers(accessToken, date)
+      return response.data
+    } catch (error) {
+      console.log(error)
     }
   }
 }

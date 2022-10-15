@@ -19,8 +19,8 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import GetNewStudentDataDialog from './GetNewStudentDataDialog';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
+import CSVExport from "../../../components/ReusableComponents/CSVExports/CSVExport";
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
-import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/Charts/LineChart';
 
@@ -182,12 +182,13 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                     disabled={!hasEditPermission}>
                   Schimbă Datele
                   </Button>
-                  <DownloadCSV
-                    data={tableDataForExport}
-                    tableTitle='CursantiInscrisiPerCurs'
+                  <CSVExport
+                    buttonLabel='Exportă CSV'
+                    dataToExport={tableDataForExport}
+                    CSVfileName='CursantiInscrisiPerCurs'
                     exportPermission={hasExportCSVPermission}
                     CSVheaders={CSVheaders}
-                  /> 
+                  />
                 </div>
               </div>
 

@@ -30,6 +30,11 @@ export const doesUserHaveCSVExportPermission = (page, userPagesPermission) => {
   return visitedPagePermission.access.download
 }
 
+export const doesUserHaveCSVExportWhatsappPermission = (page, userPagesPermission) => {
+  const visitedSection = userPagesPermission.find(element => element.label === page)
+  return visitedSection.access.downloadWhatsapp
+}
+
 export const checkUserAccessOnPastDataLimit = (page, userPagesPermission) => {
   const visitedPage = userPagesPermission.find(element => element.label === page)
   return visitedPage.access.viewTimeLimit.value
@@ -99,6 +104,19 @@ export const createCSVheadersAccordingToPermission = (page, userPagesPermission)
   return CSVheaders
 }
 
+export const createCSVheaderForWhatsappNumbers = () => {
+  return [{
+    label: 'Data inscriere',
+    key: 'registrationDate'
+  }, {
+    label: 'Numar tel.',
+    key: 'phoneNo'
+  }, {
+    label: 'Nume Curs',
+    key: 'courseName'
+  }]
+}
+
 export const isAdmin = (userRole) => {
   return userRole === rolesConstants.ADMIN
 }
@@ -132,8 +150,9 @@ export const preparePhoneNumbersWhatsappFormat = (data) => {
       const formattedPhoneNo = entry.phoneNo.charAt(0) === '0' ? entry.phoneNo.substring(1) : entry.phoneNo
 
       const phoneNo = `A,${formattedPhoneCode}${formattedPhoneNo}`
-      const course = entry.course
-      entriesList.push({phoneNo, course})
+      const courseName = entry.courseName
+      const registrationDate = entry.registrationDate
+      entriesList.push({registrationDate, phoneNo, courseName, })
     }
   })
 

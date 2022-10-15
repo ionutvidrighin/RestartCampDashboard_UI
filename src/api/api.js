@@ -90,7 +90,7 @@ const callCourses = {
 const fetchStudents = {
   /* GetStudentsByDate - receives 2 params: token & date
   *** token - String taken from Redux after user successfully logs in
-  *** date - Object of form { date: 'YYYY-MM' }
+  *** body - Object of form { date: 'YYYY-MM', userTablePermissions: [Array of Objects]  }
   */
   getStudentsByDate: (token, body) => tokenizedRequests.post('/get-students-by-year-month', token, body),
 
@@ -102,6 +102,7 @@ const fetchStudents = {
   *     career: String (ex: 'angajat')
   *     courseName: String (ex: 'Cum poți începe o carieră în Social Media')
   *     registrationYearMonth: String (ex: '2022-10')
+  *     userTablePermissions: [Array of Objects]
   *   }
   */
   getStudentsByCourseNameAndCareer: (token, body) => tokenizedRequests.post('/get-students-by-course-name-and-career', token, body),
@@ -120,9 +121,17 @@ const fetchStudents = {
   *   { 
   *     courseName: String (ex: 'Cum poți începe o carieră în Social Media')
   *     registrationYearMonth: String (ex: '2022-10')
+  *     userTablePermissions: [Array of Objects]
   *   }
   */
-  getStudentsPresenceByCourseName: (token, body) => tokenizedRequests.post('/get-course-presence', token, body)
+  getStudentsPresenceByCourseName: (token, body) => tokenizedRequests.post('/get-course-presence', token, body),
+
+
+  /* GetStudentsWhatsappNumbers - receives 2 param: token
+  *** token - String taken from Redux after user successfully logs in
+  *** body - Object of form { date: 'YYYY-MM' }
+  */
+  getStudentsWhatsappNumbers: (token, body) => tokenizedRequests.post('/get-students-whatsapp-numbers', token, body)
 }
 
 const searchStudent = {

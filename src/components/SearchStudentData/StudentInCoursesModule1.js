@@ -16,14 +16,14 @@ const StudentInCoursesModule1 = () => {
           { studentData.studentInCoursesModule1.map((element, index) => {
             const itemNo = index+1;
             const studentRegistrationDate = dayjs(element.registrationDate).locale('ro').format('LL')
-            const courseDate = dayjs(element.course[0].date).locale('ro').format('LL')
+            const courseDate = dayjs(element.courseName[0].date).locale('ro').format('LL')
             return (
               <div key={element.id}>
                 <p className='mb-0 student-registration-details'>
                   {itemNo}. Înscris pe data de 
                   <span className='fw-bold' style={{color: '#16ab7e'}}> {studentRegistrationDate} </span> 
                   la cursul
-                  <span className='fw-bold'> {element.course[0].title} </span>
+                  <span className='fw-bold'> {element.courseName[0].title} </span>
                   din data de
                   <span className='fw-bold' style={{color: '#16ab7e'}}> {courseDate}</span>.
                 </p>

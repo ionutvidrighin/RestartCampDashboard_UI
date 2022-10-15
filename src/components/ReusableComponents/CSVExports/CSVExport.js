@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { makeStyles } from '@material-ui/styles';
 import { CSVLink } from "react-csv";
 import Button from '@material-ui/core/Button';
-import SnackBar from '../../ReusableComponents/SnackBar';
+import SnackBar from '../SnackBar';
  
 const useStyles = makeStyles({
   button: {
@@ -13,28 +13,16 @@ const useStyles = makeStyles({
     "&:hover": {
       backgroundColor: '#509ecc'
     }
-  },
-  snackBarError: {
-    "& .MuiSnackbarContent-root": {
-      minWidth: '210px !important',
-      backgroundColor: '#e04d6b'
-    },
-    "& .MuiSnackbarContent-message": {
-      width: '100%',
-      textAlign: 'center',
-      color: 'white'
-    }
   }
 })
 
-const DownloadCSV = ({buttonLabel, data, CSVfileName, exportPermission, CSVheaders}) => {
+const CSVExport = ({buttonLabel, dataToExport, CSVfileName, exportPermission, CSVheaders}) => {
   const localStyles = useStyles()
   const [snackBar, setSnackBar] = useState({upDuration: 3000})
 
   const handleDisplayErrorForNoTableDataSelected = () => {
-    if (data.length === 0) {
+    if (dataToExport.length === 0) {
       setSnackBar({
-        ...snackBar,
         background: '#e43d6f', 
         open: true,
         success: false,
@@ -46,7 +34,7 @@ const DownloadCSV = ({buttonLabel, data, CSVfileName, exportPermission, CSVheade
 
   return (
     <div className='ms-2'>
-      { data.length === 0 ?
+      { dataToExport.length === 0 ?
         <Button
           className={localStyles.button}
           variant="contained"
@@ -56,7 +44,7 @@ const DownloadCSV = ({buttonLabel, data, CSVfileName, exportPermission, CSVheade
         </Button>
         :
         <CSVLink
-          data={data}
+          data={dataToExport}
           id={`csv-export ${CSVfileName}`} 
           headers={CSVheaders}
           filename={CSVfileName} >
@@ -75,4 +63,4 @@ const DownloadCSV = ({buttonLabel, data, CSVfileName, exportPermission, CSVheade
   )
 }
 
-export default DownloadCSV
+export default CSVExport

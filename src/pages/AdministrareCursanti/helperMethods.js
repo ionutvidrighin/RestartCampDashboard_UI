@@ -14,10 +14,18 @@ function setupDataForTableAllStudents(rawData, tableColumns) {
   let tableData = rawData.allData.map(item => {
     const tableRow = {
       ...item,
-      courseName: item?.course[0].title,
-      registrationDate: dayjs(item?.registrationDate).locale('ro').format('LL')
     }
 
+    if (item.hasOwnProperty(tableColumnsConstants.COURSENAME)) {
+      Object.assign(tableRow, {
+        courseName: item?.courseName[0].title
+      })
+    }
+    if (item.hasOwnProperty(tableColumnsConstants.REGISTRATION_DATE)) {
+      Object.assign(tableRow, {
+        registrationDate: dayjs(item?.registrationDate).locale('ro').format('LL')
+      })
+    }
     if (item.hasOwnProperty(tableColumnsConstants.SUBSCRIBED_TO_EMAILS)) {
       Object.assign(tableRow, {
         subscribedToEmails: item?.subscribedToEmails ? 'DA' : 'NU'
@@ -47,7 +55,7 @@ function setupDataForTableStudentPerCourse(rawData, tableColumns) {
     registrationDate: dayjs(item?.registrationDate).locale('ro').format('LL'),
     fullName: item?.fullName,
     career: item?.career,
-    courseName: item?.course[0].title
+    courseName: item?.courseName[0].title
   }))
   tableData.sort((a,b) => new Date(a.registrationDate) - new Date(b.registrationDate))
 

@@ -419,7 +419,7 @@ const tableColumnsConstants = {
   FULL_NAME: 'fullName',
   REGISTRATION_DATE: 'registrationDate',
   COUNTY: 'county',
-  COURSE: 'courseName',
+  COURSENAME: 'courseName',
   PHONE_NUMBER: 'phoneNo',
   EMAIL: 'email',
   JOB: 'job',

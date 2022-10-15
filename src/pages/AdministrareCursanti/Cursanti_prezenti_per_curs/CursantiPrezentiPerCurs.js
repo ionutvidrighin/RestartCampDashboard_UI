@@ -20,7 +20,7 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import GetNewPresenceDataDialog from './GetNewPresenceDataDialog';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
-import DownloadCSV from "../../../components/ReusableComponents/Table/DownloadCSV";
+import CSVExport from "../../../components/ReusableComponents/CSVExports/CSVExport";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import BarChart from '../../../components/ReusableComponents/Charts/barChart';
 import RoundChart from '../../../components/ReusableComponents/Charts/pieChart';
@@ -167,12 +167,13 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                     disabled={!hasEditPermission}>
                   Schimbă Datele
                   </Button>
-                  <DownloadCSV
-                    data={tableDataForExport}
-                    tableTitle='CursantiPrezentiPerCurs'
+                  <CSVExport
+                    buttonLabel='Exportă CSV'
+                    dataToExport={tableDataForExport}
+                    CSVfileName='CursantiPrezentiPerCurs'
                     exportPermission={hasExportCSVPermission}
                     CSVheaders={CSVheaders}
-                  /> 
+                  />
                 </div>
               </div>
 
