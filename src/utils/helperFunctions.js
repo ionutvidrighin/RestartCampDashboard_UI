@@ -1,4 +1,5 @@
 import { rolesConstants, tableColumnsConstants } from "../constants/userPermissions"
+import { CSV_HEADERS_ALL_STUDENTS_DATA } from "./csvHeaders";
 import adminIcon from "../assets/access-icons/admin.png";
 import trainerIcon from "../assets/access-icons/trainer.png";
 import marketingIcon from "../assets/access-icons/marketing.png";
@@ -25,12 +26,12 @@ export const doesUserHaveEditPermission = (page, userPagesPermission) => {
   return visitedPagePermission.access.edit
 }
 
-export const doesUserHaveCSVExportPermission = (page, userPagesPermission) => {
+export const doesUserHaveMonthlyCSVExportPermission = (page, userPagesPermission) => {
   const visitedPagePermission = userPagesPermission.find(element => element.label === page)
   return visitedPagePermission.access.download
 }
 
-export const doesUserHaveCSVExportWhatsappPermission = (page, userPagesPermission) => {
+export const doesUserHaveWhatsappCSVExportPermission = (page, userPagesPermission) => {
   const visitedSection = userPagesPermission.find(element => element.label === page)
   return visitedSection.access.downloadWhatsapp
 }
@@ -60,7 +61,7 @@ export const createTableColumnsAccordingToPermission = (page, userPagesPermissio
         column.width = 200
         column.sortable = false
       }
-      if (tableColumn.value === tableColumnsConstants.COURSE) {
+      if (tableColumn.value === tableColumnsConstants.COURSENAME) {
         column.width = 400
         column.sortable = false
       }
@@ -89,7 +90,11 @@ export const createTableColumnsAccordingToPermission = (page, userPagesPermissio
   return tableColumns
 }
 
-export const createCSVheadersAccordingToPermission = (page, userPagesPermission) => {
+export const createAllStudentsDataCSVheaders = () => {
+  return CSV_HEADERS_ALL_STUDENTS_DATA
+}
+
+export const createMonthlyCSVheadersAccordingToPermission = (page, userPagesPermission) => {
   const visitedSection = userPagesPermission.find(element => element.label === page)
 
   const CSVheaders = []
@@ -104,7 +109,7 @@ export const createCSVheadersAccordingToPermission = (page, userPagesPermission)
   return CSVheaders
 }
 
-export const createCSVheaderForWhatsappNumbers = () => {
+export const createWhatsappNumbersCSVheaders = () => {
   return [{
     label: 'Data inscriere',
     key: 'registrationDate'
@@ -138,27 +143,6 @@ export const calculateMonthsDifference = (dateFrom, dateTo) => {
     (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
 }
 
-export const preparePhoneNumbersWhatsappFormat = (data) => {
-  let dataValues = []
-  const entriesList = []
-  data.forEach(entry => {
-    dataValues = Object.values(entry)
-
-    const noData = dataValues.every(value => value === 'no data');
-    if (!noData) {
-      const formattedPhoneCode = entry.phoneCode.substring(1)
-      const formattedPhoneNo = entry.phoneNo.charAt(0) === '0' ? entry.phoneNo.substring(1) : entry.phoneNo
-
-      const phoneNo = `A,${formattedPhoneCode}${formattedPhoneNo}`
-      const courseName = entry.courseName
-      const registrationDate = entry.registrationDate
-      entriesList.push({registrationDate, phoneNo, courseName, })
-    }
-  })
-
-  return entriesList
-}
-
 export const displayAccountTypeIcon = (userRole) => {
   let iconSrc
   switch(userRole) {
@@ -184,7 +168,7 @@ export const displayAccountTypeIcon = (userRole) => {
   return iconSrc
 }
 
-export const getStudentNameAndEmail = (data) => {
+export const extractStudentNameAndEmail = (data) => {
   if (data) {
 
     let studentName;
@@ -207,7 +191,7 @@ export const getStudentNameAndEmail = (data) => {
   return "Error - Missing Student Name"
 }
 
-export const getStudentReferenceIDsByEmail = (data, studentEmail) => {
+export const extractStudentDBentryRefID = (data, studentEmail) => {
   const referenceIDs = []
   Object.entries(data).forEach(dataSet => {
     if (dataSet[0] === 'studentInCoursesModule1') {

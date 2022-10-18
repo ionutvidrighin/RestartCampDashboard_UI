@@ -3,6 +3,7 @@ import API from '../../api/api';
 import * as yup from 'yup';
 import { Formik, Field, Form } from 'formik';
 import { EmailTextField, PasswordTextField } from './FormFields';
+import { HTTPCodes } from '../../constants/HTTPCodes';
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 
@@ -38,13 +39,13 @@ const GenerateTokenForm = ({ setToken }) => {
               return
             }
 
-            if (error.response.status === 404) {
+            if (error.response.status === HTTPCodes.NOT_FOUND) {
               setErrors({
                 username: 'Credențiale invalide - te rog reîncearcă', 
                 password: 'Credențiale invalide - te rog reîncearcă'
               })
               setSubmitting(false)
-            } else if (error.response.status === 401) {
+            } else if (error.response.status === HTTPCodes.UNAUTHORIZED) {
               setErrors({
                 username: error.response.data.message, 
                 password: error.response.data.message

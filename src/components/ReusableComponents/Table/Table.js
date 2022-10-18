@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { DataGrid } from '@material-ui/data-grid';
-import { ActionTypes } from '../../../redux/actions/action_types';
+import { storeMonthlyStudentsExportData, clearMonthlyStudentsExportData } from "../../../redux/actions/cvsExportActions";
 
 function Table({ tableColumns, tableData }) {
   //**Props description:
@@ -12,12 +12,9 @@ function Table({ tableColumns, tableData }) {
 
   useEffect(() => {
     if (selectedTableRows.length !== 0) {
-      dispatch({ 
-        type: ActionTypes.STORE_TABLE_DATA_FOR_EXPORT,
-        payload: selectedTableRows
-      })
+      dispatch(storeMonthlyStudentsExportData(selectedTableRows))
     } else {
-      dispatch({ type: ActionTypes.CLEAR_TABLE_DATA_FOR_EXPORT})
+      dispatch(clearMonthlyStudentsExportData())
     }
   }, [selectedTableRows])
 

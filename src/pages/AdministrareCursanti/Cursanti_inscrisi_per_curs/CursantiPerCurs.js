@@ -2,12 +2,12 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appPagesConstants } from '../../../constants/userPermissions';
 import { doesUserHaveViewPermission, doesUserHaveEditPermission,
-  doesUserHaveCSVExportPermission, checkUserAccessOnPastDataLimit,
-  createTableColumnsAccordingToPermission, createCSVheadersAccordingToPermission,
+  doesUserHaveMonthlyCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createMonthlyCSVheadersAccordingToPermission,
   extractUserTablePermissions } from '../../../utils/helperFunctions';
 import { fetchStudentsByCourseNameAndCareer,
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/getRegisteredStudents';
-import { fetchCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
+  clearStudentsInCoursesMod1 } from '../../../redux/actions/studentsActions';
+import { fetchCoursesModule1 } from '../../../redux/actions/coursesActions';
 import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableStudentPerCourse, setupDataForChart } from '../helperMethods';
@@ -19,7 +19,7 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import GetNewStudentDataDialog from './GetNewStudentDataDialog';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
-import CSVExport from "../../../components/ReusableComponents/CSVExports/CSVExport";
+import CSVExport from "../../../components/ReusableComponents/CSVExport/CSVExport";
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/Charts/LineChart';
@@ -43,11 +43,11 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
 
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
-  const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
-  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
-  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
-  const permissions = { edit: hasEditPermission, export: hasExportCSVPermission }
+  const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const hasMonthlyExportCSVPermission = doesUserHaveMonthlyCSVExportPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const monthlyCSVheaders = createMonthlyCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
+  const permissions = { edit: hasEditPermission, export: hasMonthlyExportCSVPermission }
   const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
   const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_INSCRISI_PER_CURS, userPagesAccessFromStore)
 
@@ -58,7 +58,7 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
     }
 
     return () => {
-      dispatch(clearStudentsInCoursesMod1State())
+      dispatch(clearStudentsInCoursesMod1())
     }
   }, [])
 
@@ -73,13 +73,13 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
 
   // get Courses MODULE 1 from Store
   const coursesList = useSelector(state => {
-    let list = state.coursesModule1.courses
+    let list = state.courses.module1.data
     list = list.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
     return list
   })
 
   /* populate Table with data for current month at component mount
-   * data used for the api call: studentCareer, courseName, registrationYearMonth
+   * data used for the api call: studentCareer, courseName, registrationYearMonth, userTablePermissions
    */
   useEffect(() => {
     if (hasViewPermission) {
@@ -98,14 +98,11 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
 
   // get Students registered at Courses MODULE 1 from Store
   const getDataFromStore = useSelector(state => ({
-    allData: state.registeredStudentsModule1.students,
-    studentsByDay: state.registeredStudentsModule1.students.map(item => item.registrationDate),
-    error: state.registeredStudentsModule1?.error
+    allData: state.students.registeredForCourseMod1.data,
+    studentsByDay: state.students.registeredForCourseMod1.data.map(item => item.registrationDate),
+    error: state.students.registeredForCourseMod1?.error
   }))
   const { allData, error } = getDataFromStore
-
-  // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
-  const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
 
   const handleSwitchChartOrTable = () => {
     tableOrChartBtn.table ? setTableOrChartBtn({
@@ -183,11 +180,11 @@ const CursantiPerCurs = ({ setShowPlaceholder }) => {
                   Schimbă Datele
                   </Button>
                   <CSVExport
-                    buttonLabel='Exportă CSV'
-                    dataToExport={tableDataForExport}
+                    dataType='monthly'
+                    buttonLabel='Export CSV - monthly'
                     CSVfileName='CursantiInscrisiPerCurs'
-                    exportPermission={hasExportCSVPermission}
-                    CSVheaders={CSVheaders}
+                    exportPermission={hasMonthlyExportCSVPermission}
+                    CSVheaders={monthlyCSVheaders}
                   />
                 </div>
               </div>

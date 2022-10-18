@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { getStudentNameAndEmail } from '../../utils/helperFunctions';
-import { clearStudentData } from '../../redux/actions/studentsActions/searchStudent';
+import { extractStudentNameAndEmail } from '../../utils/helperFunctions';
+import { clearSingleStudentData } from '../../redux/actions/studentsActions';
 import Divider from '@material-ui/core/Divider';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
@@ -14,12 +14,12 @@ const SearchedStudentSection = () => {
   const dispatch = useDispatch()
 
   const studentData = useSelector(state => ({
-    data: state.searchStudentReducer.data,
-    success: state.searchStudentReducer?.success,
-    error: state.searchStudentReducer?.error
+    data: state.students.singleStudent.data,
+    success: state.students.singleStudent?.success,
+    error: state.students.singleStudent?.error
   }))
   const { data, success, error } = studentData
-  const studentName = getStudentNameAndEmail(data)
+  const studentName = extractStudentNameAndEmail(data)
 
   const [snackBar, setSnackBar] = useState({})
   useEffect(() => {
@@ -30,7 +30,7 @@ const SearchedStudentSection = () => {
         text: error,
         upDuration: 12000
       })
-      dispatch(clearStudentData())
+      dispatch(clearSingleStudentData())
     }
   }, [error])
 

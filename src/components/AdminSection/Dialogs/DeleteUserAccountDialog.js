@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { deleteDashboardUserAccount,
-  clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUserAccountsActions"
+  clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUsersActions"
 import Dialog from '@material-ui/core/Dialog';
 import Button from '@material-ui/core/Button';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';

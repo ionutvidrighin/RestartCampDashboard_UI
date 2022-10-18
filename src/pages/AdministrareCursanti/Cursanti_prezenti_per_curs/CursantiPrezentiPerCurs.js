@@ -5,12 +5,12 @@ import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { appPagesConstants } from '../../../constants/userPermissions';
 import { doesUserHaveViewPermission, doesUserHaveEditPermission,
-  doesUserHaveCSVExportPermission, checkUserAccessOnPastDataLimit,
-  createTableColumnsAccordingToPermission, createCSVheadersAccordingToPermission,
+  doesUserHaveMonthlyCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createMonthlyCSVheadersAccordingToPermission,
   extractUserTablePermissions } from '../../../utils/helperFunctions';
 import { fetchStudentsPresenceByCourseName,
-  clearCourseModule1Presence } from '../../../redux/actions/coursesActions/coursesPresenceModule1';
-import { clearCoursesModule1 } from '../../../redux/actions/coursesActions/coursesModule1';
+  clearStudentsPresence } from '../../../redux/actions/studentsActions';
+import { clearCoursesModule1 } from '../../../redux/actions/coursesActions';
 import { setupDataForTableCoursePresence, setupDataForBarChartCoursePresence, 
   setupDataForPieChartCoursePresence } from '../helperMethods';
 import dayjs from 'dayjs';
@@ -20,7 +20,7 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import GetNewPresenceDataDialog from './GetNewPresenceDataDialog';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
-import CSVExport from "../../../components/ReusableComponents/CSVExports/CSVExport";
+import CSVExport from "../../../components/ReusableComponents/CSVExport/CSVExport";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import BarChart from '../../../components/ReusableComponents/Charts/barChart';
 import RoundChart from '../../../components/ReusableComponents/Charts/pieChart';
@@ -45,10 +45,10 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
-  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const monthlyCSVheaders = createMonthlyCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
-  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
-  const permissions = {edit: hasEditPermission, export: hasExportCSVPermission}
+  const hasMonthlyExportCSVPermission = doesUserHaveMonthlyCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission, export: hasMonthlyExportCSVPermission}
   const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
 
@@ -70,26 +70,23 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
 
     return () => {
       dispatch(clearCoursesModule1())
-      dispatch(clearCourseModule1Presence())
+      dispatch(clearStudentsPresence())
     }
   }, [])
 
   // get the Courses MODULE 1 from Store
   const coursesList = useSelector(state => {
-    let list = state.coursesModule1.courses
+    let list = state.courses.module1.data
     list = list.map(course => ({id: nanoid(5), courseName: course.courseTitle}))
     return list
   })
 
-  // get the Course MODULE 1 Presence Data from Store
-  const coursePresence = useSelector(state => ({
-    presenceData: state.coursePresence.presence,
-    error: state.coursePresence?.error
+  // get students presence data at Courses Module 1 from store
+  const studentsPresenceAtCourse = useSelector(state => ({
+    presenceData: state.students.presenceAtCourseMod1.data,
+    error: state.students.presenceAtCourseMod1?.error
   }))
-  const { presenceData, error } = coursePresence
-
-  // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
-  const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
+  const { presenceData, error } = studentsPresenceAtCourse
 
   const handleSwitchChartOrTable = () => {
     tableOrChartBtn.table ? 
@@ -168,11 +165,11 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   Schimbă Datele
                   </Button>
                   <CSVExport
-                    buttonLabel='Exportă CSV'
-                    dataToExport={tableDataForExport}
+                    dataType="monthly"
+                    buttonLabel='Export CSV - monthly'
                     CSVfileName='CursantiPrezentiPerCurs'
-                    exportPermission={hasExportCSVPermission}
-                    CSVheaders={CSVheaders}
+                    exportPermission={hasMonthlyExportCSVPermission}
+                    CSVheaders={monthlyCSVheaders}
                   />
                 </div>
               </div>

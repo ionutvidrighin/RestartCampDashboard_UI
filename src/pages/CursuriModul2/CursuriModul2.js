@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCoursesModule2, 
-  updateCourseModule2State,
-  deleteCourseModule2,
-  clearCoursesModule2,
-  clearCoursesModule2ServerResponse } from "../../redux/actions/coursesActions/coursesModule2";
+  toggleCourseModule2State, deleteCourseModule2,
+  clearCoursesModule2, clearCoursesModule2ServerResponse } from "../../redux/actions/coursesActions";
 import { appPagesConstants } from "../../constants/userPermissions";
 import { doesUserHaveViewPermission } from "../../utils/helperFunctions";
 import { makeStyles } from '@material-ui/styles';
@@ -53,8 +51,8 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
   const [snackBar, setSnackBar] = useState({})
   const coursesModule2 = useSelector(state => {
     return {
-      courses: state.coursesModule2.courses,
-      error: state.coursesModule2?.error
+      courses: state.courses.module2.data,
+      error: state.courses.module2?.error
     }
   })
   const { courses, error } = coursesModule2
@@ -81,8 +79,8 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
   }, [courses, error])
 
   const [selectedCourse, setSelectedCourse] = useState({})
-  const [showAddCourseModule2Form, setShowAddCourseModule2Form] = useState(false)
-  const [showChangeCourseModule2Form, setShowChangeCourseModule2Form] = useState(false)
+  const [revealAddCourseForm, setRevealAddCourseForm] = useState(false)
+  const [revealUpdateCourseForm, setRevealUpdateCourseForm] = useState(false)
   const [courseState, setCourseState] = useState({ message: '', state: null, courseId: null })
   const [openCourseBannerState, setOpenCourseBannerState] = useState({ open: false, vertical: 'top', horizontal: 'center' })
   const [deleteCourseDialog, setDeleteCourseDialog] = useState({open: false})
@@ -97,14 +95,14 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
   const handleOpenDeleteCourseDialog = (course) => setDeleteCourseDialog({open: true, course})
 
   const handleOpenEditCourse = (course) => {
-    setShowChangeCourseModule2Form(true)
-    setShowAddCourseModule2Form(false)
+    setRevealUpdateCourseForm(true)
+    setRevealAddCourseForm(false)
     setSelectedCourse(course)
   }
 
   const handleOpenAddNewCourseSection = () => {
-    setShowAddCourseModule2Form(true)
-    setShowChangeCourseModule2Form(false)
+    setRevealAddCourseForm(true)
+    setRevealUpdateCourseForm(false)
   } 
 
   return (
@@ -129,7 +127,7 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
               {/* Modal on activate / deactivate course */}
               <ToggleCourseStateBanner
                 courseState={courseState}
-                updateCourseStateAction={updateCourseModule2State}
+                updateCourseStateAction={toggleCourseModule2State}
                 openBanner={openCourseBannerState}
                 closeBanner={setOpenCourseBannerState}
               />
@@ -184,7 +182,7 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
                         <DeleteCourseDialog
                           openDialog={deleteCourseDialog}
                           closeDialog={setDeleteCourseDialog}
-                          hideChangeCourseSection={setShowChangeCourseModule2Form}
+                          hideChangeCourseSection={setRevealUpdateCourseForm}
                           deleteCourseAction={deleteCourseModule2}
                         />
                       } 
@@ -196,20 +194,20 @@ const CursuriModul2 = ({setShowPlaceholder}) => {
               <section className="p-3 mt-3 save-courses">
                 <Button 
                   variant="contained" 
-                  disabled={showChangeCourseModule2Form || showAddCourseModule2Form}
+                  disabled={revealUpdateCourseForm || revealAddCourseForm}
                   className={localStyles.addBtn}
                   onClick={handleOpenAddNewCourseSection}>
                 Adauga curs nou
                 </Button>
                 
-                { showAddCourseModule2Form && 
-                  <AddCourseModule2 setShowAddCourseModule2Form={setShowAddCourseModule2Form} /> 
+                { revealAddCourseForm && 
+                  <AddCourseModule2 setShowAddCourseModule2Form={setRevealAddCourseForm} /> 
                 }
 
-                { (showChangeCourseModule2Form && Object.keys(selectedCourse).length !== 0) && 
+                { (revealUpdateCourseForm && Object.keys(selectedCourse).length !== 0) && 
                   <ChangeCourseModule2
                     setSelectedCourse={setSelectedCourse}
-                    setShowChangeCourseModule2Form={setShowChangeCourseModule2Form}
+                    setShowChangeCourseModule2Form={setRevealUpdateCourseForm}
                     courseActive={selectedCourse.courseActive}
                     courseId={selectedCourse.courseId}
                     courseLogo={selectedCourse.courseLogo}

@@ -5,7 +5,7 @@ import 'dayjs/locale/ro';
 
 const StudentInCoursesModule2 = () => {
 
-  const studentData = useSelector(state => state.searchStudentReducer.data)
+  const studentData = useSelector(state => state.students.singleStudent.data)
 
   return (
     <div style={{width: '100%', marginTop: '1rem'}}>

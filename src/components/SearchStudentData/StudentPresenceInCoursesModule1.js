@@ -5,7 +5,7 @@ import 'dayjs/locale/ro';
 
 const StudentPresenceInCoursesModule1 = () => {
 
-  const studentData = useSelector(state => state.searchStudentReducer.data)
+  const studentData = useSelector(state => state.students.singleStudent.data)
 
   return (
     

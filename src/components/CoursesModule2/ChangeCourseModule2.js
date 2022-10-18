@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useDispatch } from "react-redux";
-import { changeCourseModule2 } from "../../redux/actions/coursesActions/coursesModule2";
+import { updateCourseModule2 } from "../../redux/actions/coursesActions";
 import CourseModule2Card from "./CourseModule2Card";
 import { Formik, Form } from "formik";
 import { makeStyles } from '@material-ui/styles';
@@ -210,7 +210,7 @@ const ChangeCourseModule2 = ({
               return
             }
 
-            dispatch(changeCourseModule2(updatedCourseData))
+            dispatch(updateCourseModule2(updatedCourseData))
             setSelectedCourse(updatedCourseData)
             setSnackBar({...snackbar, open: true, error: false, text: "Curs modificat cu succes!"})
           }}

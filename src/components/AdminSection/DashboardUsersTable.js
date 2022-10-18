@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from '@material-ui/core';
 import { isAdmin, displayAccountTypeIcon } from '../../utils/helperFunctions';
-import { fetchDashboardUsers } from "../../redux/actions/dashboardUserAccountsActions";
+import { fetchDashboardUsers } from "../../redux/actions/dashboardUsersActions";
 import ChangeUserPermissionsDialog from './Dialogs/ChangeUserPermissionsDialog';
 import DeleteUserAccountDialog from './Dialogs/DeleteUserAccountDialog';
 import FiberManualRecordIcon from '@material-ui/icons/FiberManualRecord';

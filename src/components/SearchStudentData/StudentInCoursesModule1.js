@@ -1,12 +1,11 @@
 import React from 'react';
 import { useSelector } from "react-redux";
-import Divider from '@material-ui/core/Divider';
 import dayjs from 'dayjs';
 import 'dayjs/locale/ro';
 
 const StudentInCoursesModule1 = () => {
 
-  const studentData = useSelector(state => state.searchStudentReducer.data)
+  const studentData = useSelector(state => state.students.singleStudent.data)
 
   return (
     <div style={{width: '100%', marginTop: '1rem'}}>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch } from "react-redux";
-import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/studentsActions/getRegisteredStudents';
+import { fetchStudentsByCourseNameAndCareer } from '../../../redux/actions/studentsActions';
 import { calculateMonthsDifference } from '../../../utils/helperFunctions';
 import { nanoid } from 'nanoid';
 import dayjs from 'dayjs';

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from "react-redux";
-import { getStudentDataByEmail, getStudentDataByFullName } from '../../redux/actions/studentsActions/searchStudent';
+import { fetchSingleStudentByEmail, 
+  fetchSingleStudentByEmailByFullName } from '../../redux/actions/studentsActions';
 import Button from '@material-ui/core/Button';
 import SnackBar from "../ReusableComponents/SnackBar"
 
@@ -26,7 +27,7 @@ const SearchStudentSection = ({localStyles, editPermission}) => {
     if ( !(studentEmail.includes("@", 1) && studentEmail.includes(".", 3)) ) {
       setSnackBar({
         ...snackBar,
-        background: '#ff564a', 
+        background: '#e53c5d',
         open: true,
         success: false,
         text: "Format greșit al adresei de e-mail."
@@ -34,7 +35,7 @@ const SearchStudentSection = ({localStyles, editPermission}) => {
       return
     }
     const payload = studentEmail.toLowerCase()
-    dispatch(getStudentDataByEmail({studentEmail: payload}))
+    dispatch(fetchSingleStudentByEmail({studentEmail: payload}))
     setStudentEmail("")
   }
 
@@ -50,7 +51,7 @@ const SearchStudentSection = ({localStyles, editPermission}) => {
       return
     }
     const payload = studentName.toUpperCase()
-    dispatch(getStudentDataByFullName({studentName: payload}))
+    dispatch(fetchSingleStudentByEmailByFullName({studentName: payload}))
     setStudentName("")
   }
 

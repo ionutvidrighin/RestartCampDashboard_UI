@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { deleteStudent } from '../../redux/actions/studentsActions/studentEmailSubscription';
+import { HTTPCodes } from '../../constants/HTTPCodes';
+import { deleteStudent } from '../../redux/actions/studentsActions';
 import DeleteStudentDialog from './DeleteStudentDialog'
 import Button from '@material-ui/core/Button';
 import SnackBar from '../ReusableComponents/SnackBar';
@@ -19,7 +20,7 @@ const DeleteStudentButton = ({ localStyles, studentEmail }) => {
 
   const handleDeleteStudent = async () => {
     const serverResponse = await deleteStudent(studentEmail)
-    if (serverResponse.status === 200) {
+    if (serverResponse.status === HTTPCodes.OK) {
       setStudentWasDeleted(true)
       setSnackBar({
         background: '#28cc95',

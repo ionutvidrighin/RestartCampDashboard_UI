@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { nanoid } from 'nanoid';
 import { useDispatch, useSelector } from "react-redux";
-import { addCourseModule1, clearCoursesModule1ServerResponse } from "../../redux/actions/coursesActions/coursesModule1";
+import { addCourseModule1, clearCoursesModule1ServerResponse } from "../../redux/actions/coursesActions";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
 import { makeStyles } from '@material-ui/styles';

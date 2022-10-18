@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { unsubscribeStudentFromNewsLetter } from '../../redux/actions/studentsActions/studentEmailSubscription';
+import { HTTPCodes } from '../../constants/HTTPCodes';
+import { unsubscribeStudentFromNewsLetter } from '../../redux/actions/studentsActions';
 import UnsubscribeStudentDialog from './UnsubscribeStudentDialog';
 import Button from '@material-ui/core/Button';
 import SnackBar from '../ReusableComponents/SnackBar';
@@ -19,7 +20,7 @@ const UnsubscribeStudentButton = ({ localStyles, studentEmail }) => {
 
   const handleUnsubscribeStudent = async () => {
     const serverResponse = await unsubscribeStudentFromNewsLetter(studentEmail)
-    if (serverResponse.status === 200) {
+    if (serverResponse.status === HTTPCodes.OK) {
       setStudentWasUnsubscribed(true)
       setSnackBar({
         background: '#28cc95',

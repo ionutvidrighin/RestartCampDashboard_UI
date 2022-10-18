@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { makeStyles } from '@material-ui/styles';
 import { appPagesConstants } from '../../../constants/userPermissions';
 import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../../utils/helperFunctions';
-import { clearStudentData } from '../../../redux/actions/studentsActions/searchStudent';
+import { clearSingleStudentData } from '../../../redux/actions/studentsActions';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
@@ -53,7 +53,7 @@ const CautaCursantInscris = ({setShowPlaceholder}) => {
     setShowPlaceholder(false)
 
     // clear Student Data store at component destroy
-    return () => dispatch(clearStudentData())
+    return () => dispatch(clearSingleStudentData())
   }, [])
 
   return (

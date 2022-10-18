@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { appPagesConstants } from '../../constants/userPermissions';
-import { doesUserHaveViewPermission, getStudentNameAndEmail } from '../../utils/helperFunctions';
-import { clearStudentData } from '../../redux/actions/studentsActions/searchStudent';
+import { doesUserHaveViewPermission, extractStudentNameAndEmail } from '../../utils/helperFunctions';
+import { clearSingleStudentData } from '../../redux/actions/studentsActions';
 import { makeStyles } from '@material-ui/styles';
 import AssignmentIndIcon from '@material-ui/icons/AssignmentInd';
 import SearchStudent from '../../components/UnsubscribeStudent/SearchStudent';
@@ -55,18 +55,18 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.DEZABONARE_STERGERE_CURSANTI, userPagesAccessFromStore)
 
   const studentData = useSelector(state => ({
-    data: state.searchStudentReducer.data,
-    success: state.searchStudentReducer?.success,
-    error: state.searchStudentReducer?.error
+    data: state.students.singleStudent.data,
+    success: state.students.singleStudent?.success,
+    error: state.students.singleStudent?.error
   }))
   const { data, success, error } = studentData
 
-  const studentNameAndEmail = getStudentNameAndEmail(data)
+  const studentNameAndEmail = extractStudentNameAndEmail(data)
 
   useEffect(() => {
     setShowPlaceholder(false)
 
-    return () => dispatch(clearStudentData())
+    return () => dispatch(clearSingleStudentData())
   }, [])
 
   const [snackBar, setSnackBar] = useState({})
@@ -78,7 +78,7 @@ const DezabonareCursanti = ({setShowPlaceholder}) => {
         text: error,
         upDuration: 12000
       })
-      dispatch(clearStudentData())
+      dispatch(clearSingleStudentData())
     }
   }, [error])
 

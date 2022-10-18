@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { updateDashboardUserPermissions,
-  clearDashboardUserServerResponse } from '../../../redux/actions/dashboardUserAccountsActions'
+  clearDashboardUserServerResponse } from '../../../redux/actions/dashboardUsersActions'
 import { makeStyles } from '@material-ui/styles';
 import { userRoles, viewTimeLimit } from '../../../constants/userPermissions';
 import { nanoid } from 'nanoid';

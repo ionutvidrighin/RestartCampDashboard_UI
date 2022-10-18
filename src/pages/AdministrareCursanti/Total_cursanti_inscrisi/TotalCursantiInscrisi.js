@@ -1,13 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { appPagesConstants } from '../../../constants/userPermissions';
-import { doesUserHaveViewPermission, doesUserHaveEditPermission,
-  doesUserHaveCSVExportPermission, doesUserHaveCSVExportWhatsappPermission, 
+import { isAdmin, doesUserHaveViewPermission, doesUserHaveEditPermission,
+  doesUserHaveMonthlyCSVExportPermission, doesUserHaveWhatsappCSVExportPermission, 
   checkUserAccessOnPastDataLimit, createTableColumnsAccordingToPermission,
-  createCSVheadersAccordingToPermission, extractUserTablePermissions } from '../../../utils/helperFunctions';
+  createAllStudentsDataCSVheaders, createMonthlyCSVheadersAccordingToPermission,
+  createWhatsappNumbersCSVheaders, extractUserTablePermissions } from '../../../utils/helperFunctions';
 import { calculateMonthsDifference } from '../../../utils/helperFunctions';
-import { fetchStudentsByDate, fetchStudentsWhatsappNumbers, 
-  clearStudentsInCoursesMod1State } from '../../../redux/actions/studentsActions/getRegisteredStudents';
+import { fetchAllStudentsData, fetchStudentsByDate, fetchStudentsWhatsappNumbers, 
+  clearStudentsInCoursesMod1 } from '../../../redux/actions/studentsActions';
+import { storeAllStudentsExportData, storeStudentsWhatsappNumbersExportData, 
+  clearAllStudentsExportData, clearMonthlyStudentsExportData,
+  clearStudentsWhatsappNumbersExportData } from '../../../redux/actions/cvsExportActions';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableAllStudents, setupDataForChart } from '../helperMethods';
 import { makeStyles } from '@material-ui/styles';
@@ -19,8 +23,7 @@ import TableChartRoundedIcon from '@material-ui/icons/TableChartRounded';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
-import CSVExport from "../../../components/ReusableComponents/CSVExports/CSVExport";
-import CSVExportWhatsapp from '../../../components/ReusableComponents/CSVExports/CSVExportWhatsapp';
+import CSVExport from "../../../components/ReusableComponents/CSVExport/CSVExport";
 import Table from '../../../components/ReusableComponents/Table/Table';
 import LineChart from '../../../components/ReusableComponents/Charts/LineChart';
 dayjs.extend(relativeTime)
@@ -41,21 +44,36 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
   const dispatch = useDispatch()
   const currentMonthYear = dayjs().format().substring(0, 7)
 
+  const currentUserRole = useSelector(state => state.authReducer.role)
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const CSVheaders = createCSVheadersAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const allDataCSVheaders = createAllStudentsDataCSVheaders()
+  const monthlyCSVheaders = createMonthlyCSVheadersAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const whatsappCSVheaders = createWhatsappNumbersCSVheaders()
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const hasExportCSVPermission = doesUserHaveCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const hasExportCSVWhatsappPermission = doesUserHaveCSVExportWhatsappPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const permissions = {edit: hasEditPermission, export: hasExportCSVPermission}
+  const hasMonthlyExportCSVPermission = doesUserHaveMonthlyCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const hasWhatsappExportCSVPermission = doesUserHaveWhatsappCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
+  const permissions = {edit: hasEditPermission, export: hasMonthlyExportCSVPermission}
   const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const userTablePermissions = extractUserTablePermissions(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
 
-  const callStudentsByDate = () => dispatch(fetchStudentsByDate({date: currentMonthYear, userTablePermissions }))
+  const [searchingDate, setSearchingDate] = useState(currentMonthYear)
+  const [snackBar, setSnackBar] = useState({})
+  const [tableOrChartBtn, setTableOrChartBtn] = useState({
+    table: true,
+    chart: false,
+    text: 'DU-MĂ LA GRAFIC'
+  })
+
+  const callAllStudentsData = async () => {
+    const response = await dispatch(fetchAllStudentsData())
+    dispatch(storeAllStudentsExportData(response))
+  }
+  const callStudentsByDate = () => dispatch(fetchStudentsByDate({date: currentMonthYear, userTablePermissions}))
   const callStudentsWhatsappNumbers = async () => {
-    const studentsWhatsappNumbers = await dispatch(fetchStudentsWhatsappNumbers({date: searchingDate}))
-    setExportWhatsappNumbersData(studentsWhatsappNumbers)
+    const response = await dispatch(fetchStudentsWhatsappNumbers({date: searchingDate}))
+    dispatch(storeStudentsWhatsappNumbersExportData(response))
   }
 
   useEffect(() => {
@@ -63,34 +81,31 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
     if (hasViewPermission) {
       callStudentsByDate()
     }
-    if (hasExportCSVWhatsappPermission) {
+    if (hasWhatsappExportCSVPermission) {
       callStudentsWhatsappNumbers()
     }
-    // clear state at component destroy
-    return () => dispatch(clearStudentsInCoursesMod1State())
+    if (isAdmin(currentUserRole)) {
+      callAllStudentsData()
+    }
+
+    return () => clearReduxStateAtComponentDestroy()
   }, [])
 
+  const clearReduxStateAtComponentDestroy = () => {
+    dispatch(clearStudentsInCoursesMod1())
+    dispatch(clearAllStudentsExportData())
+    dispatch(clearMonthlyStudentsExportData())
+    dispatch(clearStudentsWhatsappNumbersExportData())
+  }
 
-  const [snackBar, setSnackBar] = useState({})
-  const [tableOrChartBtn, setTableOrChartBtn] = useState({
-    table: true,
-    chart: false,
-    text: 'DU-MĂ LA GRAFIC'
-  })
-  const [searchingDate, setSearchingDate] = useState(currentMonthYear)
-  const [exportWhatsappNumbersData, setExportWhatsappNumbersData] = useState([])
-
-  const getDataFromStore = useSelector(state => ({
+  const getTableDataFromStore = useSelector(state => ({
     // data used inside the Table
-    allData: state.registeredStudentsModule1.students,
+    allData: state.students.registeredForCourseMod1.data,
     // data used inside the Graph
-    studentsByDay: state.registeredStudentsModule1.students.map(item => item.registrationDate),
-    error: state.registeredStudentsModule1?.error
+    studentsByDay: state.students.registeredForCourseMod1.data.map(item => item.registrationDate),
+    error: state.students.registeredForCourseMod1?.error
   }))
-  const { allData, error } = getDataFromStore
-
-  // get the selected Table Data from Store and pass it to <DownloadCSV /> component prop
-  const tableDataForExport = useSelector(state => state.tableDataForExport.selectedTableRows)
+  const { allData, error } = getTableDataFromStore
 
   const handleSelectNewDate = event => setSearchingDate(event.target.value)
 
@@ -145,9 +160,8 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
           return
         }
 
-        if (hasExportCSVWhatsappPermission) {
-          const studentsWhatsappNumbers = await dispatch(fetchStudentsWhatsappNumbers({date: searchingDate}))
-          setExportWhatsappNumbersData(studentsWhatsappNumbers)
+        if (hasWhatsappExportCSVPermission) {
+          callStudentsWhatsappNumbers()
         }
       }
 
@@ -225,30 +239,44 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
                   Schimbă Datele
                   </Button>
                   <CSVExport
-                    buttonLabel='Exportă CSV'
-                    dataToExport={tableDataForExport}
+                    dataType="monthly"
+                    buttonLabel='Export CSV - monthly'
                     CSVfileName='TotalCursantiInscrisi'
-                    exportPermission={hasExportCSVPermission}
-                    CSVheaders={CSVheaders}
+                    exportPermission={hasMonthlyExportCSVPermission}
+                    CSVheaders={monthlyCSVheaders}
                   />
-                  <CSVExportWhatsapp
-                    exportPermission={hasExportCSVWhatsappPermission}
-                    dataToExport={exportWhatsappNumbersData}
-                  /> 
+
+                  { isAdmin(currentUserRole) &&  
+                    <CSVExport
+                      dataType="all"
+                      buttonLabel='Export CSV - all data'
+                      CSVfileName='TotalCursantiInscrisi'
+                      exportPermission={true}
+                      CSVheaders={allDataCSVheaders}
+                    />                 
+                  }
+
+                  <CSVExport
+                    dataType="whatsapp"
+                    buttonLabel='Export CSV - Whatsapp'
+                    CSVfileName='NrTelCursantiFormatWhatsapp'
+                    exportPermission={hasWhatsappExportCSVPermission}
+                    CSVheaders={whatsappCSVheaders}
+                  />
                 </div>
               </div>
               <div className="px-3 pb-5" style={{width: '100%'}}>
                 <Table
                   tableTitle={chartTableTitles.cursanti_inscrisi_total} 
                   tableColumns={tableColumns} 
-                  tableData={setupDataForTableAllStudents(getDataFromStore, tableColumns)} />
+                  tableData={setupDataForTableAllStudents(getTableDataFromStore, tableColumns)} />
               </div>
             </>
           }
 
           { tableOrChartBtn.chart &&
             <LineChart 
-              chartData={setupDataForChart(getDataFromStore)} 
+              chartData={setupDataForChart(getTableDataFromStore)} 
               chartTitle={chartTableTitles.cursanti_inscrisi_total}
             />
           }

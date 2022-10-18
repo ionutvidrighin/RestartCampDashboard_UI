@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { nanoid } from 'nanoid';
-import { createDashboardUser, clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUserAccountsActions";
+import { createDashboardUser, clearDashboardUserServerResponse } from "../../../redux/actions/dashboardUsersActions";
 import { permissions, userRoles, viewTimeLimit } from '../../../constants/userPermissions'; 
 import { makeStyles } from '@material-ui/styles';
 import NativeSelect from '@material-ui/core/NativeSelect';

@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from "react-redux";
-import { getStudentDataByEmail } from '../../redux/actions/studentsActions/searchStudent';
+import { fetchSingleStudentByEmail } from '../../redux/actions/studentsActions';
 import Button from '@material-ui/core/Button';
 import SnackBar from "../ReusableComponents/SnackBar"
 
@@ -30,7 +30,7 @@ const SearchStudent = ({localStyles}) => {
       return
     }
     const payload = studentEmail.toLowerCase()
-    dispatch(getStudentDataByEmail({studentEmail: payload}))
+    dispatch(fetchSingleStudentByEmail({studentEmail: payload}))
     setStudentEmail("")
   }
 

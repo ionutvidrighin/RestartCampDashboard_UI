@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { clearCoursesModule1ServerResponse } from '../../../redux/actions/coursesActions/coursesModule1';
+import { clearCoursesModule1ServerResponse } from '../../../redux/actions/coursesActions';
 //import { clearCoursesModule2ServerResponse } from '../../redux/actions/coursesActions/coursesModule2';
 import { makeStyles } from '@material-ui/styles';
 import Dialog from '@material-ui/core/Dialog';

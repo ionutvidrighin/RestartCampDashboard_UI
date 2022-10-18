@@ -1,7 +1,8 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:4545'
+//const baseUrl = 'http://localhost:4545'
 //const baseUrl = 'https://restart-camp-org.herokuapp.com'
+const baseUrl = 'https://red-tough-gosling.cyclic.app/'
 const responseBody = response => response
 
 // public requests
@@ -77,17 +78,23 @@ const RegistrationFormAlerts = {
 const callCourses = {
   getCoursesModule1: (token) => tokenizedRequests.get('/courses-module1', token),
   addCourseModule1: (token, body) => tokenizedRequests.post('/courses-module1', token, body),
-  updateCourseModule1State: (token, body) => tokenizedRequests.patch('/courses-module1', token, body),
-  changeCourseModule1: (token, body) => tokenizedRequests.put('/courses-module1', token, body),
+  toggleCourseModule1State: (token, body) => tokenizedRequests.patch('/courses-module1', token, body),
+  updateCourseModule1: (token, body) => tokenizedRequests.put('/courses-module1', token, body),
   deleteCourseModule1: (token, body) => tokenizedRequests.delete('/courses-module1', token, body),
   getCoursesModule2: (token) => tokenizedRequests.get('/courses-module2', token),
   addCourseModule2: (token, body) => tokenizedRequests.post('/courses-module2', token, body),
-  updateCourseModule2State: (token, body) => tokenizedRequests.patch('/courses-module2', token, body),
-  changeCourseModule2: (token, body) => tokenizedRequests.put('/courses-module2', token, body),
+  toggleCourseModule2State: (token, body) => tokenizedRequests.patch('/courses-module2', token, body),
+  updateCourseModule2: (token, body) => tokenizedRequests.put('/courses-module2', token, body),
   deleteCourseModule2: (token, body) => tokenizedRequests.delete('/courses-module2', token, body)
 }
 
 const fetchStudents = {
+  /* GetAllStudentsData - receives 1 param: token
+  *** token - String taken from Redux after user successfully logs in
+  */
+  getAllStudentsData: (token) => tokenizedRequests.post('/get-all-students-data', token),
+
+
   /* GetStudentsByDate - receives 2 params: token & date
   *** token - String taken from Redux after user successfully logs in
   *** body - Object of form { date: 'YYYY-MM', userTablePermissions: [Array of Objects]  }

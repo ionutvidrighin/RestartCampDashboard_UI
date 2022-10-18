@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCoursesModule1, 
-  updateCourseModule1State, 
-  deleteCourseModule1,
-  clearCoursesModule1,
-  clearCoursesModule1ServerResponse } from "../../redux/actions/coursesActions/coursesModule1";
+  toggleCourseModule1State, deleteCourseModule1,
+  clearCoursesModule1, clearCoursesModule1ServerResponse } from "../../redux/actions/coursesActions";
 import { appPagesConstants } from "../../constants/userPermissions";
 import { doesUserHaveViewPermission } from "../../utils/helperFunctions";
 import { makeStyles } from '@material-ui/styles';
@@ -64,9 +61,9 @@ const CursuriModul1 = ({setShowPlaceholder}) => {
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({})
   const coursesModule1 = useSelector(state => ({
-    courses: state.coursesModule1.courses,
-    success: state.coursesModule1?.success,
-    error: state.coursesModule1?.error
+    courses: state.courses.module1.data,
+    success: state.courses.module1?.success,
+    error: state.courses.module1?.error
   }))
   const { courses, success, error } = coursesModule1
 
@@ -93,7 +90,7 @@ const CursuriModul1 = ({setShowPlaceholder}) => {
   }, [courses, error])
 
   const [selectedCourse, setSelectedCourse] = useState({})
-  const [showAddCourseModule1Form, setShowAddCourseModule1Form] = useState(false)
+  const [revealAddCourseForm, setRevealAddCourseForm] = useState(false)
   const [showChangeCourseModule1, setShowChangeCourseModule1] = useState(false)
   const [courseState, setCourseState] = useState({ message: '', state: null, courseId: null })
   const [openCourseBannerState, setOpenCourseBannerState] = useState({ open: false, vertical: 'top', horizontal: 'center' })
@@ -110,12 +107,12 @@ const CursuriModul1 = ({setShowPlaceholder}) => {
 
   const handleOpenEditCourse = (course) => {
     setShowChangeCourseModule1(true)
-    setShowAddCourseModule1Form(false)
+    setRevealAddCourseForm(false)
     setSelectedCourse(course)
   }
 
   const handleOpenAddNewCourseSection = () => {
-    setShowAddCourseModule1Form(true)
+    setRevealAddCourseForm(true)
     setShowChangeCourseModule1(false)
   }
 
@@ -132,7 +129,7 @@ const CursuriModul1 = ({setShowPlaceholder}) => {
             {/* Modal on activate / deactivate course */}
             <ToggleCourseStateBanner
               courseState={courseState}
-              updateCourseStateAction={updateCourseModule1State}
+              updateCourseStateAction={toggleCourseModule1State}
               openBanner={openCourseBannerState}
               closeBanner={setOpenCourseBannerState}
             />
@@ -200,14 +197,14 @@ const CursuriModul1 = ({setShowPlaceholder}) => {
             <div className="p-3 mt-3 save-courses">
               <Button 
                 variant="contained" 
-                disabled={showChangeCourseModule1 || showAddCourseModule1Form}
+                disabled={showChangeCourseModule1 || revealAddCourseForm}
                 className={localStyles.addBtn}
                 onClick={handleOpenAddNewCourseSection}>
               Adauga curs nou
               </Button>
               
-              { showAddCourseModule1Form && 
-                <AddCourseModule1 setShowAddCourseModule1Form={setShowAddCourseModule1Form} /> 
+              { revealAddCourseForm && 
+                <AddCourseModule1 setShowAddCourseModule1Form={setRevealAddCourseForm} /> 
               }
               
               { (showChangeCourseModule1 && Object.keys(selectedCourse).length !== 0) && 
