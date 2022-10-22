@@ -71,14 +71,14 @@ function setupDataForTableCoursePresence(data, tableColumns) {
   let tableData = data.map(entry => {
     const tableRow = {
       id: entry.id,
-      courseName: entry?.course.title,
-      date: dayjs(entry?.course.date).locale('ro').format('LL'),
+      courseName: entry?.courseName.title,
+      date: dayjs(entry?.courseName.date).locale('ro').format('LL'),
       fullName: entry?.fullName,
       email: entry?.email
     }
-    if (entry.hasOwnProperty(tableColumns.PRESENT)) {
+    if (entry.courseName.hasOwnProperty(tableColumnsConstants.PRESENT)) {
       Object.assign(tableRow, {
-        present: entry?.course.present ? 'DA' : 'NU',
+        present: entry?.courseName.present ? 'DA' : 'NU',
       })
     }
     return tableRow

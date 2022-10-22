@@ -53,18 +53,8 @@ const DeleteUserAccountDialog = ({openDialog, closeDialog, user}) => {
       username
     }
     
-    if (username === currentlyLoggedUser) {
-      setSnackBar({
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        upDuration: 12000,
-        text: 'Eroare! Nu îți poți șterge propriul cont.'
-      })
-      setTimeout(() => handleCloseDialog(), 2500)
-      return
-    }
     dispatch(deleteDashboardUserAccount(payload))
+    handleCloseDialog()
   }
 
   return (

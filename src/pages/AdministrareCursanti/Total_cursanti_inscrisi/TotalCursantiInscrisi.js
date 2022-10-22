@@ -2,15 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { appPagesConstants } from '../../../constants/userPermissions';
 import { isAdmin, doesUserHaveViewPermission, doesUserHaveEditPermission,
-  doesUserHaveMonthlyCSVExportPermission, doesUserHaveWhatsappCSVExportPermission, 
-  checkUserAccessOnPastDataLimit, createTableColumnsAccordingToPermission,
-  createAllStudentsDataCSVheaders, createMonthlyCSVheadersAccordingToPermission,
-  createWhatsappNumbersCSVheaders, extractUserTablePermissions } from '../../../utils/helperFunctions';
+  doesUserHaveMonthlyCSVExportPermission, checkUserAccessOnPastDataLimit,
+  createTableColumnsAccordingToPermission, createAllStudentsDataCSVheaders,
+  createMonthlyCSVheadersAccordingToPermission, extractUserTablePermissions } from '../../../utils/helperFunctions';
 import { calculateMonthsDifference } from '../../../utils/helperFunctions';
-import { fetchAllStudentsData, fetchStudentsByDate, fetchStudentsWhatsappNumbers, 
+import { fetchAllStudentsData, fetchStudentsByDate,
   clearStudentsInCoursesMod1 } from '../../../redux/actions/studentsActions';
-import { storeAllStudentsExportData, storeStudentsWhatsappNumbersExportData, 
-  clearAllStudentsExportData, clearMonthlyStudentsExportData,
+import { storeAllStudentsExportData, clearAllStudentsExportData, clearMonthlyStudentsExportData,
   clearStudentsWhatsappNumbersExportData } from '../../../redux/actions/cvsExportActions';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { setupDataForTableAllStudents, setupDataForChart } from '../helperMethods';
@@ -50,10 +48,8 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
   const tableColumns = createTableColumnsAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const allDataCSVheaders = createAllStudentsDataCSVheaders()
   const monthlyCSVheaders = createMonthlyCSVheadersAccordingToPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const whatsappCSVheaders = createWhatsappNumbersCSVheaders()
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const hasMonthlyExportCSVPermission = doesUserHaveMonthlyCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
-  const hasWhatsappExportCSVPermission = doesUserHaveWhatsappCSVExportPermission(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const permissions = {edit: hasEditPermission, export: hasMonthlyExportCSVPermission}
   const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
   const userTablePermissions = extractUserTablePermissions(appPagesConstants.TOTAL_CURSANTI_INSCRISI, userPagesAccessFromStore)
@@ -71,18 +67,11 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
     dispatch(storeAllStudentsExportData(response))
   }
   const callStudentsByDate = () => dispatch(fetchStudentsByDate({date: currentMonthYear, userTablePermissions}))
-  const callStudentsWhatsappNumbers = async () => {
-    const response = await dispatch(fetchStudentsWhatsappNumbers({date: searchingDate}))
-    dispatch(storeStudentsWhatsappNumbersExportData(response))
-  }
 
   useEffect(() => {
     setShowPlaceholder(false)
     if (hasViewPermission) {
       callStudentsByDate()
-    }
-    if (hasWhatsappExportCSVPermission) {
-      callStudentsWhatsappNumbers()
     }
     if (isAdmin(currentUserRole)) {
       callAllStudentsData()
@@ -159,15 +148,9 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
           })
           return
         }
-
-        if (hasWhatsappExportCSVPermission) {
-          callStudentsWhatsappNumbers()
-        }
       }
 
     dispatch(fetchStudentsByDate({date: searchingDate, userTablePermissions}))
-
-
   }
 
   const displaySnackBar = () => {
@@ -255,14 +238,6 @@ const TotalCursantiInscrisi = ({ setShowPlaceholder }) => {
                       CSVheaders={allDataCSVheaders}
                     />                 
                   }
-
-                  <CSVExport
-                    dataType="whatsapp"
-                    buttonLabel='Export CSV - Whatsapp'
-                    CSVfileName='NrTelCursantiFormatWhatsapp'
-                    exportPermission={hasWhatsappExportCSVPermission}
-                    CSVheaders={whatsappCSVheaders}
-                  />
                 </div>
               </div>
               <div className="px-3 pb-5" style={{width: '100%'}}>

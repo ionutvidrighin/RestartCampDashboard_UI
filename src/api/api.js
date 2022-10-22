@@ -1,8 +1,8 @@
 import axios from 'axios'
 
-//const baseUrl = 'http://localhost:4545'
+const baseUrl = 'http://localhost:4545'
 //const baseUrl = 'https://restart-camp-org.herokuapp.com'
-const baseUrl = 'https://red-tough-gosling.cyclic.app/'
+//const baseUrl = 'https://red-tough-gosling.cyclic.app'
 const responseBody = response => response
 
 // public requests

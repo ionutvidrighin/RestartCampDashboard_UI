@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { appPagesConstants } from '../../../constants/userPermissions';
 import { fetchStudentsPresenceByCourseName } from '../../../redux/actions/studentsActions';
-import { calculateMonthsDifference } from '../../../utils/helperFunctions';
+import { doesUserHaveWhatsappCSVExportPermission, calculateMonthsDifference } from '../../../utils/helperFunctions';
 import Dialog from '@material-ui/core/Dialog';
 import CancelRoundedIcon from '@material-ui/icons/CancelRounded';
 import Button from '@material-ui/core/Button';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 import dayjs from 'dayjs';
 
-const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, selectedData, limitedAccessOnPastData, userTablePermissions}) => {
+const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, selectedData, limitedAccessOnPastData, userTablePermissions, callStudentsWhatsappNumbers}) => {
   const dispatch = useDispatch()
   const today = dayjs().format().substring(0, 7)
+
+  const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
+  const hasWhatsappExportCSVPermission = doesUserHaveWhatsappCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
 
   const handleCloseDialog = () => {
     closeDialog(false)
@@ -81,6 +85,11 @@ const GetNewPresenceDataDialog = ({openDialog, closeDialog , coursesListNames, s
 
     dispatch(fetchStudentsPresenceByCourseName(payload))
 
+    if (hasWhatsappExportCSVPermission) {
+      callStudentsWhatsappNumbers(payload)
+    }
+
+    console.log(payload)
     selectedData({
       course: selectedCourse.courseName,
       date: selectedDate

@@ -99,8 +99,7 @@ const permissions = [
     access: {
       view: false,
       edit: false,
-      download: false,
-      downloadWhatsapp: false,
+      monthlyExport: false,
       viewTimeLimit: {label: 'Nelimitat', value: "unlimited"},
       viewDataLimit: [{
         id: 0,
@@ -181,7 +180,7 @@ const permissions = [
     access: {
       view: false,
       edit: false,
-      download: false,
+      monthlyExport: false,
       viewTimeLimit: {label: 'Nelimitat', value: "unlimited"},
       viewDataLimit: [{
         id: 34,
@@ -212,7 +211,8 @@ const permissions = [
     access: {
       view: false,
       edit: false,
-      download: false,
+      monthlyExport: false,
+      whatsappExport: false,
       viewTimeLimit: {label: 'Nelimitat', value: "unlimited"},
       viewDataLimit: [{
         id: 38,

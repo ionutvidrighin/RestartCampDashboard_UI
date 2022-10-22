@@ -28,12 +28,12 @@ export const doesUserHaveEditPermission = (page, userPagesPermission) => {
 
 export const doesUserHaveMonthlyCSVExportPermission = (page, userPagesPermission) => {
   const visitedPagePermission = userPagesPermission.find(element => element.label === page)
-  return visitedPagePermission.access.download
+  return visitedPagePermission.access.monthlyExport
 }
 
 export const doesUserHaveWhatsappCSVExportPermission = (page, userPagesPermission) => {
   const visitedSection = userPagesPermission.find(element => element.label === page)
-  return visitedSection.access.downloadWhatsapp
+  return visitedSection.access.whatsappExport
 }
 
 export const checkUserAccessOnPastDataLimit = (page, userPagesPermission) => {
@@ -109,16 +109,19 @@ export const createMonthlyCSVheadersAccordingToPermission = (page, userPagesPerm
   return CSVheaders
 }
 
-export const createWhatsappNumbersCSVheaders = () => {
+export const createWhatsappExportCSVheaders = () => {
   return [{
     label: 'Data inscriere',
-    key: 'registrationDate'
+    key: 'courseDate'
   }, {
     label: 'Numar tel.',
     key: 'phoneNo'
   }, {
     label: 'Nume Curs',
     key: 'courseName'
+  }, {
+    label: 'Prezent',
+    key: 'studentPresence'
   }]
 }
 

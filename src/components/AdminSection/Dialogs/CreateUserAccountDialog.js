@@ -133,11 +133,11 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
     if (selectedSection === 'edit') {
       updatedPermissions[sectionToUpdate].access.edit = !allUserPermissions[sectionToUpdate].access.edit
     }
-    if (selectedSection === 'download') {
-      updatedPermissions[sectionToUpdate].access.download = !updatedPermissions[sectionToUpdate].access.download
+    if (selectedSection === 'monthlyExport') {
+      updatedPermissions[sectionToUpdate].access.monthlyExport = !updatedPermissions[sectionToUpdate].access.monthlyExport
     }
-    if (selectedSection === 'downloadWhatsapp') {
-      updatedPermissions[sectionToUpdate].access.downloadWhatsapp = !updatedPermissions[sectionToUpdate].access.downloadWhatsapp
+    if (selectedSection === 'whatsappExport') {
+      updatedPermissions[sectionToUpdate].access.whatsappExport = !updatedPermissions[sectionToUpdate].access.whatsappExport
     }
     if (selectedSection === 'viewTimeLimit') {
       updatedPermissions[sectionToUpdate].access.viewTimeLimit = {label: selectedViewTimeLimit, value: selectedViewTimeLimit}
@@ -187,9 +187,9 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
     userPermissions.forEach(section => {
       const viewAccess = section.access.view
       const editAccess = section.access.edit
-      const downloadAccess = section.access?.download
-      const downloadWhatsappAccess = section.access?.downloadWhatsapp
-      allSectionsPermissions.push(viewAccess, editAccess, downloadAccess, downloadWhatsappAccess)
+      const monthlyExport = section.access?.monthlyExport
+      const whatsappExport = section.access?.whatsappExport
+      allSectionsPermissions.push(viewAccess, editAccess, monthlyExport, whatsappExport)
     })
 
     if (!allSectionsPermissions.includes(true)) {
@@ -299,31 +299,31 @@ const CreateUserAccountDialog = ({openDialog, closeDialog}) => {
                           label="Editare Sectiune"
                         />
 
-                        { page.access.hasOwnProperty('download') &&
+                        { page.access.hasOwnProperty('monthlyExport') &&
                           <FormControlLabel
                             key={nanoid(4)}
                             control={
                               <Checkbox
-                                checked={page.access.download}
+                                checked={page.access.monthlyExport}
                                 onChange={(event) => handleSelectPagesPermission(event, page.id)} 
-                                name={'download'}
+                                name={'monthlyExport'}
                                 style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
                               }
-                            label="Export/Download CSV"
+                            label="Monthly CSV Export"
                           />
                         }
                         
-                        { page.access.hasOwnProperty('downloadWhatsapp') &&
+                        { page.access.hasOwnProperty('whatsappExport') &&
                           <FormControlLabel
                             key={nanoid(4)}
                             control={
                               <Checkbox
-                                checked={page.access.downloadWhatsapp}
+                                checked={page.access.whatsappExport}
                                 onChange={(event) => handleSelectPagesPermission(event, page.id)} 
-                                name={'downloadWhatsapp'}
+                                name={'whatsappExport'}
                                 style={{color: 'green', padding: '3px', marginLeft: '4px'}} />
                               }
-                            label="Export/Download CSV Nr. Tel. Whatsapp"
+                            label="Whatsapp CSV Export"
                           />
                         }
 

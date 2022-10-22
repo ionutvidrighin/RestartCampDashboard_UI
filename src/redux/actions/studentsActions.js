@@ -131,13 +131,22 @@ export const fetchStudentsPresenceByCourseName = (body) => {
   }
 }
 
-export const fetchStudentsWhatsappNumbers = (date) => {
+export const fetchStudentsWhatsappNumbers = (body) => {
+  const today = dayjs().format().substring(0, 7)
   const accessToken = store.getState().generateDBTokenReducer.value
 
   return async () => {
     try {
-      const response = await API.fetchStudents.getStudentsWhatsappNumbers(accessToken, date)
-      return response.data
+      if (!body) {
+        const coursesModule1 = await API.callCourses.getCoursesModule1(accessToken)
+        const courseName = coursesModule1.data[0].courseTitle
+        const payload = { registrationYearMonth: today, courseName }
+        const response = await API.fetchStudents.getStudentsWhatsappNumbers(accessToken, payload)
+        return response.data
+      } else {
+        const response = await API.fetchStudents.getStudentsWhatsappNumbers(accessToken, body)
+        return response.data
+      }
     } catch (error) {
       console.log(error)
     }

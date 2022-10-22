@@ -5,11 +5,13 @@ import { makeStyles } from '@material-ui/styles';
 import { chartTableTitles } from '../../../constants/chartTableTitlesConstants';
 import { appPagesConstants } from '../../../constants/userPermissions';
 import { doesUserHaveViewPermission, doesUserHaveEditPermission,
-  doesUserHaveMonthlyCSVExportPermission, checkUserAccessOnPastDataLimit,
-  createTableColumnsAccordingToPermission, createMonthlyCSVheadersAccordingToPermission,
-  extractUserTablePermissions } from '../../../utils/helperFunctions';
-import { fetchStudentsPresenceByCourseName,
-  clearStudentsPresence } from '../../../redux/actions/studentsActions';
+  doesUserHaveMonthlyCSVExportPermission, doesUserHaveWhatsappCSVExportPermission, 
+  checkUserAccessOnPastDataLimit, createTableColumnsAccordingToPermission,
+  createMonthlyCSVheadersAccordingToPermission, extractUserTablePermissions,
+  createWhatsappExportCSVheaders } from '../../../utils/helperFunctions';
+import { fetchStudentsPresenceByCourseName,clearStudentsPresence,
+  fetchStudentsWhatsappNumbers } from '../../../redux/actions/studentsActions';
+import { storeStudentsWhatsappNumbersExportData } from '../../../redux/actions/cvsExportActions';
 import { clearCoursesModule1 } from '../../../redux/actions/coursesActions';
 import { setupDataForTableCoursePresence, setupDataForBarChartCoursePresence, 
   setupDataForPieChartCoursePresence } from '../helperMethods';
@@ -25,7 +27,7 @@ import Table from '../../../components/ReusableComponents/Table/Table';
 import BarChart from '../../../components/ReusableComponents/Charts/barChart';
 import RoundChart from '../../../components/ReusableComponents/Charts/pieChart';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
-
+ 
 const useStyles = makeStyles({
   button: {
     color: 'white',
@@ -48,6 +50,8 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   const monthlyCSVheaders = createMonthlyCSVheadersAccordingToPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const hasMonthlyExportCSVPermission = doesUserHaveMonthlyCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const hasWhatsappExportCSVPermission = doesUserHaveWhatsappCSVExportPermission(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
+  const whatsappCSVheaders = createWhatsappExportCSVheaders()
   const permissions = {edit: hasEditPermission, export: hasMonthlyExportCSVPermission}
   const viewPastDataLimit = checkUserAccessOnPastDataLimit(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
   const userTablePermissions = extractUserTablePermissions(appPagesConstants.CURSANTI_PREZENTI_PER_CURS, userPagesAccessFromStore)
@@ -61,11 +65,19 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
   const [selectedSearchData, setSelectedSearchData] = useState({ date: null, course: null })
   const [snackBar, setSnackBar] = useState({})
 
+  const callStudentsWhatsappNumbers = async (body) => {
+    const response = await dispatch(fetchStudentsWhatsappNumbers(body))
+    dispatch(storeStudentsWhatsappNumbersExportData(response))
+  }
+
   // fetch All Courses MODULE 1
   useEffect(() => {
     setShowPlaceholder(false)
     if (hasViewPermission) {
       dispatch(fetchStudentsPresenceByCourseName())
+    }
+    if (hasWhatsappExportCSVPermission) {
+      callStudentsWhatsappNumbers()
     }
 
     return () => {
@@ -166,11 +178,25 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   </Button>
                   <CSVExport
                     dataType="monthly"
-                    buttonLabel='Export CSV - monthly'
+                    buttonLabel='Export CSV - Monthly'
                     CSVfileName='CursantiPrezentiPerCurs'
                     exportPermission={hasMonthlyExportCSVPermission}
                     CSVheaders={monthlyCSVheaders}
                   />
+                  <CSVExport
+                    dataType="whatsapp-present"
+                    buttonLabel='Export CSV - Whatsapp (Prezenți)'
+                    CSVfileName='NrTelWhatsapp-Prezenti'
+                    exportPermission={hasWhatsappExportCSVPermission}
+                    CSVheaders={whatsappCSVheaders}
+                  />
+                  <CSVExport
+                    dataType="whatsapp-absent"
+                    buttonLabel='Export CSV - Whatsapp (Absenți)'
+                    CSVfileName='NrTelWhatsapp-Absenti'
+                    exportPermission={hasWhatsappExportCSVPermission}
+                    CSVheaders={whatsappCSVheaders}
+                  /> 
                 </div>
               </div>
 
@@ -197,6 +223,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
                   selectedData={setSelectedSearchData}
                   limitedAccessOnPastData={viewPastDataLimit}
                   userTablePermissions={userTablePermissions}
+                  callStudentsWhatsappNumbers={callStudentsWhatsappNumbers}
                 />
               }
 
