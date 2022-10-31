@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { generateDataBaseToken } from './redux/actions/generateDBToken';
 import { BrowserRouter, Switch, Route } from "react-router-dom";
+import { appRoutes } from "./constants/appRoutesConstants";
 import LoginPage from "./pages/Login/LoginPage";
 import AppMenu from "./components/AppMenu";
 import AdminSection from "./pages/AdminSection/AdminSection";
@@ -12,7 +13,9 @@ import SchimbareParola from "./pages/SchimbareParola/SchimbareParola";
 import Placeholder from "./components/Placeholder";
 import PaginaCursuri from "./pages/ManipularePaginiWeb/PaginaCursuri/PaginaCursuri";
 import FromularInscriere from "./pages/ManipularePaginiWeb/FormularInscriere/FormularInscriere";
-import ConfirmarePrezenta from "./pages/ManipularePaginiWeb/ConfirmarePrezenta/ConfirmarePrezenta";
+import ConfirmarePrezentaCursInPrezent from "./pages/ManipularePaginiWeb/ConfirmarePrezenta/ConfirmarePrezentaCursInPrezent";
+import ConfirmarePrezentaCursInTrecutSiViitor from "./pages/ManipularePaginiWeb/ConfirmarePrezenta/ConfirmarePrezentaCursInTrecutSiViitor";
+import ConfirmarePrezentaAccesCursZoom from "./pages/ManipularePaginiWeb/ConfirmarePrezenta/ConfirmarePrezentaAccesCursZoom";
 import HeaderFooter from "./pages/ManipularePaginiWeb/Header&Footer/HeaderFooter";
 import CursuriModul1 from "./pages/CursuriModul1/CursuriModul1";
 import CursuriModul2 from "./pages/CursuriModul2/CursuriModul2";
@@ -28,8 +31,8 @@ import Email3zileCompanie from "./pages/AdministrareEmails/Email3zileCompanie"
 import EmailReminderCurs1ora from "./pages/AdministrareEmails/EmailReminderCurs1ora";
 import EmailReminderCurs1zi from "./pages/AdministrareEmails/EmailReminderCurs1zi";
 import EmailReminderCurs7zile from "./pages/AdministrareEmails/EmailReminderCurs7zile";
-import EmailVoucher40oreDupaCurs from "./pages/AdministrareEmails/EmailVoucher40oreDupaCurs";
-// import EmailVoucher40oreDupaParticipare from "./pages/AdministrareEmails/EmailVoucher40oreDupaParticipare";
+import EmailVoucher4oreDupaCurs from "./pages/AdministrareEmails/EmailVoucher4oreDupaCurs";
+import EmailVoucher18oreDupaCurs from "./pages/AdministrareEmails/EmailVoucher18oreDupaCurs";
 
 function App() {
   const dispatch = useDispatch()
@@ -55,7 +58,7 @@ function App() {
               <AppMenu />
               { showPlaceholder && <Placeholder /> }
 
-              <Route path="/sectiune-admin">
+              <Route path={appRoutes.sectiune_admin}>
                 <AdminSection setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
@@ -67,83 +70,91 @@ function App() {
                 <SchimbareParola setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/editare-pagina-cursuri">
+              <Route path={appRoutes.pagina_cursuri}>
                 <PaginaCursuri setShowPlaceholder={setShowPlaceholder} />
               </Route>
               
-              <Route path="/editare-formular-inscriere">
+              <Route path={appRoutes.formular_inscriere}>
                 <FromularInscriere setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/editare-confirmare-prezenta">
-                <ConfirmarePrezenta setShowPlaceholder={setShowPlaceholder} />
+              <Route path={appRoutes.confirmare_prezenta_curs_in_prezent}>
+                <ConfirmarePrezentaCursInPrezent setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/editare-header-footer">
+              <Route path={appRoutes.confirmare_prezenta_curs_in_trecut_viitor}>
+                <ConfirmarePrezentaCursInTrecutSiViitor setShowPlaceholder={setShowPlaceholder} />
+              </Route>
+              
+              <Route path={appRoutes.confirmare_prezenta_acces_curs_zoom}>
+                <ConfirmarePrezentaAccesCursZoom setShowPlaceholder={setShowPlaceholder} />
+              </Route>
+
+              <Route path={appRoutes.headerFooter}>
                 <HeaderFooter setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/cursuri-modul1">
+              <Route path={appRoutes.cursuri_modul1}>
                 <CursuriModul1 setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/cursuri-modul2">
+              <Route path={appRoutes.cursuri_modul2}>
                 <CursuriModul2 setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/cauta-cursant">
+              <Route path={appRoutes.cauta_cursant}>
                 <CautaCursantInscris setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/total-cursanti">
+              <Route path={appRoutes.total_cursanti}>
                 <TotalCursantiInscrisi setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/cursanti-per-curs">
+              <Route path={appRoutes.cursanti_per_curs}>
                 <CursantiPerCurs setShowPlaceholder={setShowPlaceholder} />
               </Route>
               
-              <Route path="/cursanti-prezenti">
+              <Route path={appRoutes.cursanti_prezenti}>
                 <CursantiPrezentiPerCurs setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/cursanti-modul2">
+              <Route path={appRoutes.inscriere_cursanti_modul2}>
                 <InscriereCursantiModul2 setShowPlaceholder={setShowPlaceholder} />
               </Route>
               
-              <Route path="/dezabonare-cursanti">
+              <Route path={appRoutes.dezabonare_cursanti}>
                 <DezabonareCursanti setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-confirmare-inscriere">
+              <Route path={appRoutes.email_registration}>
                 <EmailConfirmareInscriere setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-reminder-7zile">
+              <Route path={appRoutes.email_reminder_7days}>
                 <EmailReminderCurs7zile setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-reminder-1zi">
+              <Route path={appRoutes.email_reminder_1day}>
                 <EmailReminderCurs1zi setShowPlaceholder={setShowPlaceholder} />
               </Route>
               
-              <Route path="/email-reminder-1ora">
+              <Route path={appRoutes.email_reminder_1hour}>
                 <EmailReminderCurs1ora setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              {/* <Route path="/email-voucher-4ore">
-                <EmailVoucher4oreDupaParticipare setShowPlaceholder={setShowPlaceholder} />
-              </Route> */}
-
-              <Route path="/email-voucher-40ore">
-                <EmailVoucher40oreDupaCurs setShowPlaceholder={setShowPlaceholder} />
+              <Route path={appRoutes.email_voucher_4hours}>
+                <EmailVoucher4oreDupaCurs setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-3-zile-inscriere-angajat">
+              <Route path={appRoutes.email_voucher_18hours}>
+                <EmailVoucher18oreDupaCurs setShowPlaceholder={setShowPlaceholder} />
+              </Route>
+
+              <Route path={appRoutes.email_3days_after_registration_employee}>
                 <Email3zileAngajat setShowPlaceholder={setShowPlaceholder} />
               </Route>
 
-              <Route path="/email-3-zile-inscriere-antreprenor">
+              <Route path={appRoutes.email_3days_after_registration_company}>
                 <Email3zileCompanie setShowPlaceholder={setShowPlaceholder} />
               </Route>
             </>

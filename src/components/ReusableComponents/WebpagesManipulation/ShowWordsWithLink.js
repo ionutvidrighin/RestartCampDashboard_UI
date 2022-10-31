@@ -1,30 +1,51 @@
 import React from 'react';
 import { useDispatch } from "react-redux";
+import { makeStyles } from '@material-ui/styles';
 import TextField from '@material-ui/core/TextField';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
-const ShowWordsWithLink = ({editPermission, data, removeWordAction, objectKeyLocation, childObjectKey, localStyles}) => {
+const useStyles = makeStyles({
+  textField: {
+    width: '280px',
+    marginBottom: '.5rem',
+    "& .MuiFormHelperText-root": {
+      color: '#ff5c5c !important'
+    },
+    "& .MuiInputLabel-shrink": {
+      transform: 'translate(10px, 5px) scale(0.75)'
+    },
+    "& .MuiFormLabel-root": {
+      color: 'white'
+    },
+    "& .MuiInputBase-root": {
+      color: 'white'
+    }
+  }
+})
+
+const ShowWordsWithLink = ({editPermission, data, removeWordAction, objectKeyLocation, paragraphNumber}) => {
   /** Props Explanation:
    * data -> type Array of Objects [{id: '', word: '', link: ''}] to be rendered in this component
    * removeWordAction -> type Function; Redux Action to remove the element from the Store
    * objectKeyLocation -> type String; represents the key name inside the Object where we remove the element
-   * childObjectKey -> type String; represents the key name inside the above "objectKeyLocation" where we remove the element 
+   * paragraphNumber -> type String; represents the key name inside the above "objectKeyLocation" where we remove the element 
    */
 
+  const localStyles = useStyles()
   const dispatch = useDispatch()
 
   const handleRemoveRow = wordId => {
     const payload = {
       wordId, 
       location: objectKeyLocation,
-      childLocation: childObjectKey
+      paragraphNumber
     }
     dispatch(removeWordAction(payload))
   }
 
   return (
     <div className='words-with-links'>
-      { data.length !== 0 &&
+      { data && data.length !== 0 &&
         <>
           <p className='title m-0'> Cuvinte cu link </p>
           { data.map((element, index) => {

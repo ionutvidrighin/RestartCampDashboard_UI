@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { appPagesConstants } from '../../constants/userPermissions';
-import { doesUserHaveViewPermission } from '../../utils/helperFunctions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../utils/helperFunctions';
 import { emailTemplatesEndpoints } from '../../constants/emailTemplatesEndpoints';
 import { getEmailTemplateHTML } from '../../api/callEmailTemplates';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../components/NoAccessPage';
+import UpdateEmailTemplateSubject from '../../components/ReusableComponents/EmailTemplatesManipulation/UpdateEmailTemplateSubject';
 import DownloadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/DownloadEmailTemplate';
 import UploadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/UploadEmailTemplateFile';
 import SendTestEmailTemplate from '../../components/ReusableComponents/EmailTemplatesManipulation/SendTestEmailTemplate';
@@ -19,11 +20,14 @@ const EmailConfirmareInscriere = ({ setShowPlaceholder }) => {
 
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_CONFIRMARE_INSCRIERE, userPagesAccessFromStore)
-  
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.EMAIL_CONFIRMARE_INSCRIERE, userPagesAccessFromStore)
+
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 2000})
   
   const DBtoken = useSelector(state => state.generateDBTokenReducer.value)
+  const getEmailTemplateSubjectURL = emailTemplatesEndpoints.getEmailConfirmationSubjectTemplate
+  const updateEmailTemplateSubjectURL = emailTemplatesEndpoints.emailConfirmationSubjectTemplateUpdate
   const uploadTemplateURL = emailTemplatesEndpoints.emailConfirmationRegistrationUpload
   const downloadTemplateURL = emailTemplatesEndpoints.emailConfirmationRegistrationDownload
   const sendTestEmailURL = emailTemplatesEndpoints.testEmailConfirmationRegistration
@@ -68,15 +72,22 @@ const EmailConfirmareInscriere = ({ setShowPlaceholder }) => {
               <div className='text-center title-section'>
                 <h6 className='pt-3 fw-bold title'> EDITARE E-MAIL TEMPLATE </h6>
                 <h6 className='ps-5 pe-5 subtitle'> E-mail confirmare instant la înscriere </h6>
-                <Divider style={{background: 'white'}} className="mb-5 ms-2" />
+                <Divider style={{background: 'white'}} className="mb-4 ms-2" />
               </div>
 
-              <div className='d-flex flex-column justify-content-space-around' style={{marginTop: '5rem'}}>
-                <UploadEmailTemplateFile url={uploadTemplateURL} token={DBtoken} />
+              <div className='d-flex flex-column'>
+                <UpdateEmailTemplateSubject
+                  hasEditPermission={hasEditPermission}
+                  getTemplateURL={getEmailTemplateSubjectURL}
+                  updateSubjectURL={updateEmailTemplateSubjectURL}
+                  token={DBtoken}
+                />
+                
+                <UploadEmailTemplateFile hasEditPermission={hasEditPermission} url={uploadTemplateURL} token={DBtoken} />
 
-                <SendTestEmailTemplate url={sendTestEmailURL} token={DBtoken} />
+                <SendTestEmailTemplate hasEditPermission={hasEditPermission} url={sendTestEmailURL} token={DBtoken} />
 
-                <DownloadEmailTemplateFile url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
+                <DownloadEmailTemplateFile hasEditPermission={hasEditPermission} url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
               </div>
             </div>
 

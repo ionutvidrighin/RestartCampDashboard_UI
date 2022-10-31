@@ -7,11 +7,11 @@ import Button from '@material-ui/core/Button';
 import SnackBar from '../SnackBar';
 import { nanoid } from 'nanoid';
 
-const AddLinkOnWordsDialog = ({openDialog, closeDialog, storeDataAction, objectKeyLocation, childObjectKey}) => {
+const AddLinkOnWordsDialog = ({openDialog, closeDialog, storeDataAction, objectKeyLocation, paragraphNumber}) => {
   /** Props Explanation:
    * storeDataAction -> type Function; Redux Action to add the element to the Store
    * objectKeyLocation -> type String; represents the key name inside the Object where we add the element
-   * childObjectKey -> type String; represents the key name inside the above "objectKeyLocation" where we add the element 
+   * paragraphNumber -> type String; represents the key name inside the above "objectKeyLocation" where we add the element 
    */
 
   const dispatch = useDispatch()
@@ -64,7 +64,7 @@ const AddLinkOnWordsDialog = ({openDialog, closeDialog, storeDataAction, objectK
       const payload = {
         data: wordsWithLink,
         location: objectKeyLocation,
-        childLocation: childObjectKey
+        paragraphNumber
       }
       dispatch(storeDataAction(payload))
       setWordsWithLink({})
@@ -99,9 +99,7 @@ const AddLinkOnWordsDialog = ({openDialog, closeDialog, storeDataAction, objectK
         </div>
       </Dialog>
 
-      { snackBar.open &&
-        <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} />
-      }
+      { snackBar.open && <SnackBar snackbarData={snackBar} setSnackBar={setSnackBar} /> }
       
     </div>
   )

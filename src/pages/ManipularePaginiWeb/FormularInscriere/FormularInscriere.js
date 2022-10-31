@@ -9,7 +9,6 @@ import { appPagesConstants } from '../../../constants/userPermissions';
 import { makeStyles } from '@material-ui/styles';
 import { Formik, Form } from "formik";
 import { formValues, formValidation } from './formValuesAndValidation';
-import isEqual from 'lodash.isequal';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
@@ -113,18 +112,6 @@ const FormularInscriere = ({ setShowPlaceholder }) => {
   }, [alerts])
 
   const handleFormSubmit = (values) => {
-    if ( isEqual(values, formInitialValues) ) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        upDuration: 10000,
-        text: "Eroare! Nicio modificare detectată!"
-      })
-      return
-    }
-
     const payload = []
     let preparePayload = Object.entries(values)
     preparePayload = preparePayload.map(([key, value]) => [`message`, value])
@@ -188,7 +175,7 @@ const FormularInscriere = ({ setShowPlaceholder }) => {
             { alerts &&
               <>
                 { hasEditPermission ?
-                  <RingBellAndPageInstructionsBanner Component={HowToOperateOnPage} />
+                  <RingBellAndPageInstructionsBanner position={'60px'} Component={HowToOperateOnPage} />
                   :
                   <NoPermissionBanner permissions={permissions} />
                 }

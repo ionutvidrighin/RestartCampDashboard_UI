@@ -16,7 +16,6 @@ const RingBellAndPageInstructionsBanner = ({position, Component}) => {
   const handleOpenDialog = () => {
     setOpenInstructionsDialog(true)
     ringBellIconRef.current.classList.remove('animate-ring-bell')
-    bannerRef.current.classList.remove('animate-banner')
   }
 
   const verticalPosition = {
@@ -31,7 +30,7 @@ const RingBellAndPageInstructionsBanner = ({position, Component}) => {
         className={`ring-bell-icon`}
         onClick={handleOpenDialog}
       />
-      <div className='instructions-banner animate-banner' ref={bannerRef}>
+      <div className='instructions-banner' ref={bannerRef}>
         <div className='arrow'></div>
         <p className='m-0'>Instrucțiunile Paginii</p>
       </div>

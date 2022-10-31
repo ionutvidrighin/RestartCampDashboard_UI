@@ -11,7 +11,6 @@ import { formValues, formValidation } from './formValuesAndValidation';
 import { Formik, Form } from "formik";
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
-import isEqual from 'lodash.isequal';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
 import HowToOperateOnPage from '../../../components/EditingWebPages/Header&Footer/HowToOperateOnPage';
@@ -115,17 +114,6 @@ const HeaderFooter = ({ setShowPlaceholder }) => {
   }, [dataObject])
 
   const handleFormSubmit = (values) => {
-    if ( isEqual(values, formInitialValues) ) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true, 
-        success: false,
-        upDuration: 8000,
-        text: "Eroare! Nicio modificare detectată!"
-      })
-      return
-    }
     setLoadingData({...loadingData, showCircle: true})
     dispatch(updateHeaderFooterData(values))
   }

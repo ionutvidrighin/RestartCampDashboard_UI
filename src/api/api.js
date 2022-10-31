@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const baseUrl = 'http://localhost:4545'
-//const baseUrl = 'https://restart-camp-org.herokuapp.com'
 //const baseUrl = 'https://red-tough-gosling.cyclic.app'
 const responseBody = response => response
 
@@ -61,7 +60,7 @@ const CoursesPageData = {
 }
 
 const CoursePresencePageData = {
-  getData: () => requests.get('/course-presence-page-data'),
+  getData: (body) => requests.post('/course-presence-page-data', body),
   updateData: (token, body) => tokenizedRequests.put('/course-presence-page-data', token, body)
 }
 
@@ -152,29 +151,6 @@ const individualStudent = {
   deleteStudent: (token, studentEmail) => tokenizedRequests.put('/delete-student', token, studentEmail)
 }
 
-const emailAfter3DaysRegistration = {
-  getEmailTemplateEmployee: (token) => tokenizedRequests.get('/email-3days-after-registration-employee', token),
-  changeEmailTemplateEmployee: (token, body) => tokenizedRequests.post('/email-3days-after-registration-employee', token, body),
-  sendTestEmailEmployee: (token, body) => tokenizedRequests.post('/test-email-3days-after-registration-employee', token, body),
-  getEmailTemplateCompany: (token) => tokenizedRequests.get('/email-3days-after-registration-company', token),
-  changeEmailTemplateCompany: (token, body) => tokenizedRequests.post('/email-3days-after-registration-company', token, body),
-  sendTestEmailCompany: (token, body) => tokenizedRequests.post('/test-email-3days-after-registration-company', token, body)
-}
-
-const emailReminder7Days = {
-  getEmailTemplateContent: (token) => tokenizedRequests.get('/email-reminder-7days', token),
-  changeEmailTemplateContent: (token, body) => tokenizedRequests.post('/email-reminder-7days', token, body)
-}
-
-const emailReminder1Day = {
-  getEmailTemplateContent: (token) => tokenizedRequests.get('/email-reminder-1day', token),
-  changeEmailTemplateContent: (token, body) => tokenizedRequests.post('/email-reminder-1day', token, body)
-}
-
-const emailReminder1Hour = {
-  getEmailTemplateContent: (token) => tokenizedRequests.get('/email-reminder-1hour', token),
-  changeEmailTemplateContent: (token, body) => tokenizedRequests.post('/email-reminder-1hour', token, body)
-}
 
 const API = {
   Authentication,
@@ -188,11 +164,7 @@ const API = {
   CoursesPageData,
   CoursePresencePageData,
   HeaderFooterData,
-  RegistrationFormAlerts,
-  emailAfter3DaysRegistration,
-  emailReminder7Days,
-  emailReminder1Day,
-  emailReminder1Hour
+  RegistrationFormAlerts
 }
 
 export default API

@@ -14,7 +14,9 @@ import DeleteStudentButton from '../../components/UnsubscribeStudent/DeleteStude
 import NoAccessPage from '../../components/NoAccessPage';
 import SnackBar from '../../components/ReusableComponents/SnackBar';
 import Divider from '@material-ui/core/Divider';
+import dayjs from 'dayjs'
 
+console.log(dayjs().subtract(7, 'days').format())
 
 const useStyles = makeStyles({
   textField: {

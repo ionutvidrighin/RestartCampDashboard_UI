@@ -36,7 +36,7 @@ const useStyles = makeStyles({
   }
 })
 
-const SendTestEmailTemplate = ({ url, token }) => {
+const SendTestEmailTemplate = ({ hasEditPermission, url, token }) => {
   const localStyles = useStyles()
 
   const [emailAddress, setEmailAddress] = useState("")
@@ -81,7 +81,7 @@ const SendTestEmailTemplate = ({ url, token }) => {
   }
 
   return (
-    <div className='send-test-email-template mt-5'>
+    <div className='send-test-email-template'>
       <TextField
         autoComplete="off"
         variant='filled'
@@ -91,12 +91,14 @@ const SendTestEmailTemplate = ({ url, token }) => {
         label="Adresa e-mail test"
         value={emailAddress}
         onChange={handleCollectEmailAddress}
+        disabled={!hasEditPermission}
       />
       <Button
         variant="contained"
         type='submit'
         className={localStyles.submitButton}
-        onClick={handleSendTestEmail}>
+        onClick={handleSendTestEmail}
+        disabled={!hasEditPermission}>
         Trimite Test E-mail
       </Button>
 

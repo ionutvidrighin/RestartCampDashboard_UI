@@ -42,7 +42,7 @@ const useStyles = makeStyles({
   }
 })
 
-const UploadEmailTemplateFile = ({ url, token }) => {
+const UploadEmailTemplateFile = ({ hasEditPermission, url, token }) => {
   const localStyles = useStyles()
 
   const [selectedFile, setSelectedFile] = useState(null)
@@ -52,7 +52,7 @@ const UploadEmailTemplateFile = ({ url, token }) => {
 		setSelectedFile(event.target.files[0])
 	}
 
-  const handleUploadFile = async (e) => {
+  const handleUploadFile = async () => {
     if (!selectedFile) {
       setSnackBar({
         background: '#e53c5d', 
@@ -120,16 +120,19 @@ const UploadEmailTemplateFile = ({ url, token }) => {
                 hidden
                 onChange={handleSelectFile}
                 name="[name]"
+                disabled={!hasEditPermission}
               />
             </IconButton>
           )
         }}
+        disabled={!hasEditPermission}
       />
 
       <Button
         onClick={handleUploadFile}
         variant='contained' 
-        className={`${localStyles.submitButton} mt-2`}>
+        className={`${localStyles.submitButton} mt-2`}
+        disabled={!hasEditPermission}>
         Încarcă template 
       </Button>
 

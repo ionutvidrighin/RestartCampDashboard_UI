@@ -31,7 +31,7 @@ const appPagesConstants = {
   EMAIL_REMINDER_1_ZI: "Email Reminder 1 zi",
   EMAIL_REMINDER_1_ORA: "Email Reminder 1 ora",
   EMAIL_VOUCHER_4_ORE: "Email Voucher 4 ore",
-  EMAIL_VOUCHER_40_ORE: "Email Voucher 40 ore",
+  EMAIL_VOUCHER_18_ORE: "Email Voucher 18 ore",
   EMAIL_3_ZILE_ANGAJAT: "Email 3 zile dupa inscriere - angajat",
   EMAIL_3_ZILE_COMPANIE: "Email 3 zile dupa inscriere - companie"
 }
@@ -300,7 +300,7 @@ const permissions = [
   },
   {
     id: 18,
-    label: "Email Voucher 40 ore",
+    label: "Email Voucher 18 ore",
     access: {
       view: false,
       edit: false

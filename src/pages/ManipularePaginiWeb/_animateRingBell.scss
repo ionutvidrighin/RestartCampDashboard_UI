@@ -32,10 +32,6 @@
   }
 }
 
-.animate-banner {
-  animation: animateBanner 1s .2s ease-in-out infinite;
-}
-
 .animate-ring-bell {
   -webkit-animation: ring 3s .7s ease-in-out infinite;
   -webkit-transform-origin: 50% 4px;
@@ -70,12 +66,4 @@
   41% { transform: rotate(1deg); }
   43% { transform: rotate(0); }
   100% { transform: rotate(0); }
-}
-
-@keyframes animateBanner {
-  0%   {transform: translateX(10px);}
-  25%  {transform: translateX(-10px);}
-  50%  {transform: translateX(10px);}
-  75%  {transform: translateX(-10px);}
-  100% {transform: translateX(10px);}
 }

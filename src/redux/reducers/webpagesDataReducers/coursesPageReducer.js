@@ -32,7 +32,7 @@ const coursesPageData = (state = intialState, { type, payload }) => {
       }
     case ActionTypes.REMOVE_LINK_WORDS_COURSES_PAGE:
       if (payload.location === "infoCoursesModule1") {
-        if (payload.childLocation === 'paragraph1') {
+        if (payload.paragraphNumber === 'paragraph1') {
           return {
             ...state,
             data: {
@@ -46,7 +46,8 @@ const coursesPageData = (state = intialState, { type, payload }) => {
               }
             }
           }
-        } else if (payload.childLocation === 'paragraph2') {
+        }
+        if (payload.paragraphNumber === 'paragraph2') {
           return {
             ...state,
             data: {
@@ -61,7 +62,8 @@ const coursesPageData = (state = intialState, { type, payload }) => {
             }
           }
         }
-      } else if (payload.location === "infoCoursesModule2") {
+      }
+      if (payload.location === "infoCoursesModule2") {
         return {
           ...state,
           data: {
@@ -79,7 +81,7 @@ const coursesPageData = (state = intialState, { type, payload }) => {
       return state
     case ActionTypes.ADD_LINK_WORDS_COURSES_PAGE:
       if (payload.location === "infoCoursesModule1") {
-        if (payload.childLocation === 'paragraph1') {
+        if (payload.paragraphNumber === 'paragraph1') {
           return {
             ...state, 
             data: {
@@ -93,7 +95,8 @@ const coursesPageData = (state = intialState, { type, payload }) => {
               }
             }
           }
-        } else if (payload.childLocation === 'paragraph2') {
+        }
+        if (payload.paragraphNumber === 'paragraph2') {
           return {
             ...state,
             data: {
@@ -108,10 +111,10 @@ const coursesPageData = (state = intialState, { type, payload }) => {
             }
           }
         }
-      } else if (payload.location === "infoCoursesModule2") {
+      }
+      if (payload.location === "infoCoursesModule2") {
         return {
           data: {
-            ...state,
             ...state.data,
             infoCoursesModule2: {
               ...state.data.infoCoursesModule2,

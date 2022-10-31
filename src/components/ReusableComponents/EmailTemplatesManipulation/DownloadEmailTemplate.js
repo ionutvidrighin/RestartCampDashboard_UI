@@ -20,7 +20,7 @@ const useStyles = makeStyles({
   }
 })
 
-const DownloadEmailTemplateFile = ({ url, token, templateName }) => {
+const DownloadEmailTemplateFile = ({ hasEditPermission, url, token, templateName }) => {
   const localStyles = useStyles()
 
   const [snackBar, setSnackBar] = useState({})
@@ -49,8 +49,8 @@ const DownloadEmailTemplateFile = ({ url, token, templateName }) => {
   }
 
   return (
-    <div className='download-email-template mt-5'>
-      <Button variant='contained' className={localStyles.submitButton} onClick={handleDownloadFile}>
+    <div className='download-email-template'>
+      <Button variant='contained' className={localStyles.submitButton} onClick={handleDownloadFile} disabled={!hasEditPermission}>
         Descarcă template 
       </Button>
 

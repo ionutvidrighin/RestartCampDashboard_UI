@@ -2,10 +2,13 @@ import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { makeStyles } from '@material-ui/styles';
 import { appRoutes } from "../constants/appRoutesConstants";
+import { editWebPagesButtons, coursePresencePageDataButtons, 
+  studentsSectionButtons, emailsSectionButtons } from "../constants/appMenuButtonsConstants";
 import DisplayLoggedUser from "./DisplayLoggedUser";
 import DisplayDateAndTime from "./DisplayDateAndTime";
 import Button from '@material-ui/core/Button';
 import MyAccount from "./MyAccount";
+import ApplicationSubMenuButton from "./ReusableComponents/ApplicationSubMenuButton";
 
 const useStyles = makeStyles({
   outlined: {
@@ -34,16 +37,16 @@ const useStyles = makeStyles({
       backgroundColor: '#509ecc',
     },
   },
-  emailsTemplateBtn: {
+  subMenuBtn: {
     color: 'white',
     margin: '.4rem 0',
-    width: '200px',
+    width: '250px',
     padding: '6px',
     backgroundColor: '#509ecc',
     textTransform: 'capitalize',
     '&:hover': {
       backgroundColor: '#509ecc',
-    },
+    }
   }
 })
 
@@ -53,14 +56,11 @@ const AppMenu = () => {
   const route = useLocation()
   const { pathname } = route
 
-  const [showCoursesSubMenu, setShowCoursesSubMenu] = useState(true)
+  const [showEditWebPagesSubMenu, setShowEditWebPagesSubMenu] = useState(false)
+  const [coursePresencePageSubMenu, setCoursePresencePageSubMenu] = useState(false)
+  const [showCoursesSubMenu, setShowCoursesSubMenu] = useState(false)
   const [showStudentSubMenu, setShowStudentSubMenu] = useState(false)
   const [showEmailsSubMenu, setShowEmailsSubMenu] = useState(false)
-  const [showEmailsModule1, setShowEmailsModule1] = useState(false)
-  const [showEmailsModule2, setShowEmailsModule2] = useState(false)
-  const [showCommonEmails, setShowCommonEmails] = useState(false)
-  const [showWebPageManipulation, setShowWebPageManipulation] = useState(false)
-
 
   return (
     <div className="dashboard p-2">
@@ -83,142 +83,107 @@ const AppMenu = () => {
               variant="outlined"
               className={localStyles.outlined}
               onClick={() => {
-                  setShowCoursesSubMenu(!showCoursesSubMenu)
-                  setShowStudentSubMenu(false)
-                  setShowEmailsSubMenu(false)
-                  setShowEmailsModule1(false)
-                  setShowEmailsModule2(false)
+                setShowEditWebPagesSubMenu(!showEditWebPagesSubMenu)
+                setShowCoursesSubMenu(false)
+                setShowStudentSubMenu(false)
+                setShowEmailsSubMenu(false)
+              }}>
+            Manipulare Pagini Web
+            </Button>
+            { showEditWebPagesSubMenu &&
+              <div className="sub-menu-items mt-1">
+                { editWebPagesButtons.map(button => (
+                  <div key={button.id}>
+                    <ApplicationSubMenuButton
+                      appRoute={button.route}
+                      buttonLabel={button.label}
+                    />
+                  </div>
+                ))}
+
+                <Button 
+                  variant="contained"
+                  className={localStyles.subMenuBtn}
+                  onClick={() => {
+                    setCoursePresencePageSubMenu(!coursePresencePageSubMenu)
+                    setShowCoursesSubMenu(false)
+                    setShowStudentSubMenu(false)
+                    setShowEmailsSubMenu(false)
+                  }}>
+                Pagina Confirmare Prezență
+                </Button>
+                { coursePresencePageSubMenu &&
+                  <>
+                  { coursePresencePageDataButtons.map(button => (
+                    <div key={button.id}>
+                      <ApplicationSubMenuButton
+                        appRoute={button.route}
+                        buttonLabel={button.label}
+                        buttonWidth={'200px'}
+                      />
+                    </div>
+                  ))}
+                  </>
                 }
-              }>
+              </div>
+            }
+
+            <Button 
+              variant="outlined"
+              className={localStyles.outlined}
+              onClick={() => {
+                setShowCoursesSubMenu(!showCoursesSubMenu)
+                setShowEditWebPagesSubMenu(false)
+                setShowStudentSubMenu(false)
+                setShowEmailsSubMenu(false)
+              }}>
             Cursuri Restart Camp
             </Button>
               { showCoursesSubMenu &&
                 <div className="sub-menu-items">
                   <Button
                     variant="contained" 
-                    onClick={() => setShowWebPageManipulation(!showWebPageManipulation)} 
-                    style={ showWebPageManipulation ? { background: '#c23a6a'} : {background: ''} }
-                    className={localStyles.contained}> 
-                    Manipulare Pagini Website
-                  </Button>
-
-                  { showWebPageManipulation &&
-                    <div className="sub-menu-items mt-1">
-                      <Button
-                        variant="contained"
-                        className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === appRoutes.pagina_cursuri) ? { background: '#c23a6a'} : {background: ''} }
-                        onClick={() => history.push('/editare-pagina-cursuri')} > 
-                        Pagina Cursuri
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === appRoutes.formular_inscriere) ? { background: '#c23a6a'} : {background: ''} }
-                        onClick={() => history.push('/editare-formular-inscriere')} > 
-                        Alerte Formular Înscriere
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === appRoutes.confirmare_prezenta) ? { background: '#c23a6a'} : {background: ''} }
-                        onClick={() => history.push('/editare-confirmare-prezenta')} > 
-                        Pagina Confirmare Prezență
-                      </Button>
-                      <Button
-                        variant="contained"
-                        className={localStyles.emailsTemplateBtn}
-                        style={ (pathname === appRoutes.headerFooter) ? { background: '#c23a6a'} : {background: ''} }
-                        onClick={() => history.push('/editare-header-footer')} > 
-                        Header & Footer
-                      </Button>
-                    </div>
-                  }
-
-                  <Button
-                    variant="contained" 
-                    onClick={() => {
-                        history.push('/cursuri-modul1')
-                        setShowWebPageManipulation(false)
-                      } 
-                    } 
+                    onClick={() => history.push(appRoutes.cursuri_modul1)} 
                     style={ (pathname === appRoutes.cursuri_modul1) ? { background: '#c23a6a'} : {background: ''} }
                     className={localStyles.contained}> 
                     Cursuri MODUL 1
                   </Button>
                   <Button 
                     variant="contained"
-                    onClick={() => {
-                        history.push('/cursuri-modul2')
-                        setShowWebPageManipulation(false)
-                      } 
-                    } 
+                    onClick={() => history.push(appRoutes.cursuri_modul2)} 
                     style={ (pathname === appRoutes.cursuri_modul2) ? { background: '#c23a6a'} : {background: ''} }
                     className={localStyles.contained}> 
                     Cursuri MODUL 2
                   </Button>
                 </div>
               }
+
             <hr className="m-0" style={{color: 'white', width: '80%'}} />
 
             <Button 
               variant="outlined"
               className={localStyles.outlined}
               onClick={() => {
-                  setShowStudentSubMenu(!showStudentSubMenu)
-                  setShowCoursesSubMenu(false)
-                  setShowEmailsSubMenu(false)
-                  setShowEmailsModule1(false)
-                  setShowEmailsModule2(false)
-                }
-              }>
+                setShowStudentSubMenu(!showStudentSubMenu)
+                setShowEditWebPagesSubMenu(false)
+                setShowCoursesSubMenu(false)
+                setShowEmailsSubMenu(false)
+              }}>
             Administrare Cursanti
             </Button>
-              { showStudentSubMenu &&
-                <div className="sub-menu-items">
-                  <Button
-                    variant="contained" 
-                    className={localStyles.contained} 
-                    style={ (pathname === appRoutes.cauta_cursant) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/cauta-cursant')}> 
-                    Caută <span className="text-lowercase mx-1"> cursant înscris </span>
-                  </Button>
+            { showStudentSubMenu &&
+              <div className="sub-menu-items">
+                { studentsSectionButtons.map(button => (
+                  <div key={button.id}>
+                    <ApplicationSubMenuButton
+                      appRoute={button.route}
+                      buttonLabel={button.label}
+                    />
+                  </div>
+                ))}
+              </div>
+            }
 
-                  <Button
-                    variant="contained" 
-                    className={localStyles.contained} 
-                    style={ (pathname === appRoutes.total_cursanti) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/total-cursanti')}> 
-                    Total <span className="text-lowercase mx-1"> cursanți înscriși </span> MODUL 1
-                  </Button>
-
-                  <Button 
-                    variant="contained" 
-                    className={localStyles.contained}
-                    style={ (pathname === appRoutes.cursanti_per_curs) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/cursanti-per-curs')}> 
-                    Cursanți <span className="text-lowercase mx-1"> înscriși per curs </span> MODUL 1
-                  </Button>
-
-                  <Button 
-                    variant="contained" 
-                    className={localStyles.contained}
-                    style={ (pathname === appRoutes.cursanti_prezenti) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/cursanti-prezenti')}> 
-                    Cursanți <span className="text-lowercase mx-1">prezenți cursuri</span> MODUL 1
-                  </Button>
-
-                  <Button 
-                    variant="contained" 
-                    className={localStyles.contained}
-                    style={ (pathname === appRoutes.cursanti_modul2) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/cursanti-modul2')}> 
-                    Înscriere <span className="text-lowercase me-1 ms-1">cursanți</span> MODUL 2
-                  </Button>
-                </div>
-              }
-
-            {/* Separator */}
             <hr className="m-0" style={{color: 'white', width: '80%'}} />
 
             <Button 
@@ -226,195 +191,45 @@ const AppMenu = () => {
               className={localStyles.outlined}
               onClick={() => {
                 setShowEmailsSubMenu(!showEmailsSubMenu)
+                setShowEditWebPagesSubMenu(false)
                 setShowCoursesSubMenu(false)
                 setShowStudentSubMenu(false)
               }}>
-              Administrare Emails
+            Administrare Emails
             </Button>
-
             { showEmailsSubMenu && 
               <div className="sub-menu-items">
-
-                {/* Sectiunea CURSURI MODUL 1 */}
-                <Button 
-                  variant="contained"
-                  className={localStyles.contained}
-                  onClick={() => {
-                    setShowEmailsModule1(!showEmailsModule1)
-                    setShowEmailsModule2(false)
-                    setShowCommonEmails(false)
-                  }}
-                  style={ showEmailsModule1 ? { background: '#c23a6a'} : {background: ''} }>
-                  <span className="fst-italic">
-                    E-mails Cursuri MODUL 1
-                  </span>
-                </Button>
-
-                { showEmailsModule1 && 
-                  <div className="sub-menu-items mt-1">
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_reminder_7days) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-reminder-7zile')} > 
-                      E-mail <span className="text-lowercase ms-1"> reminder 7 zile </span> 
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_reminder_1day) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-reminder-1zi')}>
-                      E-mail <span className="text-lowercase ms-1"> reminder 1 zi </span>
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_reminder_1hour) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-reminder-1ora')}>
-                      E-mail <span className="text-lowercase ms-1"> reminder 1 ora </span>
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_voucher_4hours) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-voucher-4ore')}>
-                      <span>
-                        E-mail <span className="text-lowercase"> voucher - 4 ore dupa confirmare participare </span> 
-                      </span>
-                    </Button>
-                    <Button
-                    variant="contained"
-                    className={localStyles.emailsTemplateBtn}                      
-                    style={ (pathname === appRoutes.email_voucher_40hours) ? { background: '#c23a6a'} : {background: ''} }
-                    onClick={() => history.push('/email-voucher-40ore')}>
-                      <span>
-                        E-mail <span className="text-lowercase"> voucher - 40 ore dupa confirmare participare </span> 
-                      </span>
-                    </Button>
+                { emailsSectionButtons.map(button => (
+                  <div key={button.id}>
+                    <ApplicationSubMenuButton
+                      appRoute={button.route}
+                      buttonLabel={button.label}
+                    />
                   </div>
-                }
-
-                {/* Sectiunea E-mails CURSURI MODUL 2 */}
-                <Button 
-                  variant="contained"
-                  className={localStyles.contained}
-                  onClick={() => {
-                    setShowEmailsModule2(!showEmailsModule2)
-                    setShowEmailsModule1(false)
-                    setShowCommonEmails(false)
-                  }}
-                  style={ showEmailsModule2 ? { background: '#c23a6a'} : {background: ''} }>
-                  <span className="fst-italic">
-                  E-mails Cursuri MODUL 2
-                  </span>
-                </Button>
-                
-                {/* Access spre sectiunea E-mails CURSURI MODUL 2 */}
-                { showEmailsModule2 &&
-                  <div className="sub-menu-items mt-1">
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}> 
-                      E-mail <span className="text-lowercase ms-1"> reminder 7 zile </span> 
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}>
-                      E-mail <span className="text-lowercase ms-1"> reminder 1 zi </span>
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}>
-                      E-mail <span className="text-lowercase ms-1"> reminder 1 ora </span>
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}>
-                      <span>
-                      E-mail <span className="text-lowercase"> voucher - 4 ore dupa confirmare participare </span> 
-                      </span>
-                    </Button>
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}>
-                      <span>
-                      E-mail <span className="text-lowercase"> voucher - 40 ore dupa confirmare participare </span> 
-                      </span>
-                    </Button>
-                  </div>
-                }
-
-                {/* sub-Sectiunea EMAIL Templates comune */}
-                <Button 
-                  variant="contained"
-                  className={localStyles.contained}
-                  onClick={() => {
-                    setShowCommonEmails(!showCommonEmails)
-                    setShowEmailsModule1(false)
-                    setShowEmailsModule2(false)
-                  }}
-                  style={ showCommonEmails ? { background: '#c23a6a'} : {background: ''} }>
-                  <span className="fst-italic">
-                  E-mail Templates Comune
-                  </span>
-                </Button>
-
-                {/* Access spre template-uri comune */}
-                { showCommonEmails &&
-                  <>
-                    <Button 
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_registration) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-confirmare-inscriere')} > 
-                      E-mail <span className="text-lowercase ms-1"> confirmare înscriere </span> 
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_3days_after_registration_employee) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-3-zile-inscriere-angajat')} > 
-                        <span className="text-lowercase">
-                          <span className="text-capitalize">E-mail</span> 3 zile dupa înscriere candidat/angajat 
-                        </span>
-                    </Button>
-
-                    <Button
-                      variant="contained"
-                      className={localStyles.emailsTemplateBtn}
-                      style={ (pathname === appRoutes.email_3days_after_registration_freelancer) ? { background: '#c23a6a'} : {background: ''} }
-                      onClick={() => history.push('/email-3-zile-inscriere-antreprenor')} > 
-                        <span className="text-lowercase">
-                          <span className="text-capitalize">E-mail</span> 3 zile dupa înscriere antreprenor/freelancer 
-                        </span>
-                    </Button>
-                  </>
-                }
+                ))}
               </div> 
             }
 
-            {/* Separator */}
             <hr className="m-0" style={{color: 'white', width: '80%'}} />
 
-            <Button 
+            <Button
               variant="contained"
               className={localStyles.outlined}
               onClick={() => {
+                setShowEditWebPagesSubMenu(false)
                 setShowEmailsSubMenu(false)
                 setShowCoursesSubMenu(false)
                 setShowStudentSubMenu(false)
-                history.push('/dezabonare-cursanti')
+                history.push(appRoutes.dezabonare_cursanti)
               }}
               style={ (pathname === appRoutes.dezabonare_cursanti) ? { background: '#c23a6a'} : {background: ''} }>
-              <span className="fw-bold">
-                DEZABONARE / ȘTERGERE CURSANȚI
-              </span>
+              <span className="fw-bold"> DEZABONARE / ȘTERGERE CURSANȚI </span>
             </Button>
           </div>
         </div>
 
         <DisplayDateAndTime />
+
       </div>
     </div>
   )

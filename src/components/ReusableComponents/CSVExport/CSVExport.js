@@ -60,6 +60,8 @@ const CSVExport = ({dataType, buttonLabel, CSVfileName, exportPermission, CSVhea
     }
   }
 
+  console.log('dataToExport', dataToExport)
+
   return (
     <div className='ms-2'>
       { dataToExport && dataToExport.length === 0 ?
@@ -72,7 +74,7 @@ const CSVExport = ({dataType, buttonLabel, CSVfileName, exportPermission, CSVhea
         </Button>
         :
         <CSVLink
-          data={dataToExport}
+          data={dataToExport ? dataToExport : []}
           id='csv-export' 
           headers={CSVheaders}
           filename={CSVfileName} >

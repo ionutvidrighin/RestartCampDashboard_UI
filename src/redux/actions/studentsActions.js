@@ -132,6 +132,7 @@ export const fetchStudentsPresenceByCourseName = (body) => {
 }
 
 export const fetchStudentsWhatsappNumbers = (body) => {
+  console.log('body', body)
   const today = dayjs().format().substring(0, 7)
   const accessToken = store.getState().generateDBTokenReducer.value
 
@@ -165,6 +166,7 @@ export const fetchSingleStudentByEmail = (studentEmailAddress) => {
         payload: returnedData
       })
     } catch (error) {
+      console.log(error)
       if (error.response) {
         const errorMessage = error.response.data.message
         dispatch({
@@ -181,7 +183,7 @@ export const fetchSingleStudentByEmail = (studentEmailAddress) => {
   }
 }
 
-export const fetchSingleStudentByEmailByFullName = (studentFullName) => {
+export const fetchSingleStudentByFullName = (studentFullName) => {
   const accessToken = store.getState().generateDBTokenReducer.value
 
   return async (dispatch) => {

@@ -7,11 +7,13 @@ export const formValues = (coursesPageData) => {
     infoCoursesModule1: {
       title: coursesPageData?.infoCoursesModule1?.title,
       paragraph1: coursesPageData?.infoCoursesModule1?.paragraph1,
-      paragraph2: coursesPageData?.infoCoursesModule1?.paragraph2
+      paragraph2: coursesPageData?.infoCoursesModule1?.paragraph2,
+      linkWords: coursesPageData?.infoCoursesModule1?.linkWords
     },
     infoCoursesModule2: {
       title: coursesPageData?.infoCoursesModule2?.title,
-      paragraph: coursesPageData?.infoCoursesModule2?.paragraph
+      paragraph: coursesPageData?.infoCoursesModule2?.paragraph,
+      linkWords: coursesPageData?.infoCoursesModule2?.linkWords
     }
   }
 }

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from "react-redux";
 import { appPagesConstants } from '../../constants/userPermissions';
-import { doesUserHaveViewPermission } from '../../utils/helperFunctions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../utils/helperFunctions';
 import { emailTemplatesEndpoints } from '../../constants/emailTemplatesEndpoints';
 import { getEmailTemplateHTML } from '../../api/callEmailTemplates';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../components/NoAccessPage';
+import UpdateEmailTemplateSubject from '../../components/ReusableComponents/EmailTemplatesManipulation/UpdateEmailTemplateSubject';
 import UploadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/UploadEmailTemplateFile';
 import DownloadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/DownloadEmailTemplate';
 import SendTestEmailTemplate from '../../components/ReusableComponents/EmailTemplatesManipulation/SendTestEmailTemplate';
@@ -19,11 +20,14 @@ const Email3zileCompanie = ({setShowPlaceholder}) => {
 
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_3_ZILE_COMPANIE, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.EMAIL_3_ZILE_COMPANIE, userPagesAccessFromStore)
 
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 3000})
 
   const DBtoken = useSelector(state => state.generateDBTokenReducer.value)
+  const getEmailTemplateSubjectURL = emailTemplatesEndpoints.getEmail3DaysCompanySubjectTemplate
+  const updateEmailTemplateSubjectURL = emailTemplatesEndpoints.email3DaysCompanySubjectTemplateUpdate
   const uploadTemplateURL = emailTemplatesEndpoints.email3DaysCompanyUpload
   const downloadTemplateURL = emailTemplatesEndpoints.email3DaysCompanyDownload
   const sendTestEmailURL = emailTemplatesEndpoints.testEmail3DaysCompany
@@ -68,15 +72,22 @@ const Email3zileCompanie = ({setShowPlaceholder}) => {
             <div className='text-center title-section'>
               <h6 className='pt-3 fw-bold title'> EDITARE E-MAIL TEMPLATE </h6>
               <h6 className='ps-5 pe-5 subtitle'> E-mail trimis la 3 zile dupa înscriere pentru antreprenor </h6>
-              <Divider style={{background: 'white'}} className="mb-5 ms-2" />
+              <Divider style={{background: 'white'}} className="mb-3 ms-2" />
             </div>
 
-            <div className='d-flex flex-column justify-content-space-around' style={{marginTop: '5rem'}}>
-              <UploadEmailTemplateFile url={uploadTemplateURL} token={DBtoken} />
+            <div className='d-flex flex-column'>
+              <UpdateEmailTemplateSubject
+                hasEditPermission={hasEditPermission}
+                getTemplateURL={getEmailTemplateSubjectURL}
+                updateSubjectURL={updateEmailTemplateSubjectURL}
+                token={DBtoken}
+              />
 
-              <SendTestEmailTemplate url={sendTestEmailURL} token={DBtoken} />
+              <UploadEmailTemplateFile hasEditPermission={hasEditPermission} url={uploadTemplateURL} token={DBtoken} />
 
-              <DownloadEmailTemplateFile url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
+              <SendTestEmailTemplate hasEditPermission={hasEditPermission} url={sendTestEmailURL} token={DBtoken} />
+
+              <DownloadEmailTemplateFile hasEditPermission={hasEditPermission} url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
             </div>
           </div>
 

@@ -16,23 +16,23 @@ import OverlayProgressCircle from '../../components/ReusableComponents/OverlayPr
 import RingBellAndPageInstructionsBanner from '../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import SnackBar from '../../components/ReusableComponents/SnackBar';
 
-const EmailReminderCurs7Zile = ({ setShowPlaceholder }) => {
+const EmailVoucher4oreDupaCurs = ({ setShowPlaceholder }) => {
 
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
-  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_REMINDER_7_ZILE, userPagesAccessFromStore)
-  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.EMAIL_REMINDER_7_ZILE, userPagesAccessFromStore)
+  const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_VOUCHER_4_ORE, userPagesAccessFromStore)
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.EMAIL_VOUCHER_4_ORE, userPagesAccessFromStore)
 
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 2000})
   
   const DBtoken = useSelector(state => state.generateDBTokenReducer.value)
-  const getEmailTemplateSubjectURL = emailTemplatesEndpoints.getEmailReminder7DaysSubjectTemplate
-  const updateEmailTemplateSubjectURL = emailTemplatesEndpoints.emailReminder7DaysSubjectTemplateUpdate
-  const uploadTemplateURL = emailTemplatesEndpoints.emailReminder7DaysUpload
-  const downloadTemplateURL = emailTemplatesEndpoints.emailReminder7DaysDownload
-  const sendTestEmailURL = emailTemplatesEndpoints.testEmailReminder7Days
-  const callHTMLtemplateURL = emailTemplatesEndpoints.renderEmailReminder7Days
-  const templateName = 'emailReminder7days.handlebars'
+  const getEmailTemplateSubjectURL = emailTemplatesEndpoints.getEmailVoucher4HoursSubjectTemplate
+  const updateEmailTemplateSubjectURL = emailTemplatesEndpoints.emailVoucher4HoursSubjectTemplateUpdate
+  const uploadTemplateURL = emailTemplatesEndpoints.emailVoucher4HoursUpload
+  const downloadTemplateURL = emailTemplatesEndpoints.emailVoucher4HoursDownload
+  const sendTestEmailURL = emailTemplatesEndpoints.testEmailVoucher4Hours
+  const callHTMLtemplateURL = emailTemplatesEndpoints.renderEmailVoucher4Hours
+  const templateName = 'emailVoucher4hours.handlebars'
 
   const [HTMLtemplate, setHTMLtemplate] = useState(null)
 
@@ -71,8 +71,8 @@ const EmailReminderCurs7Zile = ({ setShowPlaceholder }) => {
             <div className='manipulare-template'>
               <div className='text-center title-section'>
                 <h6 className='pt-3 fw-bold title'> EDITARE E-MAIL TEMPLATE </h6>
-                <h6 className='ps-5 pe-5 subtitle'> E-mail reminder trimis cu 7 zile înainte de începerea cursului </h6>
-                <Divider style={{background: 'white'}} className="mb-5 ms-2" />
+                <h6 className='ps-5 pe-5 subtitle'> E-mail voucher trimis la 4 ore dupa participarea la curs </h6>
+                <Divider style={{background: 'white'}} className="mb-3 ms-2" />
               </div>
 
               <div className='d-flex flex-column'>
@@ -103,4 +103,4 @@ const EmailReminderCurs7Zile = ({ setShowPlaceholder }) => {
   )
 }
 
-export default EmailReminderCurs7Zile
+export default EmailVoucher4oreDupaCurs

@@ -118,90 +118,41 @@ const PaginaCursuri = ({ setShowPlaceholder }) => {
     handleShowLoadingPageData()
   }, [dataObject])
 
+  const displayErrorBanner = (paragraphNumber, section) => {
+    setSnackBar({
+      ...snackBar,
+      background: '#e53c5d', 
+      open: true,
+      success: false,
+      text: `Eroare! Ai adăugat cuvânt/cuvinte cu link în Paragraful ${paragraphNumber}, secțiunea ${section}. Fiecare cuvânt (din interiorul frazei) ce conține link, trebuie încadrat între paranteze pătrate, exemplu: [link]. Ulterior, cuvântul și link-ul acestuia, trebuie adăugate prin click pe butonul 'Adaugă link pe cuvânt'.`,
+      upDuration: 40000
+    })
+  }
 
   const handleFormSubmit = (values) => {
-    if (isEqual(values, formInitialValues)) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true, 
-        success: false,
-        upDuration: 8000,
-        text: "Eroare! Nicio modificare detectată!"
-      })
-      return
-    }
-
-    // check if user followed the correct instructions 
-    // for having the section Titles on 2 rows
-    const courseModule1Title = values.infoCoursesModule1.title
-    const courseModule2Title = values.infoCoursesModule2.title
-    if (!courseModule1Title.includes('[break]') || !courseModule2Title.includes('[break]')) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        text: "Eroare! Titlul Cursuri Modul 1 sau Titlul Cursuri Modul 2, nu conțin caracterele '[break]' pentru separarea pe 2 rânduri.",
-        upDuration: 30000
-      })
-      return
-    }
-
-    // Following checks are needed to ensure user fulfils the requirement related to adding links on words
+    // Below checks are needed to ensure user fulfils the requirement related to adding links on words
     // every word with link needs to be encapsulated within square brackets, as -> [link] , inside the TextField
     // and then added to the dedicated section for each Paragraph, clicking on "Adaugă link pe cuvânt" button.
-    const occurenceInModule1Paragraph1 = (values.infoCoursesModule1.paragraph1.match(/\[/g) || []).length
-    const occurenceInModule1Paragraph2 = (values.infoCoursesModule1.paragraph2.match(/\[/g) || []).length
-    const occurenceInModule2Paragraph = (values.infoCoursesModule2.paragraph.match(/\[/g) || []).length
+    const wordLinksInModule1Paragraph1 = (values.infoCoursesModule1.paragraph1.match(/\[/g) || []).length
+    const wordLinksInModule1Paragraph2 = (values.infoCoursesModule1.paragraph2.match(/\[/g) || []).length
+    const wordLinksInModule2Paragraph = (values.infoCoursesModule2.paragraph.match(/\[/g) || []).length
+    const MODULE_1_SECTION = 'Info Cursuri Modul 1'
+    const MODULE_2_SECTION = 'Info Cursuri Modul 2'
 
-    if (module1WordsWithLinks.paragraph1.length !== occurenceInModule1Paragraph1) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        text: "Eroare! Ai adăugat cuvânt/cuvinte cu link în Paragraful 1, secțiunea 'Info Cursuri Modul 1'. Fiecare cuvânt (din interiorul frazei) ce conține link, trebuie încadrat între paranteze pătrate, exemplu: [link]. Ulterior, cuvântul și link-ul acestuia, trebuie adăugate prin click pe butonul 'Adaugă link pe cuvânt'.",
-        upDuration: 30000
-      })
+    if (module1WordsWithLinks.paragraph1.length !== wordLinksInModule1Paragraph1) {
+      displayErrorBanner(1, MODULE_1_SECTION)
       return
     }
 
-    if (module1WordsWithLinks.paragraph2.length !== occurenceInModule1Paragraph2) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        text: "Eroare! Ai adăugat cuvânt/cuvinte cu link în Paragraful 2, secțiunea 'Info Cursuri Modul 1'. Fiecare cuvânt (din interiorul frazei) ce conține link, trebuie încadrat între paranteze pătrate, exemplu: [link]. Ulterior, cuvântul și link-ul acestuia, trebuie adăugate prin click pe butonul 'Adaugă link pe cuvânt'.",
-        upDuration: 30000
-      })
+    if (module1WordsWithLinks.paragraph2.length !== wordLinksInModule1Paragraph2) {
+      displayErrorBanner(2, MODULE_1_SECTION)
       return
     }
 
-    if (module2WordsWithLinks.paragraph.length !== occurenceInModule2Paragraph) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        text: "Eroare! Ai adăugat cuvânt/cuvinte cu link în Paragraf, secțiunea 'Info Cursuri Modul 2'. Fiecare cuvânt (din interiorul frazei) ce conține link, trebuie încadrat între paranteze pătrate, exemplu: [link]. Ulterior, cuvântul și link-ul acestuia, trebuie adăugate prin click pe butonul 'Adaugă link pe cuvânt'.",
-        upDuration: 30000
-      })
+    if (module2WordsWithLinks.paragraph.length !== wordLinksInModule2Paragraph) {
+      displayErrorBanner(null, MODULE_2_SECTION)
       return
     }
-
-    // Add all Words with Links to the final Payload object
-    Object.assign(values, {
-      infoCoursesModule1: {
-        ...values.infoCoursesModule1,
-        linkWords: module1WordsWithLinks
-      },
-      infoCoursesModule2: {
-        ...values.infoCoursesModule2,
-        linkWords: module2WordsWithLinks
-      }
-    })
 
     setLoadingData({...loadingData, showCircle: true})
     dispatch(updateCoursesPageData(values))
@@ -263,6 +214,7 @@ const PaginaCursuri = ({ setShowPlaceholder }) => {
                   <Divider style={{background: 'white'}} className="mb-5" />
             
                   <Formik
+                    enableReinitialize={true}
                     initialValues={formInitialValues}
                     validationSchema={FORM_VALIDATION}
                     onSubmit={values => handleFormSubmit(values)}>

@@ -67,6 +67,7 @@ const CursantiPrezentiPerCurs = ({ setShowPlaceholder }) => {
 
   const callStudentsWhatsappNumbers = async (body) => {
     const response = await dispatch(fetchStudentsWhatsappNumbers(body))
+    console.log('response', response)
     dispatch(storeStudentsWhatsappNumbersExportData(response))
   }
 

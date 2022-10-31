@@ -6,39 +6,21 @@ import { fetchCoursePresencePageData,
 import { clearServerResponse } from '../../../redux/actions/clearServerResponseAction';
 import { doesUserHaveViewPermission, doesUserHaveEditPermission } from "../../../utils/helperFunctions";
 import { appPagesConstants } from '../../../constants/userPermissions';
+import { coursePageDataScenarios } from '../../../constants/coursePresencePageDataConstants';
 import { makeStyles } from '@material-ui/styles';
 import { Formik, Form } from "formik";
-import { formValues, formValidation } from './formValuesAndValidation';
-import isEqual from 'lodash.isequal';
+import { formValuesCourseDateInPresent, formValidation } from './formValuesAndValidation';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../../components/NoAccessPage';
 import NoPermissionBanner from '../../../components/ReusableComponents/Banners/NoPermissionBanner';
-import HowToOperateOnPage from '../../../components/EditingWebPages/CoursePresence/HowToOperateOnPage';
-import EditContentForMoreThan30minBeforeCourseStart from '../../../components/EditingWebPages/CoursePresence/EditContentForMoreThan30minBeforeCourseStart';
-import EditContentForLessThan30minBeforeCourseStart from '../../../components/EditingWebPages/CoursePresence/EditContentForLessThan30minBeforeCourseStart';
-import ShowPageContent from '../../../components/EditingWebPages/CoursePresence/ShowPageContent';
+import CourseDateIsInPresent from '../../../components/EditingWebPages/CoursePresencePage/CourseDateIsInPresent';
+import ContentCourseDateIsInPresent from '../../../components/EditingWebPages/CoursePresencePage/PagesContent/ContentCourseDateIsInPresent';
 import RingBellAndPageInstructionsBanner from '../../../components/ReusableComponents/Banners/RingBellAndPageInstructionsBanner';
 import OverlayProgressCircle from '../../../components/ReusableComponents/OverlayProgressCircle/OverlayProgressCircle';
 import SnackBar from '../../../components/ReusableComponents/SnackBar';
 
 const useStyles = makeStyles({
-  textField: {
-    width: '280px',
-    marginBottom: '.5rem',
-    "& .MuiFormHelperText-root": {
-      color: '#ff5c5c !important'
-    },
-    "& .MuiInputLabel-shrink": {
-      transform: 'translate(10px, 5px) scale(0.75)'
-    },
-    "& .MuiFormLabel-root": {
-      color: 'white'
-    },
-    "& .MuiInputBase-root": {
-      color: 'white'
-    }
-  },
   submitButton: {
     margin: 'auto 0',
     backgroundColor: '#509ecc', 
@@ -53,7 +35,7 @@ const useStyles = makeStyles({
   },
 })
 
-const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
+const ConfirmarePrezentaCursInPrezent = ({ setShowPlaceholder }) => {
   const localStyles = useStyles()
   const dispatch = useDispatch()
 
@@ -62,10 +44,11 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
   const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.PAGINA_CONFIRMARE_PREZENTA, userPagesAccessFromStore)
   const permissions = {edit: hasEditPermission}
   
+  const scenario = coursePageDataScenarios.course_date_is_in_present
   useEffect(() => {
     setShowPlaceholder(false)
     if (hasViewPermission) {
-      dispatch(fetchCoursePresencePageData())
+      dispatch(fetchCoursePresencePageData({scenario: [scenario]}))
     }
 
     // clear Store at component destroy
@@ -77,25 +60,26 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 3000})
 
-  // grab the Page data object from Redux
-  const coursePresencePageData = useSelector(state => {
-    const dataObject = state.coursePresencePageReducer.data
-    const serverResponse = state.coursePresencePageReducer.success
-    const serverMessage = state.coursePresencePageReducer?.serverMessage
-    return { dataObject, serverResponse, serverMessage }
+  // get Page data object from Redux
+  const pageData = useSelector(state => {
+    const dataObject = state.coursePresencePageReducer?.[scenario]?.pageData
+    const collectionId = state.coursePresencePageReducer?.[scenario]?.collectionId
+    const severSuccess = state.coursePresencePageReducer?.success
+    const serverMessage = state.coursePresencePageReducer?.message
+    return { dataObject, collectionId, severSuccess, serverMessage }
   })
-  const { dataObject, serverResponse, serverMessage } = coursePresencePageData
+  const { dataObject, collectionId, severSuccess, serverMessage } = pageData
 
-  const formInitialValues = formValues(coursePresencePageData.dataObject)
-  const FORM_VALIDATION = formValidation
+  const formInitialValues = formValuesCourseDateInPresent(dataObject)
+  const FORM_VALIDATION = formValidation.courseInPresent
 
   const handleShowLoadingPageData = () => {
-    if (dataObject || serverResponse) {
+    if (dataObject || severSuccess) {
       setLoadingData({...loadingData, showCircle: false})
       setSnackBar({
         background: '#28cc95', 
         open: true,
-        upDuration: 1000,
+        upDuration: 500,
         text: 'Data Loaded Successfully'
       })
     } else {
@@ -112,64 +96,58 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
     handleShowLoadingPageData()
   }, [dataObject])
 
-  const [presenceConfirmFormTitleOnMultipleRows, setPresenceConfirmFormTitleOnMultipleRows] = useState(false)
-  const handleSelectFormTitleOnMultipleRows = (e) => {
-    setPresenceConfirmFormTitleOnMultipleRows(e.target.checked)
+  const displayErrorBanner = (paragraphNumber, section) => {
+    setSnackBar({
+      ...snackBar,
+      background: '#e53c5d', 
+      open: true,
+      success: false,
+      text: `Eroare! Ai adăugat cuvânt/cuvinte cu link în *Paragraful ${paragraphNumber}*, secțiunea '${section}'. Fiecare cuvânt (din interiorul frazei) ce conține link, trebuie încadrat între paranteze pătrate, exemplu: [link]. Ulterior, cuvântul și link-ul acestuia, trebuie adăugate prin click pe butonul 'Adaugă link pe cuvânt'.`,
+      upDuration: 40000
+    })
   }
 
   const handleFormSubmit = (values) => {
-    if ( isEqual(values, formInitialValues) ) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true, 
-        success: false,
-        upDuration: 6000,
-        text: "Eroare! Nicio modificare detectată!"
-      })
-      return
-    }
+    // Below checks are needed to ensure user fulfils the requirement related to adding links on words
+    // every word with link needs to be encapsulated within square brackets, as -> [link] , inside the TextField
+    // and then added to the dedicated section for each Paragraph, clicking on "Adaugă link pe cuvânt" button.
+    const linksInMoreThan30minParagraph1 = (values.moreThan30min.paragraph1.match(/\[/g) || []).length
+    const linksInMoreThan30minParagraph2 = (values.moreThan30min.paragraph2.match(/\[/g) || []).length
+    const linksInMoreThan30minParagraph3 = (values.moreThan30min.paragraph3.match(/\[/g) || []).length
+    const linksInLessThan30minParagraph1 = (values.lessThan30min.paragraph1.match(/\[/g) || []).length
+    const linksInLessThan30minParagraph2 = (values.lessThan30min.paragraph2.match(/\[/g) || []).length
+    const MORE_THAN_30MIN_SECTION_NAME = 'Acces cu mai mult de 30min.'
+    const LESS_THAN_30MIN_SECTION_NAME = 'Acces cu mai putin de 30min.'
 
-    // check if user followed the correct instructions 
-    // related to having the Form Title on 2 rows
-    const confirmPresenceFormTitle = values.lessThan30Min.formTitle
-    if ( !confirmPresenceFormTitle.includes('[break]') ) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d', 
-        open: true,
-        success: false,
-        text: 'Eroare! Ai selectat "Titlu Formular pe mai multe rânduri" fără a nota locul/locurile de separare.',
-        upDuration: 12000
-      })
+    if (values.moreThan30min.linkWords.paragraph1.length !== linksInMoreThan30minParagraph1) {
+      displayErrorBanner(1, MORE_THAN_30MIN_SECTION_NAME)
       return
     }
-    if (!presenceConfirmFormTitleOnMultipleRows && confirmPresenceFormTitle.includes('[break]')) {
-      setSnackBar({
-        ...snackBar,
-        background: '#e53c5d',
-        open: true,
-        success: false,
-        upDuration: 12000,
-        text: 'Eroare! Ai notat locuri de separare a Titlului Formular fără a bifa "Titlu Formular pe mai multe rânduri".'
-      })
+    if (values.moreThan30min.linkWords.paragraph2.length !== linksInMoreThan30minParagraph2) {
+      displayErrorBanner(2, MORE_THAN_30MIN_SECTION_NAME)
       return
     }
-
-    // Add all Words with Links to the final Payload object
-    Object.assign(values, {
-      lessThan30Min: {
-        ...values.lessThan30Min,
-        linkWords: dataObject.lessThan30Min.linkWords
-      },
-      moreThan30Min: {
-        ...values.moreThan30Min,
-        linkWords: dataObject.moreThan30Min.linkWords
+    if (values.moreThan30min.linkWords.paragraph3.length !== linksInMoreThan30minParagraph3) {
+      displayErrorBanner(3, MORE_THAN_30MIN_SECTION_NAME)
+      return
+    }
+    if (values.lessThan30min.linkWords.paragraph1.length !== linksInLessThan30minParagraph1) {
+      displayErrorBanner(1, LESS_THAN_30MIN_SECTION_NAME)
+      return
+    }
+    if (values.lessThan30min.linkWords.paragraph2.length !== linksInLessThan30minParagraph2) {
+      displayErrorBanner(2, LESS_THAN_30MIN_SECTION_NAME)
+      return
+    }
+ 
+    const payload = {
+      [scenario]: {
+        collectionId,
+        [scenario]: values
       }
-    })
-
+    }
     setLoadingData({...loadingData, showCircle: true})
-    dispatch(updateCoursePresencePageData(values))
+    dispatch(updateCoursePresencePageData(payload))
   }
 
   const displaySnackBar = () => {
@@ -184,9 +162,7 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
       })
       dispatch(clearServerResponse())
       setLoadingData({...loadingData, showCircle: false})
-    }
-
-    if (serverMessage === 'Page Data could not be updated') {
+    } else if (serverMessage === 'Page Data Could Not Be Updated') {
       setSnackBar({
         ...snackBar,
         background: '#e53c5d', 
@@ -218,7 +194,7 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
             { dataObject && 
               <>
                 { hasEditPermission ?
-                  <RingBellAndPageInstructionsBanner position={'60px'} Component={HowToOperateOnPage} />
+                  <RingBellAndPageInstructionsBanner position={'60px'} />
                   :
                   <NoPermissionBanner permissions={permissions} />
                 }
@@ -228,25 +204,16 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
                   <Divider style={{background: 'white'}} className="mb-5" />
 
                   <Formik
+                    enableReinitialize={true}
                     initialValues={formInitialValues}
                     validationSchema={FORM_VALIDATION}
                     onSubmit={values => handleFormSubmit(values)}>
                   {(props) => (
                     <Form>
-                      <EditContentForMoreThan30minBeforeCourseStart 
-                        FormikProps={props} 
-                        localStyles={localStyles}
-                        wordsWithLinks={dataObject?.moreThan30Min?.linkWords}
-                        editPermission={!hasEditPermission}
-                      />
-                      <EditContentForLessThan30minBeforeCourseStart
+                      <CourseDateIsInPresent 
                         FormikProps={props}
-                        localStyles={localStyles}
-                        formTitleMultipleRows={handleSelectFormTitleOnMultipleRows}
-                        wordsWithLinks={dataObject?.lessThan30Min?.linkWords}
-                        editPermission={!hasEditPermission}
+                        hasEditPermission={hasEditPermission}
                       />
-
                       <div className='d-flex justify-content-center'>
                         <Button variant='contained'
                           type="submit"
@@ -261,7 +228,7 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
                 </section>
 
                 {/* Showing Edited PageData Content */}
-                <ShowPageContent data={dataObject} />
+                <ContentCourseDateIsInPresent pageData={dataObject} />
               </>
             }
 
@@ -275,4 +242,4 @@ const ConfirmarePrezenta = ({ setShowPlaceholder }) => {
   )
 }
 
-export default ConfirmarePrezenta
+export default ConfirmarePrezentaCursInPrezent

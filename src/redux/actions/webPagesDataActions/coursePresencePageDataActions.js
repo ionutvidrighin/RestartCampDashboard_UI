@@ -2,14 +2,13 @@ import { ActionTypes } from "../action_types"
 import API from '../../../api/api'
 import { store } from "../../store"
 
-export const fetchCoursePresencePageData = () => {
+export const fetchCoursePresencePageData = (body) => {
   return async (dispatch) => {
     try {
-      const response = await API.CoursePresencePageData.getData()
-      console.log(response)
+      const response = await API.CoursePresencePageData.getData(body)
       dispatch({
         type: ActionTypes.GET_COURSE_PRESENCE_PAGE_DATA,
-        payload: response.data.coursePresencePageData
+        payload: response.data
       })
     } catch (error) {
       console.log(error)
@@ -35,7 +34,7 @@ export const updateCoursePresencePageData = (body) => {
       const response = await API.CoursePresencePageData.updateData(accessToken, body)
       dispatch({
         type: ActionTypes.UPDATE_COURSE_PRESENCE_PAGE_DATA,
-        payload: response.data.newCoursePresencePageData
+        payload: response.data.updatedData
       })
     } catch (error) {
       console.log(error)

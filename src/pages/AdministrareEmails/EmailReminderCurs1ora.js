@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from "react-redux";
 import { appPagesConstants } from '../../constants/userPermissions';
-import { doesUserHaveViewPermission } from '../../utils/helperFunctions';
+import { doesUserHaveViewPermission, doesUserHaveEditPermission } from '../../utils/helperFunctions';
 import { emailTemplatesEndpoints } from '../../constants/emailTemplatesEndpoints';
 import { getEmailTemplateHTML } from '../../api/callEmailTemplates';
 import Divider from '@material-ui/core/Divider';
 import NoAccessPage from '../../components/NoAccessPage';
+import UpdateEmailTemplateSubject from '../../components/ReusableComponents/EmailTemplatesManipulation/UpdateEmailTemplateSubject';
 import DownloadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/DownloadEmailTemplate';
 import UploadEmailTemplateFile from '../../components/ReusableComponents/EmailTemplatesManipulation/UploadEmailTemplateFile';
 import SendTestEmailTemplate from '../../components/ReusableComponents/EmailTemplatesManipulation/SendTestEmailTemplate';
@@ -19,11 +20,14 @@ const EmailReminderCurs1Ora = ({ setShowPlaceholder }) => {
 
   const userPagesAccessFromStore = useSelector(state => state.authReducer.permissions)
   const hasViewPermission = doesUserHaveViewPermission(appPagesConstants.EMAIL_REMINDER_1_ORA, userPagesAccessFromStore)
-  
+  const hasEditPermission = doesUserHaveEditPermission(appPagesConstants.EMAIL_REMINDER_1_ORA, userPagesAccessFromStore)
+
   const [loadingData, setLoadingData] = useState({ showCircle: false, circlePosition: 'center' })
   const [snackBar, setSnackBar] = useState({upDuration: 2000})
   
   const DBtoken = useSelector(state => state.generateDBTokenReducer.value)
+  const getEmailTemplateSubjectURL = emailTemplatesEndpoints.getEmailReminder1HourSubjectTemplate
+  const updateEmailTemplateSubjectURL = emailTemplatesEndpoints.emailReminder1HourSubjectTemplateUpdate
   const uploadTemplateURL = emailTemplatesEndpoints.emailReminder1HourUpload
   const downloadTemplateURL = emailTemplatesEndpoints.emailReminder1HourDownload
   const sendTestEmailURL = emailTemplatesEndpoints.testEmailReminder1Hour
@@ -71,12 +75,19 @@ const EmailReminderCurs1Ora = ({ setShowPlaceholder }) => {
                 <Divider style={{background: 'white'}} className="mb-5 ms-2" />
               </div>
 
-              <div className='d-flex flex-column justify-content-space-around' style={{marginTop: '5rem'}}>
-                <UploadEmailTemplateFile url={uploadTemplateURL} token={DBtoken} />
+              <div className='d-flex flex-column'>
+                <UpdateEmailTemplateSubject
+                  hasEditPermission={hasEditPermission}
+                  getTemplateURL={getEmailTemplateSubjectURL}
+                  updateSubjectURL={updateEmailTemplateSubjectURL}
+                  token={DBtoken}
+                />
 
-                <SendTestEmailTemplate url={sendTestEmailURL} token={DBtoken} />
+                <UploadEmailTemplateFile hasEditPermission={hasEditPermission} url={uploadTemplateURL} token={DBtoken} />
 
-                <DownloadEmailTemplateFile url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
+                <SendTestEmailTemplate hasEditPermission={hasEditPermission} url={sendTestEmailURL} token={DBtoken} />
+
+                <DownloadEmailTemplateFile hasEditPermission={hasEditPermission} url={downloadTemplateURL} token={DBtoken} templateName={templateName} />
               </div>
             </div>
 

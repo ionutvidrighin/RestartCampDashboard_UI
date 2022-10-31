@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useSelector } from "react-redux";
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
 import { addWordsWithLinkOnCoursesPageData,
@@ -9,10 +8,9 @@ import ShowWordsWithLink from '../../ReusableComponents/WebpagesManipulation/Sho
 
 const EditInfoCoursesModule2 = ({localStyles, FormikProps, editPermission}) => {
   const { values, handleChange, errors, touched } = FormikProps
-  const { infoCoursesModule2: { title, paragraph } } = values
+  const { infoCoursesModule2: { title, paragraph, linkWords } } = values
 
   const [addWordsWithLink, setAddWordsWithLink] = useState(false)
-  const wordsWithLink = useSelector(state => state.coursesPageReducer.data.infoCoursesModule2.linkWords.paragraph)
 
   return (
     <div className='section-content mb-4'>
@@ -52,7 +50,7 @@ const EditInfoCoursesModule2 = ({localStyles, FormikProps, editPermission}) => {
         disabled={editPermission}
       />
 
-      <div className='add-and-show-words-with-links'>
+      <div className={linkWords.paragraph.length !== 0 && 'add-and-show-words-with-links'}>
         <Button
           onClick={() => setAddWordsWithLink(!addWordsWithLink)}
           variant="contained"
@@ -70,15 +68,15 @@ const EditInfoCoursesModule2 = ({localStyles, FormikProps, editPermission}) => {
           closeDialog={setAddWordsWithLink}
           storeDataAction={addWordsWithLinkOnCoursesPageData}
           objectKeyLocation="infoCoursesModule2"
-          childObjectKey="paragraph"
+          paragraphNumber="paragraph"
         />
 
         <ShowWordsWithLink
           editPermission={editPermission}
-          data={wordsWithLink}
+          data={linkWords.paragraph}
           removeWordAction={removeWordsWithLinkOnCoursesPageData}
           objectKeyLocation="infoCoursesModule2"
-          childObjectKey="paragraph"
+          paragraphNumber="paragraph"
           localStyles={localStyles}
         />
       </div>

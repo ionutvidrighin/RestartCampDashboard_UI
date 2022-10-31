@@ -6,7 +6,7 @@
   .right-section {
     height: fit-content;
     flex: 1;
-    min-height: 500px;
+    min-height: 300px;
     overflow-y: auto;
     background-color: white;
 
@@ -20,6 +20,89 @@
 
     img {
       width: 100%;
+    }
+
+    .more-than-30min {
+      .countdown {
+        background-color: #38b6ff;
+        color: white;
+        font-weight: bold;
+        font-size: 1.2rem;
+        padding: 1rem 3rem;
+        border-radius: 5px;
+        box-shadow: 0px 0px 13px 0px rgba(0,0,0,0.75);
+      }
+    }
+
+    .less-than-30min {
+      .red-squared-paragraph {
+        border: 4px solid #fd5d4b;
+        padding: 3px 10px;
+      }
+      .form-input {
+        width: 100%;
+        height: 55px;
+        background-color: #f0f0f0;
+        border-radius: 5px 5px 0 0;
+        margin: .5rem 0;
+        display: flex;
+        align-items: center;
+        font-weight: bold;
+        padding-left: 1rem;
+      }
+      .form-submit-btn {
+        width: 100%;
+        height: 50px;
+        margin: .5rem 0 4rem 0;
+        color: white;
+        text-transform: uppercase;
+        font-weight: bold;
+        font-size: .9rem;
+        background-color: #38b6ff;
+        border-radius: 5px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .success-banner {
+        width: 100%;
+        height: 50px;
+        margin-top: .5rem;
+        background-color: green;
+        border-radius: 5px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .error-banner {
+        width: 100%;
+        height: 50px;
+        margin-top: .5rem;
+        background-color: #d32f2f;
+        border-radius: 5px;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+      }
+    }
+
+    .course-zoom-access-btn {
+      font-weight: bolder;
+      color: white;
+      background-color: #fd5c4a;
+      border-radius: 10px;
+      border: none;
+      outline: none;
+      padding: 3px 20px;
+      margin-top: 2.5rem;
+      transition: .2s ease-in-out;
+      &:hover {
+        background-color: #3e5676;
+        transition: .2s ease-in-out;
+      }
     }
   }
 

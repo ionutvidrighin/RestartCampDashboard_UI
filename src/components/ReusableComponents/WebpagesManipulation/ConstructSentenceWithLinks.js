@@ -45,7 +45,7 @@ const ConstructSentenceWithLinks = ({sentence, words}) => {
   }
 
   return (
-    <h5 className='text-center pe-4 ps-4'>
+    <p className='text-center pe-4 ps-4 mb-0'>
       { words && words.length !== 0 ?
         <>
           {spreadSentence && spreadSentence.map(element => (
@@ -63,7 +63,7 @@ const ConstructSentenceWithLinks = ({sentence, words}) => {
           {sentence}
         </span>
       }
-    </h5>
+    </p>
   )
 }
 

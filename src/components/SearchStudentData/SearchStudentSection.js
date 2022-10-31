@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import { useDispatch } from "react-redux";
 import { fetchSingleStudentByEmail, 
-  fetchSingleStudentByEmailByFullName } from '../../redux/actions/studentsActions';
+  fetchSingleStudentByFullName } from '../../redux/actions/studentsActions';
 import Button from '@material-ui/core/Button';
 import SnackBar from "../ReusableComponents/SnackBar"
 
@@ -51,7 +51,7 @@ const SearchStudentSection = ({localStyles, editPermission}) => {
       return
     }
     const payload = studentName.toUpperCase()
-    dispatch(fetchSingleStudentByEmailByFullName({studentName: payload}))
+    dispatch(fetchSingleStudentByFullName({studentName: payload}))
     setStudentName("")
   }
 
